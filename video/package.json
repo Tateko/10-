@@ -1,0 +1,18 @@
+{
+  "name": "michi-pr-video",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "michi の PR動画をコードから組み立てる（実アプリの操作を録って、字幕・音楽を付ける）",
+  "scripts": {
+    "capture": "node capture-app.mjs",
+    "render": "node render.mjs",
+    "build": "bash build.sh"
+  },
+  "dependencies": {
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
+    "@fontsource/noto-sans-jp": "^5.2.9",
+    "@fontsource/noto-serif-jp": "^5.2.7",
+    "playwright": "1.56.1"
+  }
+}

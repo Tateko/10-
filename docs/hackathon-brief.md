@@ -109,6 +109,8 @@
 
 - **作品名**: michi（未知）
 - **一言**: 自分では選ばない体験を、根拠と誘い文つきで3つ提案するAI秘書
-- **リンク**: GitHub リポジトリ `Tateko/10-`（ブランチ `claude/stoic-ride-m7z7pi`）＋ 動作URL（ローカルデモならスクリーンショット）
+- **リンク**: GitHub リポジトリ `Tateko/10-` ＋ 動作URL https://fuu-black-letter.tatetate0912-10969.workers.dev/
+- **動画**: [`video/out/michi-pr.mp4`](../video/out/michi-pr.mp4)（78秒・字幕のみでも伝わる構成）。
+  提出フォームに出すときは YouTube 限定公開にアップしてそのリンクを貼る。台本は [`video/script.md`](../video/script.md)
 - **動かし方**: `npm install && ANTHROPIC_API_KEY=... npm start` → http://localhost:3000。キーなしなら自動でモック動作。
 - **説明**: 上記「5観点に対する答え」の価値・新規性・AIの活かし方の3行を転記。

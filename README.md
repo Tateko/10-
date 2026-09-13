@@ -4,6 +4,7 @@
 提案には必ず **なぜあなたはこれを選ばないか（根拠）** と **誰を誘うか・誘い文** と **60秒でできる最初の一歩** が付く。
 
 - **仕様書: [docs/spec.md](docs/spec.md)**
+- **PR動画（78秒）: [video/out/michi-pr.mp4](video/out/michi-pr.mp4)** — 台本は [video/script.md](video/script.md)、作り直し方は [video/README.md](video/README.md)
 - アイデアの経緯: [docs/2026-09-13-unknown-event-app.md](docs/2026-09-13-unknown-event-app.md)
 - ハッカソン要件・進行・発表構成: [docs/hackathon-brief.md](docs/hackathon-brief.md)
 
@@ -26,6 +27,7 @@ APIキーが無いときは自動で **モックモード**（固定の3案を�
 | `server.js` | Express。`POST /api/suggest` で Claude（`claude-opus-5`）を呼び、Zodスキーマで構造化出力を保証 |
 | `public/index.html` | スマホ型の単一ページ（依存なし）。ホーム／アナタへのオススメ／友達／設定の4タブ＋**ロック画面**（「これにする」から完了報告まで他の画面に戻れない） |
 | `docs/codex-image-prompts.md`, `docs/prompts/*.txt` | Codex CLI で画面モックを生成するためのプロンプト集。出力は `docs/mocks/` へ |
+| `video/` | PR動画を1コマンドで作り直す一式。実アプリをPlaywrightで操作して録り、字幕とBGMを重ねてmp4にする |
 | `.env.example` | 環境変数のひな形 |
 
 ### API
