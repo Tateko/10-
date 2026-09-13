@@ -24,7 +24,7 @@ APIキーが無いときは自動で **モックモード**（固定の3案を�
 | ファイル | 役割 |
 |---|---|
 | `server.js` | Express。`POST /api/suggest` で Claude（`claude-opus-5`）を呼び、Zodスキーマで構造化出力を保証 |
-| `public/index.html` | 単一ページのフロント（依存なし） |
+| `public/index.html` | スマホ型の単一ページ（依存なし）。ホーム／アナタへのオススメ／友達／設定の4タブ |
 | `.env.example` | 環境変数のひな形 |
 
 ### API
