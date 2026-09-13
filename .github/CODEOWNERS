@@ -1,0 +1,30 @@
+# CODEOWNERS — ファイルごとのレビュー担当を自動で指名する仕組み
+#
+# 使い方:
+#   1. 下の @member-a / @member-b / @member-c を実際のGitHubユーザー名に置き換える
+#   2. 行頭の # を外して有効化する
+#   3. 該当ファイルを含むPRが出ると、そのオーナーが自動でレビュワーに指名される
+#
+# 役割の対応は docs/team-workflow.md の「Step 4. 役割分担」を参照。
+
+# デフォルト（どこにも当てはまらないファイル）
+# *                    @member-a @member-b @member-c
+
+# A: プロダクト & AI提案ロジック
+# /src/lib/ai/         @member-a
+# /prompts/            @member-a
+# /docs/               @member-a
+
+# B: フロントエンド & 通知体験
+# /src/app/(ui)/       @member-b
+# /src/components/     @member-b
+# /public/             @member-b
+
+# C: バックエンド & インフラ
+# /src/app/api/        @member-c
+# /src/lib/db/         @member-c
+# /supabase/           @member-c
+# /.github/            @member-c
+
+# 境界にあるもの: 変更時は3人全員のレビューが必要
+# /src/types/          @member-a @member-b @member-c
