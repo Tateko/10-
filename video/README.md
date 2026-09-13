@@ -10,6 +10,20 @@ bash video/build.sh          # → video/out/michi-pr.mp4
 
 APIキーは要らない（アプリが自動でモックに落ちる）。所要 10〜15分程度。
 
+**公開中のサイトをそのまま録る**なら、録る相手を `BASE_URL` で指定する。ローカルのサーバーは起動しない。
+
+```bash
+BASE_URL=https://fuu-black-letter.tatetate0912-10969.workers.dev bash video/build.sh
+```
+
+APIキーを入れて起動したサーバーを指定すれば、提案文がサンプルではなく **Claude の生成結果** の映像になる。
+その場合は `scenes.html` の注記（「提案文はAPIキー未設定時のサンプル応答」）を消すこと。
+
+```bash
+ANTHROPIC_API_KEY=... npm start          # 別のターミナルで
+BASE_URL=http://localhost:3000 bash video/build.sh
+```
+
 ## できるもの
 
 | ファイル | 中身 |

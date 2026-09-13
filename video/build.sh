@@ -1,7 +1,13 @@
 #!/usr/bin/env bash
 # michi の PR動画を最初から最後まで作り直す。
+#
 #   bash video/build.sh
-# 前提: リポジトリ直下で npm install 済み（アプリを動かすため）。APIキーは不要（モックで動く）。
+#     → このリポジトリのアプリをローカルで起動して録る（APIキー不要。モックで動く）
+#
+#   BASE_URL=https://fuu-black-letter.tatetate0912-10969.workers.dev bash video/build.sh
+#     → 公開中のサイトをそのまま録る（ローカルのサーバーは起動しない）
+#
+# 前提: リポジトリ直下で npm install 済み（ローカル起動する場合のみ）。
 set -euo pipefail
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -15,18 +21,25 @@ mkdir -p "$BUILD" "$OUT"
 cd "$HERE"
 [ -d node_modules ] || npm install --no-audit --no-fund
 
-# 1. アプリを起動（APIキーが無ければ自動でモック）
-if ! curl -sf "http://localhost:$PORT/api/health" >/dev/null 2>&1; then
-  echo "==> アプリを起動 (port $PORT)"
-  (cd "$ROOT" && [ -d node_modules ] || npm install --no-audit --no-fund)
-  (cd "$ROOT" && MOCK=1 PORT="$PORT" node server.js > "$BUILD/server.log" 2>&1 &)
-  for _ in $(seq 1 30); do curl -sf "http://localhost:$PORT/api/health" >/dev/null && break; sleep 0.5; done
-  STARTED=1
+# 1. 録る相手を決める。BASE_URL が指定されていればそこを録る（公開URLでもいい）
+TARGET="${BASE_URL:-}"
+if [ -z "$TARGET" ]; then
+  TARGET="http://localhost:$PORT"
+  if ! curl -sf "$TARGET/api/health" >/dev/null 2>&1; then
+    echo "==> アプリを起動 (port $PORT)"
+    (cd "$ROOT" && [ -d node_modules ] || npm install --no-audit --no-fund)
+    (cd "$ROOT" && MOCK=1 PORT="$PORT" node server.js > "$BUILD/server.log" 2>&1 &)
+    for _ in $(seq 1 30); do curl -sf "$TARGET/api/health" >/dev/null && break; sleep 0.5; done
+    STARTED=1
+  fi
+else
+  echo "==> 公開中のサイトを録る: $TARGET"
+  curl -sfI "$TARGET" >/dev/null || { echo "!! $TARGET に届かない。URLとネットワークを確認して。"; exit 1; }
 fi
 
 # 2. 実アプリを操作して録る
 echo "==> アプリ画面をキャプチャ"
-BASE_URL="http://localhost:$PORT" OUT_DIR="$BUILD" node capture-app.mjs
+BASE_URL="$TARGET" OUT_DIR="$BUILD" node capture-app.mjs
 
 # 3. BGM
 echo "==> BGM を合成"
