@@ -1,0 +1,1182 @@
+<title>あさ、ひとつ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Zen+Old+Mincho:wght@600&display=swap">
+<style>
+  /* ============================================================
+     トークン
+     surround = ページ側（テーマに追従）
+     phone    = プロダクト側（常に明るい。表紙の色に連動）
+     ============================================================ */
+  :root {
+    --page-bg: #EDEFF4;
+    --page-bg-2: #F7F8FB;
+    --page-fg: #171A21;
+    --page-muted: #5D6577;
+    --page-card: rgba(255,255,255,.72);
+    --page-line: rgba(23,26,33,.10);
+    --page-accent: #3F4CE0;
+
+    /* プロダクト側の固定値 */
+    --ink: #12151C;
+    --ink-soft: #5B6474;
+    --ink-faint: #8A93A5;
+    --paper: #FFFFFF;
+    --line: rgba(18,21,28,.09);
+
+    /* 表紙の既定値（JS/属性で上書き） */
+    --c1: #FFE1B8;
+    --c2: #FFC2C9;
+    --c3: #D7C4FF;
+    --accent: #F2683C;
+    --accent-deep: #C7441F;
+
+    --font-ui: "Zen Kaku Gothic New", "Hiragino Kaku Gothic ProN", "Yu Gothic", system-ui, sans-serif;
+    --font-display: "Zen Old Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif;
+    --font-mono: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+    --r-lg: 28px;
+    --r-md: 18px;
+    --r-sm: 12px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --page-bg: #101319;
+      --page-bg-2: #161A22;
+      --page-fg: #EEF0F5;
+      --page-muted: #9AA3B4;
+      --page-card: rgba(255,255,255,.05);
+      --page-line: rgba(255,255,255,.11);
+      --page-accent: #A9B2FF;
+    }
+  }
+  :root[data-theme="dark"] {
+    --page-bg: #101319;
+    --page-bg-2: #161A22;
+    --page-fg: #EEF0F5;
+    --page-muted: #9AA3B4;
+    --page-card: rgba(255,255,255,.05);
+    --page-line: rgba(255,255,255,.11);
+    --page-accent: #A9B2FF;
+  }
+
+  /* ---- 表紙プリセット ------------------------------------- */
+  [data-cover="dawn"]   { --c1:#FFE1B8; --c2:#FFC2C9; --c3:#D7C4FF; --accent:#F2683C; --accent-deep:#C7441F; }
+  [data-cover="aurora"] { --c1:#B6F5E4; --c2:#A9D3FF; --c3:#D6C2FF; --accent:#12A594; --accent-deep:#0B7D70; }
+  [data-cover="tide"]   { --c1:#BDEEFF; --c2:#96D9EF; --c3:#CFF5EA; --accent:#0A8FB5; --accent-deep:#06708F; }
+  [data-cover="citrus"] { --c1:#FFF2B2; --c2:#FFD9A6; --c3:#C7EBC9; --accent:#D98A0B; --accent-deep:#A66600; }
+  [data-cover="fuji"]   { --c1:#E7D3FF; --c2:#CBD6FF; --c3:#FBD0E8; --accent:#7C5CE0; --accent-deep:#5B3FC4; }
+  [data-cover="mist"]   { --c1:#E8EDF3; --c2:#D8E2EC; --c3:#F1F3F6; --accent:#46607F; --accent-deep:#33495F; }
+  [data-cover="photo"]  { --c1:#DDE4EC; --c2:#C9D4E0; --c3:#EDF1F5; --accent:#2C3A4B; --accent-deep:#1E2833; }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--page-bg);
+    background-image:
+      radial-gradient(120% 70% at 12% -10%, color-mix(in oklab, var(--c1) 34%, transparent), transparent 60%),
+      radial-gradient(90% 60% at 92% 6%, color-mix(in oklab, var(--c3) 30%, transparent), transparent 62%);
+    background-attachment: fixed;
+    color: var(--page-fg);
+    font-family: var(--font-ui);
+    font-size: 15px;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+    transition: background-color .5s ease;
+  }
+
+  .stage {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding-inline: 20px;
+    padding-block: clamp(32px, 6vw, 72px) 56px;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(36px, 5vw, 64px);
+  }
+
+  /* ---- イントロ -------------------------------------------- */
+  .intro { display: flex; flex-direction: column; gap: 14px; max-width: 46ch; }
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    font-weight: 400;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--page-muted);
+    margin: 0;
+  }
+  .intro h1 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(34px, 6.2vw, 52px);
+    line-height: 1.16;
+    letter-spacing: .02em;
+    margin: 0;
+    text-wrap: balance;
+  }
+  .intro p { margin: 0; color: var(--page-muted); font-size: 15.5px; }
+
+  /* ---- ショーケース ---------------------------------------- */
+  .showcase {
+    display: grid;
+    grid-template-columns: minmax(0, 390px) minmax(0, 1fr);
+    gap: clamp(28px, 5vw, 60px);
+    align-items: start;
+  }
+  @media (max-width: 840px) {
+    .showcase { grid-template-columns: minmax(0, 1fr); justify-items: center; }
+    .notes { max-width: 420px; }
+  }
+
+  /* ============================================================
+     端末
+     ============================================================ */
+  .phone {
+    width: 100%;
+    max-width: 390px;
+    aspect-ratio: 390 / 830;
+    position: relative;
+    overflow: hidden;
+    border-radius: 40px;
+    background: color-mix(in oklab, var(--c2) 13%, #F5F7FA);
+    border: 1px solid rgba(18,21,28,.10);
+    box-shadow:
+      0 1px 0 rgba(255,255,255,.9) inset,
+      0 30px 60px -28px rgba(18,21,28,.45),
+      0 6px 18px -10px rgba(18,21,28,.22);
+    color: var(--ink);
+    font-size: 14px;
+    isolation: isolate;
+    transition: background-color .55s ease;
+  }
+  @media (max-width: 420px) {
+    .phone { border-radius: 30px; aspect-ratio: 390 / 846; }
+  }
+
+  /* ---- 表紙 ------------------------------------------------- */
+  .cover {
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 44%;
+    overflow: hidden;
+    background: linear-gradient(158deg, var(--c1) 0%, var(--c2) 52%, var(--c3) 100%);
+    transition: background .55s ease;
+  }
+  .cover::after {
+    /* 粒子感。のっぺりしたグラデーションにしない */
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+    opacity: .16;
+    mix-blend-mode: soft-light;
+    pointer-events: none;
+  }
+  .cover-photo {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    transition: opacity .5s ease;
+  }
+  .phone[data-cover="photo"] .cover-photo { opacity: 1; }
+  .blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(34px);
+    opacity: .72;
+    mix-blend-mode: screen;
+    will-change: transform;
+  }
+  .blob-1 { width: 62%; aspect-ratio: 1; left: -14%; top: -22%; background: #fff; opacity: .5; animation: drift-a 19s ease-in-out infinite; }
+  .blob-2 { width: 50%; aspect-ratio: 1; right: -10%; top: 8%;  background: color-mix(in oklab, var(--c1) 70%, #fff); animation: drift-b 23s ease-in-out infinite; }
+  .blob-3 { width: 44%; aspect-ratio: 1; left: 22%;  bottom: -18%; background: color-mix(in oklab, var(--c3) 70%, #fff); animation: drift-a 27s ease-in-out infinite reverse; }
+  @keyframes drift-a { 0%,100% { transform: translate3d(0,0,0) scale(1); } 50% { transform: translate3d(12%, 8%, 0) scale(1.12); } }
+  @keyframes drift-b { 0%,100% { transform: translate3d(0,0,0) scale(1.05); } 50% { transform: translate3d(-14%, 10%, 0) scale(.92); } }
+
+  /* 写真でも文字が読めるようにする白のスクリム */
+  .cover-scrim {
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 62%;
+    background: linear-gradient(to top, rgba(255,255,255,.82), rgba(255,255,255,0));
+    opacity: 0;
+    transition: opacity .5s ease;
+  }
+  .phone[data-cover="photo"] .cover-scrim { opacity: 1; }
+
+  .cover-bar {
+    position: absolute;
+    inset: 0 0 auto 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 16px 18px 0;
+    z-index: 3;
+  }
+  .clock {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: .04em;
+    color: color-mix(in oklab, var(--ink) 72%, transparent);
+    font-variant-numeric: tabular-nums;
+  }
+  .pill {
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid rgba(255,255,255,.72);
+    background: rgba(255,255,255,.58);
+    -webkit-backdrop-filter: blur(14px) saturate(1.4);
+    backdrop-filter: blur(14px) saturate(1.4);
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 500;
+    padding: 7px 13px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: transform .16s ease, background .2s ease, box-shadow .2s ease;
+    box-shadow: 0 2px 10px -4px rgba(18,21,28,.3);
+  }
+  .pill:hover { background: rgba(255,255,255,.82); }
+  .pill:active { transform: scale(.96); }
+  .pill[disabled] { opacity: .45; cursor: not-allowed; }
+  .pill svg { display: block; }
+
+  /* ---- プロフィール（表紙の上） ----------------------------- */
+  .profile {
+    position: absolute;
+    left: 22px;
+    right: 22px;
+    top: 23%;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    gap: 13px;
+  }
+  .avatar {
+    width: 58px;
+    height: 58px;
+    border-radius: 20px;
+    display: grid;
+    place-items: center;
+    font-size: 21px;
+    font-weight: 700;
+    color: var(--ink);
+    background: linear-gradient(150deg, #fff, color-mix(in oklab, var(--c2) 55%, #fff));
+    border: 2px solid rgba(255,255,255,.92);
+    box-shadow: 0 8px 20px -10px rgba(18,21,28,.5);
+    flex: none;
+  }
+  .profile-name { font-size: 19px; font-weight: 700; letter-spacing: .01em; }
+  .profile-sub {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: .06em;
+    color: color-mix(in oklab, var(--ink) 62%, transparent);
+  }
+
+  /* ---- だれの画面を見るか（プロトタイプ用の操作。製品にはない） ---- */
+  .members { display: flex; flex-wrap: wrap; gap: 7px; }
+  .member {
+    appearance: none;
+    border: 1px solid var(--page-line);
+    background: var(--page-card);
+    border-radius: 999px;
+    padding: 5px 13px 5px 5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--page-fg);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: transform .16s ease, border-color .2s ease;
+  }
+  .member:active { transform: scale(.96); }
+  .member[aria-current="true"] { border-color: color-mix(in oklab, var(--page-fg) 45%, transparent); }
+  .member-chip {
+    width: 21px; height: 21px;
+    border-radius: 50%;
+    flex: none;
+    border: 1.5px solid rgba(255,255,255,.9);
+    box-shadow: 0 0 0 1px var(--page-line);
+  }
+  .hint { margin: 10px 0 0; font-size: 12px; color: var(--page-muted); line-height: 1.65; }
+
+  /* ---- 同行者（名前は出ない。色だけ） ---- */
+  .dots { display: inline-flex; flex: none; }
+  .dots span {
+    width: 17px; height: 17px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    margin-right: -5px;
+    box-shadow: 0 1px 3px rgba(18,21,28,.2);
+  }
+  .dots span:last-child { margin-right: 0; }
+  .with, .meet {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+  }
+  .with[hidden], .meet[hidden] { display: none; }
+  .with b, .meet b { color: var(--ink); font-weight: 500; }
+  .meet { align-items: flex-start; }
+  .meet-when {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: .02em;
+  }
+  .meet-where { font-size: 13px; color: var(--ink); font-weight: 500; }
+  .meet-note { margin: 5px 0 0; font-size: 11.5px; color: var(--ink-soft); }
+  .h-dots { flex: none; display: inline-flex; }
+  .h-dots span {
+    width: 13px; height: 13px;
+    border-radius: 50%;
+    border: 1.5px solid #fff;
+    margin-right: -4px;
+  }
+
+  /* ---- 提案カード ------------------------------------------- */
+  .sheet-body {
+    position: absolute;
+    inset: 37.5% 0 0 0;
+    z-index: 4;
+    padding: 0 16px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow: hidden;
+  }
+  .card {
+    background: rgba(255,255,255,.80);
+    -webkit-backdrop-filter: blur(22px) saturate(1.5);
+    backdrop-filter: blur(22px) saturate(1.5);
+    border: 1px solid rgba(255,255,255,.9);
+    border-radius: var(--r-lg);
+    box-shadow: 0 18px 40px -26px rgba(18,21,28,.55);
+    padding: 18px 18px 16px;
+  }
+  .card-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex: none; }
+  .card-head span {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: .09em;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+  }
+  .proposal {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 21px;
+    line-height: 1.5;
+    letter-spacing: .015em;
+    margin: 0 0 12px;
+    text-wrap: balance;
+  }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 8px;
+    margin-bottom: 12px;
+  }
+  .tag {
+    font-size: 11.5px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--accent) 12%, #fff);
+    color: color-mix(in oklab, var(--accent-deep) 88%, #000);
+    border: 1px solid color-mix(in oklab, var(--accent) 24%, transparent);
+    font-variant-numeric: tabular-nums;
+  }
+  .why {
+    display: flex;
+    gap: 8px;
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    padding-top: 11px;
+    border-top: 1px solid var(--line);
+  }
+  .why b { color: var(--ink); font-weight: 500; }
+  .why-label {
+    flex: none;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: .05em;
+    color: var(--accent-deep);
+    padding-top: 2px;
+  }
+
+  /* ---- 3つのボタン ------------------------------------------ */
+  .actions { display: grid; grid-template-columns: 1.35fr 1fr 1fr; gap: 8px; }
+  .act {
+    appearance: none;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 13px 6px;
+    border-radius: var(--r-md);
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: transform .16s ease, box-shadow .2s ease, background .2s ease;
+  }
+  .act:active { transform: scale(.97); }
+  .act-go {
+    background: var(--accent-deep);
+    color: #fff;
+    box-shadow: 0 10px 22px -12px color-mix(in oklab, var(--accent-deep) 80%, transparent);
+  }
+  .act-maybe { background: rgba(255,255,255,.86); color: var(--ink); border-color: var(--line); }
+  .act-skip { background: transparent; color: var(--ink-faint); border-color: transparent; }
+  .act[aria-pressed="true"] { outline: 2px solid var(--accent-deep); outline-offset: 2px; }
+
+  /* ---- 履歴 -------------------------------------------------- */
+  .history { display: flex; flex-direction: column; gap: 2px; }
+  .history-label {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: .1em;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    padding: 2px 4px 6px;
+  }
+  .h-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: var(--r-sm);
+    background: rgba(255,255,255,.45);
+  }
+  .h-date {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink-faint);
+    font-variant-numeric: tabular-nums;
+    flex: none;
+  }
+  .h-title {
+    font-size: 12.5px;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--ink-soft);
+  }
+  .h-state {
+    font-size: 10.5px;
+    flex: none;
+    padding: 2px 8px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    color: var(--ink-soft);
+  }
+  .h-state[data-s="went"] { background: color-mix(in oklab, var(--accent) 16%, #fff); border-color: transparent; color: color-mix(in oklab, var(--accent-deep) 90%, #000); }
+
+  /* ---- 着せかえシート ---------------------------------------- */
+  .picker {
+    position: absolute;
+    inset: auto 0 0 0;
+    z-index: 10;
+    background: rgba(255,255,255,.93);
+    -webkit-backdrop-filter: blur(26px) saturate(1.6);
+    backdrop-filter: blur(26px) saturate(1.6);
+    border-radius: 30px 30px 40px 40px;
+    border-top: 1px solid rgba(255,255,255,.95);
+    box-shadow: 0 -20px 50px -30px rgba(18,21,28,.6);
+    padding: 10px 18px 22px;
+    transform: translateY(102%);
+    transition: transform .42s cubic-bezier(.22,1,.36,1);
+  }
+  .picker.open { transform: translateY(0); }
+  .grab { width: 38px; height: 4px; border-radius: 999px; background: rgba(18,21,28,.16); margin: 0 auto 14px; }
+  .picker h2 { font-size: 15px; font-weight: 700; margin: 0 0 2px; }
+  .picker p { margin: 0 0 14px; font-size: 12px; color: var(--ink-soft); }
+  .swatches { display: grid; grid-template-columns: repeat(4, 1fr); gap: 9px; }
+  .swatch {
+    appearance: none;
+    border: 2px solid transparent;
+    background: none;
+    padding: 0;
+    cursor: pointer;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    align-items: center;
+    font-family: inherit;
+    transition: transform .16s ease;
+  }
+  .swatch:active { transform: scale(.94); }
+  .swatch-face {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 14px;
+    background: linear-gradient(158deg, var(--s1), var(--s2) 55%, var(--s3));
+    border: 1px solid rgba(18,21,28,.08);
+    box-shadow: 0 4px 12px -8px rgba(18,21,28,.5);
+    position: relative;
+  }
+  .swatch[aria-pressed="true"] .swatch-face::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 13px;
+    border: 2.5px solid var(--ink);
+    box-shadow: 0 0 0 2px #fff inset;
+  }
+  .swatch-name { font-size: 10.5px; color: var(--ink-soft); }
+  .swatch-photo .swatch-face {
+    background: repeating-linear-gradient(45deg, #EEF1F6 0 7px, #E2E7EE 7px 14px);
+    display: grid;
+    place-items: center;
+    font-size: 17px;
+  }
+  .picker-note { margin: 18px 0 0; font-size: 11px; color: var(--ink-faint); line-height: 1.6; }
+  .picker-close {
+    appearance: none;
+    width: 100%;
+    margin-top: 12px;
+    padding: 12px;
+    border: none;
+    border-radius: var(--r-md);
+    background: var(--ink);
+    color: #fff;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .scrim-tap {
+    position: absolute;
+    inset: 0;
+    z-index: 9;
+    background: rgba(18,21,28,.18);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .3s ease;
+  }
+  .scrim-tap.on { opacity: 1; pointer-events: auto; }
+
+  .toast {
+    position: absolute;
+    left: 50%;
+    bottom: 26px;
+    transform: translate(-50%, 14px);
+    z-index: 20;
+    background: var(--ink);
+    color: #fff;
+    font-size: 12.5px;
+    padding: 9px 16px;
+    border-radius: 999px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s ease, transform .25s ease;
+    white-space: nowrap;
+  }
+  .toast.on { opacity: 1; transform: translate(-50%, 0); }
+
+  /* ============================================================
+     ページ側の解説
+     ============================================================ */
+  .notes { display: flex; flex-direction: column; gap: 22px; padding-top: 6px; }
+  .notes h2 {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    margin: 0 0 10px;
+  }
+  .try { display: flex; flex-direction: column; gap: 10px; margin: 0; padding: 0; list-style: none; }
+  .try li {
+    display: flex;
+    gap: 11px;
+    align-items: baseline;
+    font-size: 14px;
+    color: var(--page-muted);
+    line-height: 1.65;
+  }
+  .try b { color: var(--page-fg); font-weight: 500; }
+  .try-num {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--page-accent);
+    flex: none;
+    letter-spacing: .04em;
+  }
+  .callout {
+    border-left: 2px solid color-mix(in oklab, var(--page-accent) 55%, transparent);
+    padding: 2px 0 2px 16px;
+    font-size: 13.5px;
+    color: var(--page-muted);
+    line-height: 1.75;
+  }
+  .callout b { color: var(--page-fg); font-weight: 500; }
+
+  /* ---- 仕様 -------------------------------------------------- */
+  .spec { display: flex; flex-direction: column; gap: 18px; }
+  .spec-head { display: flex; flex-direction: column; gap: 6px; }
+  .spec-head h2 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(22px, 3.4vw, 28px);
+    margin: 0;
+    letter-spacing: .02em;
+  }
+  .spec-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(248px, 1fr));
+    gap: 14px;
+  }
+  .spec-card {
+    background: var(--page-card);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--page-line);
+    border-radius: var(--r-md);
+    padding: 18px 18px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .spec-card h3 {
+    font-size: 13px;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: .02em;
+  }
+  .spec-card p { margin: 0; font-size: 13px; color: var(--page-muted); line-height: 1.7; }
+  .spec-card code {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    background: color-mix(in oklab, var(--page-fg) 8%, transparent);
+    padding: 1px 6px;
+    border-radius: 5px;
+  }
+  .kv { display: flex; flex-direction: column; gap: 5px; margin: 0; }
+  .kv div { display: flex; justify-content: space-between; gap: 12px; font-size: 12.5px; border-bottom: 1px dotted var(--page-line); padding-bottom: 4px; }
+  .kv dt { color: var(--page-muted); }
+  .kv dd { margin: 0; font-family: var(--font-mono); font-size: 11.5px; }
+
+  .palette { display: flex; flex-wrap: wrap; gap: 10px; }
+  .palette figure { margin: 0; display: flex; flex-direction: column; gap: 6px; width: 84px; }
+  .palette .chip {
+    height: 46px;
+    border-radius: 12px;
+    border: 1px solid var(--page-line);
+    background: linear-gradient(158deg, var(--s1), var(--s2) 55%, var(--s3));
+  }
+  .palette figcaption { font-size: 11px; color: var(--page-muted); line-height: 1.4; }
+  .palette .hex { font-family: var(--font-mono); font-size: 10px; color: var(--page-muted); opacity: .8; }
+
+  footer {
+    border-top: 1px solid var(--page-line);
+    padding-top: 20px;
+    font-size: 12.5px;
+    color: var(--page-muted);
+    line-height: 1.8;
+  }
+  footer b { color: var(--page-fg); font-weight: 500; }
+
+  :focus-visible { outline: 2px solid var(--page-accent); outline-offset: 2px; border-radius: 4px; }
+  .phone :focus-visible { outline-color: var(--accent-deep); }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+  }
+</style>
+
+<div class="stage">
+
+  <header class="intro">
+    <p class="eyebrow">未知の体験提案アプリ（仮称）</p>
+    <h1>あさ、ひとつ</h1>
+    <p>毎朝7時、自分では選ばない体験がひとつだけ届く。<br>同じ提案を受け取った人と、その日その場で合流します。</p>
+  </header>
+
+  <div class="showcase">
+
+    <!-- ================= 端末 ================= -->
+    <div class="phone" id="phone" data-cover="dawn">
+      <div class="cover">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+        <div class="cover-photo" id="coverPhoto"></div>
+        <div class="cover-scrim"></div>
+      </div>
+
+      <div class="cover-bar">
+        <span class="clock">9/13 SAT · 7:04</span>
+        <button class="pill" id="openPicker" type="button">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"></path><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>
+          表紙をかえる
+        </button>
+      </div>
+
+      <div class="profile">
+        <div class="avatar" id="avatar">あ</div>
+        <div>
+          <div class="profile-name" id="profileName">あなた</div>
+          <div class="profile-sub" id="profileSub">連続 12 日</div>
+        </div>
+      </div>
+
+      <div class="sheet-body">
+        <div class="card">
+          <div class="card-head">
+            <span class="dot"></span>
+            <span id="cardTime">今朝 7:00 に届きました</span>
+          </div>
+          <p class="proposal" id="proposalTitle">知らない駅で降りて、看板の出ていない店に入る</p>
+          <div class="meta" id="proposalMeta"></div>
+          <div class="why">
+            <span class="why-label">WHY</span>
+            <p style="margin:0" id="proposalWhy">あなたが自分では選ばない理由: <b>過去90日、評価3.8未満の店に入っていません。</b></p>
+          </div>
+
+          <div class="with" id="withBlock">
+            <span class="dots" id="withDots"></span>
+            <p style="margin:0">この提案は、ほかに<b id="withCount">2人</b>に届いています。<br>誰なのかは、まだわかりません。</p>
+          </div>
+
+          <div class="meet" id="meetBlock" hidden>
+            <span class="dots" id="meetDots"></span>
+            <div>
+              <div class="meet-when" id="meetWhen">9/14 SAT · 13:00</div>
+              <div class="meet-where" id="meetWhere">京成立石駅 改札前</div>
+              <p class="meet-note">目印は、おたがいの表紙の色です。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="actions" id="actions">
+          <button class="act act-go" type="button" aria-pressed="false" data-v="行く">行く</button>
+          <button class="act act-maybe" type="button" aria-pressed="false" data-v="気になる">気になる</button>
+          <button class="act act-skip" type="button" aria-pressed="false" data-v="今日はいい">今日はいい</button>
+        </div>
+
+        <div class="history">
+          <div class="history-label">これまで</div>
+          <div id="historyRows"></div>
+        </div>
+      </div>
+
+      <div class="scrim-tap" id="scrim"></div>
+
+      <!-- ================= 着せかえ ================= -->
+      <div class="picker" id="picker" role="dialog" aria-modal="true" aria-labelledby="pickerTitle">
+        <div class="grab"></div>
+        <h2 id="pickerTitle">表紙をえらぶ</h2>
+        <p>選んだ色は、あなたの画面ぜんぶに広がります。</p>
+        <div class="swatches" id="swatches"></div>
+        <input type="file" id="photoInput" accept="image/*" hidden>
+        <p class="picker-note">表紙はあなただけのものです。ほかのメンバーの画面は変わりません。</p>
+        <button class="picker-close" id="closePicker" type="button">これにする</button>
+      </div>
+
+      <div class="toast" id="toast"></div>
+    </div>
+
+    <!-- ================= 解説 ================= -->
+    <aside class="notes">
+      <div>
+        <h2>さわってみてください</h2>
+        <ul class="try">
+          <li><span class="try-num">01</span><span><b>「行く」を押す</b> — 相手が誰かは出ません。出るのは時刻と場所と、<b>相手の表紙の色</b>だけです。</span></li>
+          <li><span class="try-num">02</span><span><b>表紙をかえる</b> — 右上のボタンから6つの表紙と、自分の写真。色はカードの縁、タグ、ボタンまで連動します。</span></li>
+          <li><span class="try-num">03</span><span><b>だれの画面を見るか切りかえる</b> — 下のボタンから。ひとりひとりが別の表紙と、別の提案を持っています。</span></li>
+        </ul>
+      </div>
+
+      <div>
+        <h2>だれの画面を見る?</h2>
+        <div class="members" id="members" role="group" aria-label="表示するメンバー"></div>
+        <p class="hint">これはプロトタイプ用の操作です。実際のアプリに、ほかの人の画面を見る機能はありません。</p>
+      </div>
+
+      <p class="callout"><b>名前より先に、色で人を認識する。</b><br>改札で探すのは名前ではなく「藤色の表紙の人」です。表紙は設定画面の飾りではなく、<b>当日あなたを見つけるための名札</b>になります。表紙のカスタマイズと人間関係は、別々の機能ではなく同じひとつの仕組みです。</p>
+
+      <div>
+        <h2>10年後、人はどう出会っているか</h2>
+        <ul class="try">
+          <li><span class="try-num">01</span><span><b>選べない</b> — 「この人と会う」というボタンはありません。あるのは「行く」だけ。選べる範囲は、自分が気づいている範囲でしかないからです。</span></li>
+          <li><span class="try-num">02</span><span><b>人ではなく体験に集まる</b> — 提案されるのは必ず体験です。人は「ほかに2人に届いています」としてしか現れません。</span></li>
+          <li><span class="try-num">03</span><span><b>会う前に話さない</b> — メッセージ機能を作りません。会う前にテキストで擦り合わせると、会う前に関係が終わります。</span></li>
+          <li><span class="try-num">04</span><span><b>その日で解散していい</b> — 「また会う」ボタンも友だちリストもありません。続きは、アプリの外で起きるべきです。</span></li>
+        </ul>
+      </div>
+
+      <p class="callout"><b>明るい未来</b>を、暗い画面に光る線で描かないことにしました。このアプリが開かれるのは毎朝7時です。だから基調は<b>朝の光</b>――白に近い地色、すりガラス、ゆっくり動く大気。見出しだけを明朝にして、提案文が「システムの出力」ではなく<b>誰かの言葉</b>に見えるようにしています。</p>
+
+      <p class="callout"><b>未解決:</b> 初対面で会う以上、安全の設計が要ります。いまは「合流は3人から」「公共の場所だけ」を前提に置いていますが、これだけでは足りません。<code>docs/relationships-2036.md</code> に残りの宿題を書いています。</p>
+    </aside>
+  </div>
+
+  <!-- ================= 仕様 ================= -->
+  <section class="spec">
+    <div class="spec-head">
+      <p class="eyebrow">implementation</p>
+      <h2>実装するときの決めごと</h2>
+    </div>
+
+    <div class="palette" id="palette"></div>
+
+    <div class="spec-grid">
+      <div class="spec-card">
+        <h3>表紙の持ち方</h3>
+        <p><code>users.cover_theme</code>（プリセット名）と <code>users.cover_image_url</code>（写真）の2列だけ。プリセットは文字列なので、あとから増やしてもマイグレーション不要です。</p>
+      </div>
+      <div class="spec-card">
+        <h3>色の連動</h3>
+        <p>表紙が決めるのは <code>--c1 --c2 --c3 --accent --accent-deep</code> の5つ。個々の部品に色を直接書かず、必ずこの変数を経由させます。表紙を足すときCSSは1行です。</p>
+      </div>
+      <div class="spec-card">
+        <h3>読めることを壊さない</h3>
+        <p>文字色は表紙に関わらず <code>#12151C</code> 固定。表紙はすべて明度の高い色に限定し、写真のときだけ下半分に白のスクリムを敷きます。</p>
+      </div>
+      <div class="spec-card">
+        <h3>書体</h3>
+        <dl class="kv">
+          <div><dt>提案の見出し</dt><dd>Zen Old Mincho</dd></div>
+          <div><dt>UI・本文</dt><dd>Zen Kaku Gothic New</dd></div>
+          <div><dt>時刻・日付</dt><dd>DM Mono</dd></div>
+        </dl>
+      </div>
+      <div class="spec-card">
+        <h3>作らないもの</h3>
+        <p>チャット、友だちリスト、「また会う」ボタン、相手の検索、プロフィール閲覧、1対1のマッチング。機能を足したくなったら毎回ここに戻ります。</p>
+      </div>
+      <div class="spec-card">
+        <h3>合流の単位は3人</h3>
+        <p>1対1にしません。抜けても相手がひとりにならないので<b>断りやすく</b>、沈黙が事故にならず、初対面が1対1で会う状況を作らずに済みます。押した人が1人なら、ひとりで行く。それも失敗ではありません。</p>
+      </div>
+      <div class="spec-card">
+        <h3>表紙は識別子でもある</h3>
+        <p><code>cover_theme</code> は当日の目印として同行者にも見えます。顔写真と名前の代わりに色を出す、という設計です。同じ色がかぶったときの扱いは未決。</p>
+      </div>
+      <div class="spec-card">
+        <h3>触れる場所を絞る</h3>
+        <p>ホームで押せるのは「表紙」と「3つのボタン」だけ。判断の回数を増やさないという方針を、画面の要素数で守ります。</p>
+      </div>
+      <div class="spec-card">
+        <h3>角丸と影</h3>
+        <dl class="kv">
+          <div><dt>カード</dt><dd>28px</dd></div>
+          <div><dt>ボタン</dt><dd>18px</dd></div>
+          <div><dt>タグ・チップ</dt><dd>999px</dd></div>
+          <div><dt>影</dt><dd>下方向のみ・拡散広め</dd></div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <b>これは見た目を決めるためのプロトタイプです。</b>実データもログインもありません。提案文とメンバーはすべてサンプルです。<br>
+    アプリ名「あさ、ひとつ」は仮称です。見た目の決めごとは <code>docs/ui-design.md</code>、人間関係の設計は <code>docs/relationships-2036.md</code> にあります。
+  </footer>
+</div>
+
+<script>
+  const COVERS = [
+    { id: "dawn",   name: "夜明け",   c: ["#FFE1B8", "#FFC2C9", "#D7C4FF"] },
+    { id: "aurora", name: "オーロラ", c: ["#B6F5E4", "#A9D3FF", "#D6C2FF"] },
+    { id: "tide",   name: "潮",       c: ["#BDEEFF", "#96D9EF", "#CFF5EA"] },
+    { id: "citrus", name: "柑橘",     c: ["#FFF2B2", "#FFD9A6", "#C7EBC9"] },
+    { id: "fuji",   name: "藤",       c: ["#E7D3FF", "#CBD6FF", "#FBD0E8"] },
+    { id: "mist",   name: "霧",       c: ["#E8EDF3", "#D8E2EC", "#F1F3F6"] }
+  ];
+
+  const MEMBERS = [
+    { id: "you",  name: "あなた", initial: "あ", sub: "連続 12 日", cover: "dawn", editable: true,
+      time: "今朝 7:00 に届きました",
+      title: "知らない駅で降りて、看板の出ていない店に入る",
+      meta: ["京成立石", "電車で28分", "所要 2時間"],
+      why: "過去90日、評価3.8未満の店に入っていません。",
+      others: ["aurora", "citrus"],
+      meet: { when: "9/13 SAT · 13:00", where: "京成立石駅 改札前" },
+      history: [
+        { d: "09/11", t: "公園で、コーヒーだけ飲んで帰る", s: "行った", went: true, with: ["tide"] },
+        { d: "09/08", t: "ひとりで銭湯に行く", s: "気になる", went: false, with: [] },
+        { d: "09/05", t: "商店街の端から端まで歩く", s: "パス", went: false, with: [] }
+      ] },
+    { id: "taku", name: "たく", initial: "た", sub: "連続 4 日", cover: "tide", editable: false,
+      time: "今朝 7:00 に届きました",
+      title: "平日の昼に、映画館のいちばん前に座る",
+      meta: ["下高井戸シネマ", "自転車で12分", "所要 3時間"],
+      why: "予定のない平日の昼を、48回すべて家で過ごしています。",
+      others: ["fuji"],
+      meet: { when: "9/13 SAT · 14:20", where: "下高井戸駅 西口" },
+      history: [
+        { d: "09/12", t: "川沿いを終点まで自転車で行く", s: "行った", went: true, with: ["citrus"] },
+        { d: "09/09", t: "定食屋で日替わりだけ頼む", s: "気になる", went: false, with: [] },
+        { d: "09/06", t: "早朝の市場を歩く", s: "行った", went: true, with: ["dawn", "fuji"] }
+      ] },
+    { id: "an",   name: "りん", initial: "り", sub: "連続 27 日", cover: "fuji", editable: false,
+      time: "今朝 7:00 に届きました",
+      title: "常連しかいない時間に、銭湯へ行く",
+      meta: ["大黒湯", "歩いて9分", "所要 1時間"],
+      why: "いつも人の少ない時間だけを選んでいます。",
+      others: ["tide", "mist"],
+      meet: { when: "9/13 SAT · 16:00", where: "大黒湯 のれん前" },
+      history: [
+        { d: "09/12", t: "知らない路地を選んで帰る", s: "行った", went: true, with: [] },
+        { d: "09/10", t: "古本屋で背表紙だけ見る", s: "行った", went: true, with: ["mist"] },
+        { d: "09/07", t: "始発で海まで行く", s: "パス", went: false, with: [] }
+      ] },
+    { id: "mio",  name: "みお", initial: "み", sub: "連続 9 日", cover: "citrus", editable: false,
+      time: "今朝 7:00 に届きました",
+      title: "知らない人の個展に、感想を言わずに行く",
+      meta: ["谷中", "電車で34分", "所要 1.5時間"],
+      why: "アートに関する検索履歴が0件です。",
+      others: ["dawn", "aurora"],
+      meet: { when: "9/13 SAT · 15:30", where: "谷中 ギャラリー前" },
+      history: [
+        { d: "09/11", t: "陶器市で一番安いものを買う", s: "行った", went: true, with: ["tide"] },
+        { d: "09/09", t: "屋上のある喫茶店を探す", s: "気になる", went: false, with: [] },
+        { d: "09/04", t: "誰も知らない映画を観る", s: "行った", went: true, with: ["aurora", "dawn"] }
+      ] }
+  ];
+
+  const phone = document.getElementById("phone");
+  const picker = document.getElementById("picker");
+  const scrim = document.getElementById("scrim");
+  const toastEl = document.getElementById("toast");
+  const photoInput = document.getElementById("photoInput");
+  const coverPhoto = document.getElementById("coverPhoto");
+  const openBtn = document.getElementById("openPicker");
+
+  let viewing = "you";
+  let myCover = "dawn";
+  let myPhoto = null;
+
+  try {
+    const saved = localStorage.getItem("asa-hitotsu-cover");
+    if (saved && (COVERS.some(c => c.id === saved))) myCover = saved;
+  } catch (e) { /* プライベートウィンドウなど。既定の表紙で続行する */ }
+
+  const gradient = c => `linear-gradient(158deg, ${c[0]}, ${c[1]} 55%, ${c[2]})`;
+
+  /* ---- メンバー ------------------------------------------- */
+  function renderMembers() {
+    const wrap = document.getElementById("members");
+    wrap.textContent = "";
+    MEMBERS.forEach(m => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "member";
+      b.setAttribute("aria-current", String(m.id === viewing));
+      const chip = document.createElement("span");
+      chip.className = "member-chip";
+      const cov = m.id === "you" ? myCover : m.cover;
+      const preset = COVERS.find(c => c.id === cov);
+      chip.style.background = (m.id === "you" && myCover === "photo" && myPhoto)
+        ? `center/cover url(${myPhoto})`
+        : gradient(preset ? preset.c : COVERS[0].c);
+      b.append(chip, document.createTextNode(m.name));
+      b.addEventListener("click", () => { viewing = m.id; render(); });
+      wrap.append(b);
+    });
+  }
+
+  /* ---- 同行者の色（名前は出さない） -------------------------- */
+  function coverColor(id) {
+    const c = COVERS.find(x => x.id === id);
+    return c ? c.c[1] : "#C9D4E0";
+  }
+  function fillDots(el, covers, blank) {
+    el.textContent = "";
+    covers.forEach(id => {
+      const d = document.createElement("span");
+      d.style.background = blank ? "rgba(18,21,28,.10)" : coverColor(id);
+      el.append(d);
+    });
+  }
+
+  /* ---- 画面 ------------------------------------------------ */
+  function render() {
+    const m = MEMBERS.find(x => x.id === viewing);
+    const cover = m.editable ? myCover : m.cover;
+    phone.dataset.cover = cover;
+    if (cover === "photo" && myPhoto) coverPhoto.style.backgroundImage = `url(${myPhoto})`;
+
+    document.getElementById("avatar").textContent = m.initial;
+    document.getElementById("profileName").textContent = m.name;
+    document.getElementById("profileSub").textContent = m.sub;
+    document.getElementById("cardTime").textContent = m.time;
+    document.getElementById("proposalTitle").textContent = m.title;
+    document.getElementById("proposalWhy").innerHTML =
+      (m.editable ? "あなた" : m.name + "さん") + "が自分では選ばない理由: <b>" + m.why + "</b>";
+
+    const meta = document.getElementById("proposalMeta");
+    meta.textContent = "";
+    m.meta.forEach(t => {
+      const s2 = document.createElement("span");
+      s2.className = "tag";
+      s2.textContent = t;
+      meta.append(s2);
+    });
+
+    // 押す前は、相手が何人いるかだけ。色は出ない
+    document.getElementById("withCount").textContent = m.others.length + "人";
+    fillDots(document.getElementById("withDots"), m.others, true);
+    // 押したあとに、はじめて色がわかる
+    fillDots(document.getElementById("meetDots"), [cover].concat(m.others), false);
+    document.getElementById("meetWhen").textContent = m.meet.when;
+    document.getElementById("meetWhere").textContent = m.meet.where;
+    document.getElementById("withBlock").hidden = false;
+    document.getElementById("meetBlock").hidden = true;
+
+    const rows = document.getElementById("historyRows");
+    rows.textContent = "";
+    m.history.forEach(h => {
+      const row = document.createElement("div");
+      row.className = "h-row";
+      const date = document.createElement("span");
+      date.className = "h-date";
+      date.textContent = h.d;
+      const title = document.createElement("span");
+      title.className = "h-title";
+      title.textContent = h.t;
+      row.append(date, title);
+      if (h.with.length) {
+        const dots = document.createElement("span");
+        dots.className = "h-dots";
+        fillDots(dots, h.with, false);
+        row.append(dots);
+      }
+      const st = document.createElement("span");
+      st.className = "h-state";
+      if (h.went) st.dataset.s = "went";
+      st.textContent = h.s;
+      row.append(st);
+      rows.append(row);
+    });
+
+    openBtn.disabled = !m.editable;
+    openBtn.title = m.editable ? "" : "表紙は本人だけが変えられます";
+
+    document.querySelectorAll(".act").forEach(a => a.setAttribute("aria-pressed", "false"));
+    renderMembers();
+  }
+
+  /* ---- 着せかえ -------------------------------------------- */
+  function renderSwatches() {
+    const wrap = document.getElementById("swatches");
+    wrap.textContent = "";
+    COVERS.forEach(c => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "swatch";
+      b.setAttribute("aria-pressed", String(myCover === c.id));
+      b.innerHTML = `<span class="swatch-face" style="--s1:${c.c[0]};--s2:${c.c[1]};--s3:${c.c[2]}"></span><span class="swatch-name">${c.name}</span>`;
+      b.addEventListener("click", () => setCover(c.id));
+      wrap.append(b);
+    });
+    const p = document.createElement("button");
+    p.type = "button";
+    p.className = "swatch swatch-photo";
+    p.setAttribute("aria-pressed", String(myCover === "photo"));
+    p.innerHTML = `<span class="swatch-face">＋</span><span class="swatch-name">写真</span>`;
+    p.addEventListener("click", () => photoInput.click());
+    wrap.append(p);
+  }
+
+  function setCover(id) {
+    myCover = id;
+    viewing = "you";
+    try { localStorage.setItem("asa-hitotsu-cover", id); } catch (e) { /* 保存できなくても表示は続く */ }
+    render();
+    renderSwatches();
+  }
+
+  photoInput.addEventListener("change", e => {
+    const f = e.target.files && e.target.files[0];
+    if (!f) return;
+    const r = new FileReader();
+    r.onload = ev => {
+      myPhoto = ev.target.result;
+      coverPhoto.style.backgroundImage = `url(${myPhoto})`;
+      setCover("photo");
+      toast("写真を表紙にしました");
+    };
+    r.readAsDataURL(f);
+  });
+
+  function openPicker() {
+    picker.classList.add("open");
+    scrim.classList.add("on");
+    renderSwatches();
+  }
+  function closePicker() {
+    picker.classList.remove("open");
+    scrim.classList.remove("on");
+  }
+  openBtn.addEventListener("click", openPicker);
+  document.getElementById("closePicker").addEventListener("click", closePicker);
+  scrim.addEventListener("click", closePicker);
+  document.addEventListener("keydown", e => { if (e.key === "Escape") closePicker(); });
+
+  /* ---- 反応 ------------------------------------------------- */
+  let toastTimer;
+  function toast(msg) {
+    toastEl.textContent = msg;
+    toastEl.classList.add("on");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toastEl.classList.remove("on"), 2200);
+  }
+  document.getElementById("actions").addEventListener("click", e => {
+    const b = e.target.closest(".act");
+    if (!b) return;
+    document.querySelectorAll(".act").forEach(a => a.setAttribute("aria-pressed", "false"));
+    b.setAttribute("aria-pressed", "true");
+
+    const m = MEMBERS.find(x => x.id === viewing);
+    const joined = b.dataset.v === "行く";
+    document.getElementById("withBlock").hidden = joined;
+    document.getElementById("meetBlock").hidden = !joined;
+
+    if (joined) {
+      toast((m.others.length + 1) + "人になりました");
+    } else if (b.dataset.v === "今日はいい") {
+      toast("明日は別の種類を送ります");
+    } else {
+      toast("明日の提案に反映しました");
+    }
+  });
+
+  /* ---- ページ下部のパレット --------------------------------- */
+  const pal = document.getElementById("palette");
+  COVERS.forEach(c => {
+    const f = document.createElement("figure");
+    f.innerHTML = `<span class="chip" style="--s1:${c.c[0]};--s2:${c.c[1]};--s3:${c.c[2]}"></span>
+      <figcaption>${c.name}<br><span class="hex">${c.c[0]}</span></figcaption>`;
+    pal.append(f);
+  });
+
+  render();
+  renderSwatches();
+</script>
