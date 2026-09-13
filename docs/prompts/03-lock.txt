@@ -1,0 +1,19 @@
+Style guide for all images:
+- iPhone-sized app screen mockup, 1170x2532, portrait, single screen, no device bezel, no hands.
+- Calm, editorial, paper-like aesthetic: off-white background (#F3EFE8), deep forest green accent (#1F3D2B),
+  ink-black text (#1D2B22), muted sand for secondary surfaces (#E6E0D4). No gradients, no neon, no glassmorphism.
+- Typography: large serif headline for the greeting/date, clean sans-serif for body. Japanese UI text is fine.
+- Generous whitespace. One dominant card per screen. Rounded corners (22px), thin 1.5px ink outlines instead of shadows.
+- Bottom tab bar with 4 outlined square tabs: "!" (recommendations), house (home), person (friends), gear (settings).
+- Do NOT show store names, brand logos, maps with real place names, or stock photos of people.
+- Render the exact Japanese strings given below as UI text.
+
+App name: michi（未知）. Screen: LOCK MODE — after the user commits to today's proposal, the app takes over the whole screen
+until the experience is completed. This is the signature screen; make it feel calm and final, not punitive.
+Full-bleed deep forest green background (#1F3D2B) with off-white text.
+Top small text: "進行中 ・ 2036/9/12".
+Center: very large serif countdown "47:12" with caption "残り時間".
+Below: the proposal title "知らない駅で降りて昼を決める" and one line "最初の一歩: 路線図を見て駅名を一つ選ぶ".
+A single wide off-white button "完了を報告する" (with a small camera icon).
+At the very bottom, tiny low-contrast text: "やめる（3秒長押し）".
+No tab bar. No other UI. The phone is committed.

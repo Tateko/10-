@@ -1,0 +1,17 @@
+Style guide for all images:
+- iPhone-sized app screen mockup, 1170x2532, portrait, single screen, no device bezel, no hands.
+- Calm, editorial, paper-like aesthetic: off-white background (#F3EFE8), deep forest green accent (#1F3D2B),
+  ink-black text (#1D2B22), muted sand for secondary surfaces (#E6E0D4). No gradients, no neon, no glassmorphism.
+- Typography: large serif headline for the greeting/date, clean sans-serif for body. Japanese UI text is fine.
+- Generous whitespace. One dominant card per screen. Rounded corners (22px), thin 1.5px ink outlines instead of shadows.
+- Bottom tab bar with 4 outlined square tabs: "!" (recommendations), house (home), person (friends), gear (settings).
+- Do NOT show store names, brand logos, maps with real place names, or stock photos of people.
+- Render the exact Japanese strings given below as UI text.
+
+App name: michi（未知）. Screen: RECOMMENDATIONS — three proposals stacked as cards.
+Off-white background. Headline "アナタへのオススメ", subline "今日は『いつもの』を一つだけ外してみる日".
+Three cards, each with a title, a small category pill, a meta line, a green-ruled "なぜ選ばないか" block, and buttons "これにする" / "誘い文をコピー":
+  1) "知らない駅で降りて昼を決める" pill "移動・散歩"
+  2) "会話禁止で30分、同じものを見る" pill "文化・鑑賞"
+  3) "初対面の人に一つ質問して帰る" pill "人と会う"
+Bottom: 4-tab bar, "!" tab active.

@@ -10,6 +10,7 @@
     --card: #fffdf9; --accent: #1f3d2b; --accent-ink: #f3efe8; --tag: #e6e0d4; --warn: #a23b2a;
   }
   * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
   html, body { height: 100%; }
   body { margin: 0; background: var(--bg); color: var(--ink);
     font-family: "Hiragino Sans", "Noto Sans JP", system-ui, sans-serif; line-height: 1.55; }
@@ -85,6 +86,32 @@
   nav.tabs button .lbl { position: absolute; bottom: -18px; font-size: 10px; color: var(--sub); letter-spacing: .04em; }
   nav.tabs button .badge { position: absolute; top: 6px; right: 8px; width: 8px; height: 8px; border-radius: 50%; background: var(--warn); }
   section[hidden] { display: none; }
+
+  /* ロック画面: 完了までアプリ全体を占有する */
+  .lock { position: absolute; inset: 0; background: var(--accent); color: var(--accent-ink); display: flex; flex-direction: column;
+    padding: 28px 24px calc(20px + env(safe-area-inset-bottom)); z-index: 10; }
+  .lock[hidden] { display: none; }
+  .lock .top { font-size: 12px; letter-spacing: .1em; opacity: .75; }
+  .lock .timer { font-family: "Hiragino Mincho ProN", "Noto Serif JP", Georgia, serif; font-size: 84px; line-height: 1; margin: auto 0 4px; font-variant-numeric: tabular-nums; letter-spacing: .02em; }
+  .lock .timer.over { font-size: 40px; line-height: 1.25; }
+  .lock .cap { font-size: 13px; opacity: .75; margin-bottom: 28px; }
+  .lock h3 { margin: 0 0 6px; font-size: 22px; line-height: 1.3; }
+  .lock .step { font-size: 14px; opacity: .9; margin-bottom: 26px; }
+  .lock .btn { background: var(--accent-ink); color: var(--accent); border-color: var(--accent-ink); font-weight: 600; }
+  .lock .btn.ghost { background: transparent; color: var(--accent-ink); border-color: rgba(243,239,232,.4); font-weight: 400; }
+  .lock .quit { margin-top: 18px; text-align: center; font-size: 12px; opacity: .45; user-select: none; -webkit-user-select: none; }
+  .lock .quit.arming { opacity: .9; }
+  .report { background: var(--card); color: var(--ink); border-radius: 16px; padding: 16px; display: grid; gap: 10px; margin-bottom: 12px; }
+  .report input[type=file] { font-size: 13px; padding: 8px; }
+  .report img { max-width: 100%; border-radius: 10px; max-height: 180px; object-fit: cover; }
+
+  /* 完了画面 */
+  .done h1 { font-family: "Hiragino Mincho ProN", "Noto Serif JP", Georgia, serif; font-size: 40px; margin: 8px 0 0; }
+  .done .sub { color: var(--sub); margin: 0 0 18px; }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 14px 0; }
+  .stat { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 10px; text-align: center; }
+  .stat b { display: block; font-size: 24px; }
+  .stat span { font-size: 11px; color: var(--sub); }
   .note { font-size: 12px; color: var(--sub); margin-top: 8px; }
 </style>
 </head>
@@ -164,7 +191,34 @@
     <div class="note">データはこの端末（ブラウザ）にだけ保存されます。</div>
   </section>
 
+  <!-- 完了 -->
+  <section id="tab-done" class="done" hidden></section>
+
 </main>
+
+<!-- ロック: 「これにする」からイベント完了まで、この画面しか使えない -->
+<div class="lock" id="lock" hidden>
+  <div class="top">進行中 ・ <span id="lockDate"></span></div>
+  <div class="timer" id="lockTimer">--:--</div>
+  <div class="cap" id="lockCap">残り時間</div>
+  <h3 id="lockTitle"></h3>
+  <div class="step" id="lockStep"></div>
+  <div class="report" id="report" hidden>
+    <div style="font-size:13px;color:var(--sub)">完了の報告（写真は任意）</div>
+    <input type="file" id="reportPhoto" accept="image/*" capture="environment">
+    <img id="reportPreview" hidden alt="">
+    <input id="reportNote" placeholder="一言（任意）">
+    <div class="actions">
+      <button class="btn primary" data-act="finish">完了にする</button>
+      <button class="btn" data-act="report-cancel">戻る</button>
+    </div>
+  </div>
+  <div class="actions" id="lockActions">
+    <button class="btn block" data-act="report">完了を報告する</button>
+    <button class="btn block ghost" data-act="lock-copy">誘い文をコピー</button>
+  </div>
+  <div class="quit" id="quit">やめる（3秒長押し）</div>
+</div>
 
 <nav class="tabs" aria-label="タブ">
   <button data-tab="reco" aria-label="アナタへのオススメ">
@@ -193,6 +247,8 @@ let settings = store.get('settings', {});
 let friends  = store.get('friends', []);          // [{name, lastMet, today}]
 let result   = store.get('result', null);         // 直近の提案 {one_liner, proposals, mode}
 let picked   = store.get('picked', null);         // 選んだ案の index
+let lock     = store.get('lock', null);           // 進行中 {proposal, startedAt, durationMin, companion}
+let history  = store.get('history', []);          // 完了・中断の記録
 let focusIdx = 0;
 
 const $ = (id) => document.getElementById(id);
@@ -263,10 +319,11 @@ function renderFocus() {
   $('quick').hidden = !!has;
   $('focus').hidden = !has;
   if (!has) return;
-  const i = picked ?? focusIdx;
+  const i = focusIdx;
   const p = result.proposals[i];
   $('focus').innerHTML = `
-    <div class="kicker">${picked != null ? '今日はこれ' : '今日の未知'} ・ ${esc(result.one_liner)}</div>
+    <div class="kicker">今日の未知 ・ ${esc(result.one_liner)}</div>
+    <div class="note" style="margin:0">「これにする」を押すと、完了までこのアプリから出られません。</div>
     <h3>${esc(p.title)}</h3>
     <div class="meta">${p.duration_min}分 ・ ${esc(p.cost_hint)} ・ ${esc(p.where_hint)}</div>
     <div class="why"><strong>なぜ自分では選ばないか:</strong> ${esc(p.why_you_wouldnt_pick)}</div>
@@ -276,11 +333,8 @@ function renderFocus() {
       <dt>最初の一歩</dt><dd>${esc(p.first_step)}</dd>
     </dl>
     <div class="actions">
-      ${picked == null
-        ? `<button class="btn primary" data-act="pick" data-i="${i}">これにする</button>
-           <button class="btn" data-act="next">別の案</button>`
-        : `<button class="btn primary" data-act="copy" data-msg="${esc(p.invite_message)}">誘い文をコピー</button>
-           <button class="btn" data-act="unpick">やめる</button>`}
+      <button class="btn primary" data-act="pick" data-i="${i}">これにする</button>
+      <button class="btn" data-act="next">別の案</button>
       <button class="btn" data-act="regen">もう一度</button>
     </div>
     <div class="dots">${result.proposals.map((_, k) => `<i class="${k === i ? 'on' : ''}"></i>`).join('')}</div>`;
@@ -331,7 +385,7 @@ document.querySelector('main').addEventListener('click', async (e) => {
   if (!b) return;
   const i = +b.dataset.i;
   switch (b.dataset.act) {
-    case 'pick':   picked = i; store.set('picked', picked); renderAll(); showTab('home'); break;
+    case 'pick':   picked = i; store.set('picked', picked); startLock(i); break;
     case 'unpick': picked = null; store.set('picked', null); renderAll(); break;
     case 'next':   focusIdx = (focusIdx + 1) % result.proposals.length; renderFocus(); break;
     case 'regen':  result = null; picked = null; store.set('result', null); renderAll(); break;
@@ -341,6 +395,12 @@ document.querySelector('main').addEventListener('click', async (e) => {
       break;
     case 'met':    friends[i].lastMet = $('today').textContent; store.set('friends', friends); renderFriends(); break;
     case 'del':    friends.splice(i, 1); store.set('friends', friends); renderFriends(); break;
+    case 'met-companion': {
+      const f = friends.find(x => x.name === b.dataset.name);
+      if (f) { f.lastMet = $('today').textContent; f.today = false; store.set('friends', friends); }
+      b.textContent = '記録した'; b.disabled = true; renderFriends(); break;
+    }
+    case 'go-home': showTab('home'); break;
   }
 });
 
@@ -370,8 +430,112 @@ async function showMode() {
 }
 showMode();
 
+// ---------- ロック ----------
+function startLock(i) {
+  const p = result.proposals[i];
+  const todayFriend = friends.find(f => f.today);
+  lock = { proposal: p, startedAt: Date.now(), durationMin: p.duration_min || 60, companion: todayFriend?.name || null };
+  store.set('lock', lock);
+  renderLock();
+}
+let tick = null;
+function renderLock() {
+  const el = $('lock');
+  el.hidden = !lock;
+  document.querySelector('nav.tabs').hidden = !!lock;
+  clearInterval(tick);
+  if (!lock) return;
+  $('lockDate').textContent = $('today').textContent;
+  $('lockTitle').textContent = lock.proposal.title;
+  $('lockStep').textContent = '最初の一歩: ' + lock.proposal.first_step;
+  $('report').hidden = true; $('lockActions').hidden = false;
+  const update = () => {
+    const remain = lock.durationMin * 60000 - (Date.now() - lock.startedAt);
+    const t = $('lockTimer');
+    if (remain > 0) {
+      const m = Math.floor(remain / 60000), s = Math.floor((remain % 60000) / 1000);
+      t.textContent = `${m}:${String(s).padStart(2, '0')}`; t.classList.remove('over');
+      $('lockCap').textContent = '残り時間 — 終わるまでこの画面から出られません';
+    } else {
+      t.textContent = '時間です。'; t.classList.add('over');
+      $('lockCap').textContent = '完了を報告して、スマホを取り戻してください';
+    }
+  };
+  update(); tick = setInterval(update, 1000);
+}
+function finishLock(status, note, photo) {
+  const minutes = Math.max(1, Math.round((Date.now() - lock.startedAt) / 60000));
+  history.push({ date: $('today').textContent, title: lock.proposal.title, status, minutes, companion: lock.companion, note: note || '', photo: photo || null });
+  store.set('history', history);
+  const finished = lock; lock = null; store.set('lock', null);
+  picked = null; store.set('picked', null);
+  renderLock(); renderAll();
+  if (status === 'done') renderDone(finished, minutes); else showTab('home');
+}
+function renderDone(finished, minutes) {
+  const doneCount = history.filter(h => h.status === 'done').length;
+  const streak = calcStreak();
+  const last = history[history.length - 1];
+  $('tab-done').innerHTML = `
+    <div class="date">${$('today').textContent}</div>
+    <h1>おかえり。</h1>
+    <p class="sub">未知を1つ、現実にした。</p>
+    <div class="card">
+      <h3 style="margin:0">${esc(finished.proposal.title)}</h3>
+      <div class="meta" style="color:var(--sub);font-size:13px">所要 ${minutes}分${finished.companion ? ' ・ 一緒に: ' + esc(finished.companion) : ''}</div>
+      ${last.photo ? `<img src="${last.photo}" alt="報告写真" style="max-width:100%;border-radius:10px">` : ''}
+      ${last.note ? `<div>${esc(last.note)}</div>` : ''}
+    </div>
+    <div class="stats">
+      <div class="stat"><b>${doneCount}</b><span>未知</span></div>
+      <div class="stat"><b>${friends.filter(f => f.lastMet).length}</b><span>/ 100人 会った</span></div>
+      <div class="stat"><b>${streak}</b><span>連続日</span></div>
+    </div>
+    <div class="actions">
+      ${finished.companion ? `<button class="btn primary" data-act="met-companion" data-name="${esc(finished.companion)}">${esc(finished.companion)}に会ったと記録する</button>` : ''}
+      <button class="btn" data-act="go-home">ホームへ</button>
+    </div>`;
+  for (const s of document.querySelectorAll('main > section')) s.hidden = s.id !== 'tab-done';
+  for (const b of document.querySelectorAll('nav.tabs button')) b.classList.remove('on');
+}
+function calcStreak() {
+  const days = new Set(history.filter(h => h.status === 'done').map(h => h.date));
+  let n = 0; const d = new Date();
+  while (days.has(`${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()}`)) { n++; d.setDate(d.getDate() - 1); }
+  return n;
+}
+let photoData = null;
+$('reportPhoto').addEventListener('change', (e) => {
+  const f = e.target.files?.[0]; if (!f) { photoData = null; return; }
+  const r = new FileReader();
+  r.onload = () => { photoData = r.result; $('reportPreview').src = photoData; $('reportPreview').hidden = false; };
+  r.readAsDataURL(f);
+});
+$('lock').addEventListener('click', async (e) => {
+  const b = e.target.closest('[data-act]'); if (!b) return;
+  switch (b.dataset.act) {
+    case 'report': $('report').hidden = false; $('lockActions').hidden = true; break;
+    case 'report-cancel': $('report').hidden = true; $('lockActions').hidden = false; break;
+    case 'finish': finishLock('done', $('reportNote').value.trim(), photoData); photoData = null; $('reportNote').value = ''; $('reportPreview').hidden = true; break;
+    case 'lock-copy':
+      try { await navigator.clipboard.writeText(lock.proposal.invite_message); b.textContent = 'コピーした'; }
+      catch { prompt('コピーしてください', lock.proposal.invite_message); }
+      break;
+  }
+});
+// やめる: 3秒長押しだけ受け付ける（誤タップで抜けられないように）
+(function quitHold() {
+  const q = $('quit'); let timer = null;
+  const arm = (e) => { e.preventDefault(); q.classList.add('arming'); q.textContent = 'そのまま押し続ける…';
+    timer = setTimeout(() => { finishLock('quit'); reset(); }, 3000); };
+  const reset = () => { clearTimeout(timer); q.classList.remove('arming'); q.textContent = 'やめる（3秒長押し）'; };
+  for (const ev of ['pointerdown']) q.addEventListener(ev, arm);
+  for (const ev of ['pointerup', 'pointerleave', 'pointercancel']) q.addEventListener(ev, reset);
+})();
+
 function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 renderAll();
+renderLock();
 </script>
 </body>
 </html>

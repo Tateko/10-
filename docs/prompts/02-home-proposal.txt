@@ -1,0 +1,20 @@
+Style guide for all images:
+- iPhone-sized app screen mockup, 1170x2532, portrait, single screen, no device bezel, no hands.
+- Calm, editorial, paper-like aesthetic: off-white background (#F3EFE8), deep forest green accent (#1F3D2B),
+  ink-black text (#1D2B22), muted sand for secondary surfaces (#E6E0D4). No gradients, no neon, no glassmorphism.
+- Typography: large serif headline for the greeting/date, clean sans-serif for body. Japanese UI text is fine.
+- Generous whitespace. One dominant card per screen. Rounded corners (22px), thin 1.5px ink outlines instead of shadows.
+- Bottom tab bar with 4 outlined square tabs: "!" (recommendations), house (home), person (friends), gear (settings).
+- Do NOT show store names, brand logos, maps with real place names, or stock photos of people.
+- Render the exact Japanese strings given below as UI text.
+
+App name: michi（未知）. Screen: HOME showing today's single proposal.
+Top: date "2036/9/12", greeting "Hello, たて!".
+Center: one big card. Small kicker "今日の未知 ・ 今日は『いつもの』を一つだけ外してみる日".
+  Headline (24px, bold): "知らない駅で降りて昼を決める".
+  Meta line: "60分 ・ 〜1,500円 ・ 乗り換えなしで行ける、降りたことのない駅".
+  A highlighted block with a green left rule titled "なぜ自分では選ばないか:" and text
+  "「休日はだいたい家で動画」と書いているので、店を事前に決めて動くタイプ。決めずに降りることは選ばない。"
+  Three label/value rows: "やること", "誰を誘う 同期のA", "最初の一歩 乗換アプリを開かず、路線図を見て駅名を一つ選ぶ".
+  Buttons: dark green "これにする", outlined "別の案", outlined "もう一度". Three pagination dots (first filled).
+Bottom: 4-tab bar, home active, a small red dot on the "!" tab.

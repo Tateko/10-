@@ -24,7 +24,8 @@ APIキーが無いときは自動で **モックモード**（固定の3案を�
 | ファイル | 役割 |
 |---|---|
 | `server.js` | Express。`POST /api/suggest` で Claude（`claude-opus-5`）を呼び、Zodスキーマで構造化出力を保証 |
-| `public/index.html` | スマホ型の単一ページ（依存なし）。ホーム／アナタへのオススメ／友達／設定の4タブ |
+| `public/index.html` | スマホ型の単一ページ（依存なし）。ホーム／アナタへのオススメ／友達／設定の4タブ＋**ロック画面**（「これにする」から完了報告まで他の画面に戻れない） |
+| `docs/codex-image-prompts.md`, `docs/prompts/*.txt` | Codex CLI で画面モックを生成するためのプロンプト集。出力は `docs/mocks/` へ |
 | `.env.example` | 環境変数のひな形 |
 
 ### API

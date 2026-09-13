@@ -1,0 +1,18 @@
+Style guide for all images:
+- iPhone-sized app screen mockup, 1170x2532, portrait, single screen, no device bezel, no hands.
+- Calm, editorial, paper-like aesthetic: off-white background (#F3EFE8), deep forest green accent (#1F3D2B),
+  ink-black text (#1D2B22), muted sand for secondary surfaces (#E6E0D4). No gradients, no neon, no glassmorphism.
+- Typography: large serif headline for the greeting/date, clean sans-serif for body. Japanese UI text is fine.
+- Generous whitespace. One dominant card per screen. Rounded corners (22px), thin 1.5px ink outlines instead of shadows.
+- Bottom tab bar with 4 outlined square tabs: "!" (recommendations), house (home), person (friends), gear (settings).
+- Do NOT show store names, brand logos, maps with real place names, or stock photos of people.
+- Render the exact Japanese strings given below as UI text.
+
+App name: michi（未知）. Screen: COMPLETION — the experience is done and the lock is released.
+Off-white background. Top: date "2036/9/12".
+Large serif headline "おかえり。" and subline "未知を1つ、現実にした。"
+A card with: the proposal title "知らない駅で降りて昼を決める", "所要 58分", "一緒に: 同期のA",
+a photo placeholder area (empty rounded rectangle labeled "報告写真") and a text field "一言 (任意)".
+Three small stat tiles in a row: "未知 12", "友達 7 / 100", "連続 3日".
+Buttons: dark green "友達に会ったと記録する", outlined "ホームへ".
+Bottom: 4-tab bar returns (home active).

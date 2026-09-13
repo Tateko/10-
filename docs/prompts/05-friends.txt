@@ -1,0 +1,17 @@
+Style guide for all images:
+- iPhone-sized app screen mockup, 1170x2532, portrait, single screen, no device bezel, no hands.
+- Calm, editorial, paper-like aesthetic: off-white background (#F3EFE8), deep forest green accent (#1F3D2B),
+  ink-black text (#1D2B22), muted sand for secondary surfaces (#E6E0D4). No gradients, no neon, no glassmorphism.
+- Typography: large serif headline for the greeting/date, clean sans-serif for body. Japanese UI text is fine.
+- Generous whitespace. One dominant card per screen. Rounded corners (22px), thin 1.5px ink outlines instead of shadows.
+- Bottom tab bar with 4 outlined square tabs: "!" (recommendations), house (home), person (friends), gear (settings).
+- Do NOT show store names, brand logos, maps with real place names, or stock photos of people.
+- Render the exact Japanese strings given below as UI text.
+
+App name: michi（未知）. Screen: FRIENDS — "make 100 friends you actually meet in real life".
+Off-white background. Headline "友達". A big number "7" followed by small text "/ 100人 — リアルに会った人だけ数える".
+A vertical list of friend rows, each: round initial avatar, name, small grey line "最後に会った日: 2036/9/5",
+an outlined button "会った". The first row is highlighted with an ink outline and a small tag "今日誘う".
+Names to render: "同期のA", "大学の友人B", "前職のC", "近所のD".
+Below the list: an input "名前を追加" with an outlined "追加" button.
+Bottom: 4-tab bar, person tab active.

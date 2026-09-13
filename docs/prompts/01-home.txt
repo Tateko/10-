@@ -1,0 +1,19 @@
+Style guide for all images:
+- iPhone-sized app screen mockup, 1170x2532, portrait, single screen, no device bezel, no hands.
+- Calm, editorial, paper-like aesthetic: off-white background (#F3EFE8), deep forest green accent (#1F3D2B),
+  ink-black text (#1D2B22), muted sand for secondary surfaces (#E6E0D4). No gradients, no neon, no glassmorphism.
+- Typography: large serif headline for the greeting/date, clean sans-serif for body. Japanese UI text is fine.
+- Generous whitespace. One dominant card per screen. Rounded corners (22px), thin 1.5px ink outlines instead of shadows.
+- Bottom tab bar with 4 outlined square tabs: "!" (recommendations), house (home), person (friends), gear (settings).
+- Do NOT show store names, brand logos, maps with real place names, or stock photos of people.
+- Render the exact Japanese strings given below as UI text.
+
+App name: michi（未知）. A secretary that proposes, for today, the one experience you would never pick yourself.
+Screen: HOME, before any proposal.
+Top: small date "2036/9/12". Large serif greeting "Hello, たて!" and a one-line subtitle "今日、自分では選ばない一手を。"
+Center: one big speech-bubble-shaped card (rounded 22px, bottom-left corner sharper) containing a minimal form:
+  label "いまいるエリア" with a text field placeholder "渋谷",
+  two dropdowns side by side "使える時間: 1時間" and "気分: 特になし",
+  a full-width dark green button "今日の未知を提案する".
+Bottom: the 4-tab bar (home tab filled dark green, others outlined).
+Mood: quiet morning, an invitation rather than a dashboard.
