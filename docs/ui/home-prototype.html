@@ -159,7 +159,7 @@
   .cover {
     position: absolute;
     inset: 0 0 auto 0;
-    height: 46%;
+    height: 44%;
     overflow: hidden;
     background: linear-gradient(158deg, var(--c1) 0%, var(--c2) 52%, var(--c3) 100%);
     transition: background .55s ease;
@@ -254,7 +254,7 @@
     position: absolute;
     left: 22px;
     right: 22px;
-    top: 24.5%;
+    top: 23%;
     z-index: 3;
     display: flex;
     align-items: center;
@@ -282,51 +282,81 @@
     color: color-mix(in oklab, var(--ink) 62%, transparent);
   }
 
-  /* ---- メンバー（LINEの友だちのように、各自の表紙を持つ） ---- */
-  .members {
-    position: absolute;
-    left: 0; right: 0;
-    top: 38%;
-    z-index: 3;
-    display: flex;
-    gap: 9px;
-    padding-inline: 22px;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-  .members::-webkit-scrollbar { display: none; }
+  /* ---- だれの画面を見るか（プロトタイプ用の操作。製品にはない） ---- */
+  .members { display: flex; flex-wrap: wrap; gap: 7px; }
   .member {
     appearance: none;
-    border: 1px solid rgba(255,255,255,.7);
-    background: rgba(255,255,255,.55);
-    -webkit-backdrop-filter: blur(12px);
-    backdrop-filter: blur(12px);
+    border: 1px solid var(--page-line);
+    background: var(--page-card);
     border-radius: 999px;
-    padding: 5px 12px 5px 5px;
+    padding: 5px 13px 5px 5px;
     display: inline-flex;
     align-items: center;
     gap: 7px;
     font-family: inherit;
     font-size: 12.5px;
     font-weight: 500;
-    color: var(--ink);
+    color: var(--page-fg);
     cursor: pointer;
     white-space: nowrap;
-    transition: transform .16s ease, background .2s ease;
+    transition: transform .16s ease, border-color .2s ease;
   }
   .member:active { transform: scale(.96); }
-  .member[aria-current="true"] { background: rgba(255,255,255,.95); box-shadow: 0 4px 14px -6px rgba(18,21,28,.4); }
+  .member[aria-current="true"] { border-color: color-mix(in oklab, var(--page-fg) 45%, transparent); }
   .member-chip {
-    width: 22px; height: 22px;
+    width: 21px; height: 21px;
     border-radius: 50%;
     flex: none;
     border: 1.5px solid rgba(255,255,255,.9);
+    box-shadow: 0 0 0 1px var(--page-line);
+  }
+  .hint { margin: 10px 0 0; font-size: 12px; color: var(--page-muted); line-height: 1.65; }
+
+  /* ---- 同行者（名前は出ない。色だけ） ---- */
+  .dots { display: inline-flex; flex: none; }
+  .dots span {
+    width: 17px; height: 17px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    margin-right: -5px;
+    box-shadow: 0 1px 3px rgba(18,21,28,.2);
+  }
+  .dots span:last-child { margin-right: 0; }
+  .with, .meet {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+  }
+  .with[hidden], .meet[hidden] { display: none; }
+  .with b, .meet b { color: var(--ink); font-weight: 500; }
+  .meet { align-items: flex-start; }
+  .meet-when {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: .02em;
+  }
+  .meet-where { font-size: 13px; color: var(--ink); font-weight: 500; }
+  .meet-note { margin: 5px 0 0; font-size: 11.5px; color: var(--ink-soft); }
+  .h-dots { flex: none; display: inline-flex; }
+  .h-dots span {
+    width: 13px; height: 13px;
+    border-radius: 50%;
+    border: 1.5px solid #fff;
+    margin-right: -4px;
   }
 
   /* ---- 提案カード ------------------------------------------- */
   .sheet-body {
     position: absolute;
-    inset: 44% 0 0 0;
+    inset: 37.5% 0 0 0;
     z-index: 4;
     padding: 0 16px 16px;
     display: flex;
@@ -684,7 +714,7 @@
   <header class="intro">
     <p class="eyebrow">未知の体験提案アプリ（仮称）</p>
     <h1>あさ、ひとつ</h1>
-    <p>毎朝7時、自分では選ばない体験がひとつだけ届く。<br>表紙は、ひとりひとりが自分で選べます。</p>
+    <p>毎朝7時、自分では選ばない体験がひとつだけ届く。<br>同じ提案を受け取った人と、その日その場で合流します。</p>
   </header>
 
   <div class="showcase">
@@ -715,8 +745,6 @@
         </div>
       </div>
 
-      <div class="members" id="members" role="group" aria-label="メンバーの表紙"></div>
-
       <div class="sheet-body">
         <div class="card">
           <div class="card-head">
@@ -729,6 +757,20 @@
             <span class="why-label">WHY</span>
             <p style="margin:0" id="proposalWhy">あなたが自分では選ばない理由: <b>過去90日、評価3.8未満の店に入っていません。</b></p>
           </div>
+
+          <div class="with" id="withBlock">
+            <span class="dots" id="withDots"></span>
+            <p style="margin:0">この提案は、ほかに<b id="withCount">2人</b>に届いています。<br>誰なのかは、まだわかりません。</p>
+          </div>
+
+          <div class="meet" id="meetBlock" hidden>
+            <span class="dots" id="meetDots"></span>
+            <div>
+              <div class="meet-when" id="meetWhen">9/14 SAT · 13:00</div>
+              <div class="meet-where" id="meetWhere">京成立石駅 改札前</div>
+              <p class="meet-note">目印は、おたがいの表紙の色です。</p>
+            </div>
+          </div>
         </div>
 
         <div class="actions" id="actions">
@@ -739,9 +781,7 @@
 
         <div class="history">
           <div class="history-label">これまで</div>
-          <div class="h-row"><span class="h-date">09/11</span><span class="h-title">公園で、コーヒーだけ飲んで帰る</span><span class="h-state" data-s="went">行った</span></div>
-          <div class="h-row"><span class="h-date">09/08</span><span class="h-title">ひとりで銭湯に行く</span><span class="h-state">気になる</span></div>
-          <div class="h-row"><span class="h-date">09/05</span><span class="h-title">商店街の端から端まで歩く</span><span class="h-state">パス</span></div>
+          <div id="historyRows"></div>
         </div>
       </div>
 
@@ -766,15 +806,33 @@
       <div>
         <h2>さわってみてください</h2>
         <ul class="try">
-          <li><span class="try-num">01</span><span><b>表紙をかえる</b> — 右上のボタンから6つの表紙と、自分の写真。色はカードの縁、タグ、ボタンまで連動します。</span></li>
-          <li><span class="try-num">02</span><span><b>メンバーを切りかえる</b> — 表紙の下の名前をタップ。ひとりひとりが別の表紙を持っています。</span></li>
-          <li><span class="try-num">03</span><span><b>3つのボタン</b> — 押すのはこれだけ。入力欄はひとつもありません。</span></li>
+          <li><span class="try-num">01</span><span><b>「行く」を押す</b> — 相手が誰かは出ません。出るのは時刻と場所と、<b>相手の表紙の色</b>だけです。</span></li>
+          <li><span class="try-num">02</span><span><b>表紙をかえる</b> — 右上のボタンから6つの表紙と、自分の写真。色はカードの縁、タグ、ボタンまで連動します。</span></li>
+          <li><span class="try-num">03</span><span><b>だれの画面を見るか切りかえる</b> — 下のボタンから。ひとりひとりが別の表紙と、別の提案を持っています。</span></li>
+        </ul>
+      </div>
+
+      <div>
+        <h2>だれの画面を見る?</h2>
+        <div class="members" id="members" role="group" aria-label="表示するメンバー"></div>
+        <p class="hint">これはプロトタイプ用の操作です。実際のアプリに、ほかの人の画面を見る機能はありません。</p>
+      </div>
+
+      <p class="callout"><b>名前より先に、色で人を認識する。</b><br>改札で探すのは名前ではなく「藤色の表紙の人」です。表紙は設定画面の飾りではなく、<b>当日あなたを見つけるための名札</b>になります。表紙のカスタマイズと人間関係は、別々の機能ではなく同じひとつの仕組みです。</p>
+
+      <div>
+        <h2>10年後、人はどう出会っているか</h2>
+        <ul class="try">
+          <li><span class="try-num">01</span><span><b>選べない</b> — 「この人と会う」というボタンはありません。あるのは「行く」だけ。選べる範囲は、自分が気づいている範囲でしかないからです。</span></li>
+          <li><span class="try-num">02</span><span><b>人ではなく体験に集まる</b> — 提案されるのは必ず体験です。人は「ほかに2人に届いています」としてしか現れません。</span></li>
+          <li><span class="try-num">03</span><span><b>会う前に話さない</b> — メッセージ機能を作りません。会う前にテキストで擦り合わせると、会う前に関係が終わります。</span></li>
+          <li><span class="try-num">04</span><span><b>その日で解散していい</b> — 「また会う」ボタンも友だちリストもありません。続きは、アプリの外で起きるべきです。</span></li>
         </ul>
       </div>
 
       <p class="callout"><b>明るい未来</b>を、暗い画面に光る線で描かないことにしました。このアプリが開かれるのは毎朝7時です。だから基調は<b>朝の光</b>――白に近い地色、すりガラス、ゆっくり動く大気。見出しだけを明朝にして、提案文が「システムの出力」ではなく<b>誰かの言葉</b>に見えるようにしています。</p>
 
-      <p class="callout">表紙は飾りではなく、<b>このアプリが自分のものだと感じるための唯一の設定</b>です。ほかに設定画面を作らない前提で置いています。</p>
+      <p class="callout"><b>未解決:</b> 初対面で会う以上、安全の設計が要ります。いまは「合流は3人から」「公共の場所だけ」を前提に置いていますが、これだけでは足りません。<code>docs/relationships-2036.md</code> に残りの宿題を書いています。</p>
     </aside>
   </div>
 
@@ -809,8 +867,20 @@
         </dl>
       </div>
       <div class="spec-card">
+        <h3>作らないもの</h3>
+        <p>チャット、友だちリスト、「また会う」ボタン、相手の検索、プロフィール閲覧、1対1のマッチング。機能を足したくなったら毎回ここに戻ります。</p>
+      </div>
+      <div class="spec-card">
+        <h3>合流の単位は3人</h3>
+        <p>1対1にしません。抜けても相手がひとりにならないので<b>断りやすく</b>、沈黙が事故にならず、初対面が1対1で会う状況を作らずに済みます。押した人が1人なら、ひとりで行く。それも失敗ではありません。</p>
+      </div>
+      <div class="spec-card">
+        <h3>表紙は識別子でもある</h3>
+        <p><code>cover_theme</code> は当日の目印として同行者にも見えます。顔写真と名前の代わりに色を出す、という設計です。同じ色がかぶったときの扱いは未決。</p>
+      </div>
+      <div class="spec-card">
         <h3>触れる場所を絞る</h3>
-        <p>ホームで押せるのは「表紙」「メンバー」「3つのボタン」だけ。判断の回数を増やさないという方針を、画面の要素数で守ります。</p>
+        <p>ホームで押せるのは「表紙」と「3つのボタン」だけ。判断の回数を増やさないという方針を、画面の要素数で守ります。</p>
       </div>
       <div class="spec-card">
         <h3>角丸と影</h3>
@@ -826,7 +896,7 @@
 
   <footer>
     <b>これは見た目を決めるためのプロトタイプです。</b>実データもログインもありません。提案文とメンバーはすべてサンプルです。<br>
-    アプリ名「あさ、ひとつ」は仮称です。実装の方針は <code>docs/team-workflow.md</code> の役割分担でいう <b>B（フロントエンド）</b> の担当範囲になります。
+    アプリ名「あさ、ひとつ」は仮称です。見た目の決めごとは <code>docs/ui-design.md</code>、人間関係の設計は <code>docs/relationships-2036.md</code> にあります。
   </footer>
 </div>
 
@@ -845,22 +915,50 @@
       time: "今朝 7:00 に届きました",
       title: "知らない駅で降りて、看板の出ていない店に入る",
       meta: ["京成立石", "電車で28分", "所要 2時間"],
-      why: "過去90日、評価3.8未満の店に入っていません。" },
+      why: "過去90日、評価3.8未満の店に入っていません。",
+      others: ["aurora", "citrus"],
+      meet: { when: "9/13 SAT · 13:00", where: "京成立石駅 改札前" },
+      history: [
+        { d: "09/11", t: "公園で、コーヒーだけ飲んで帰る", s: "行った", went: true, with: ["tide"] },
+        { d: "09/08", t: "ひとりで銭湯に行く", s: "気になる", went: false, with: [] },
+        { d: "09/05", t: "商店街の端から端まで歩く", s: "パス", went: false, with: [] }
+      ] },
     { id: "taku", name: "たく", initial: "た", sub: "連続 4 日", cover: "tide", editable: false,
       time: "今朝 7:00 に届きました",
       title: "平日の昼に、映画館のいちばん前に座る",
       meta: ["下高井戸シネマ", "自転車で12分", "所要 3時間"],
-      why: "予定のない平日の昼を、48回すべて家で過ごしています。" },
+      why: "予定のない平日の昼を、48回すべて家で過ごしています。",
+      others: ["fuji"],
+      meet: { when: "9/13 SAT · 14:20", where: "下高井戸駅 西口" },
+      history: [
+        { d: "09/12", t: "川沿いを終点まで自転車で行く", s: "行った", went: true, with: ["citrus"] },
+        { d: "09/09", t: "定食屋で日替わりだけ頼む", s: "気になる", went: false, with: [] },
+        { d: "09/06", t: "早朝の市場を歩く", s: "行った", went: true, with: ["dawn", "fuji"] }
+      ] },
     { id: "an",   name: "りん", initial: "り", sub: "連続 27 日", cover: "fuji", editable: false,
       time: "今朝 7:00 に届きました",
       title: "常連しかいない時間に、銭湯へ行く",
       meta: ["大黒湯", "歩いて9分", "所要 1時間"],
-      why: "いつも人の少ない時間だけを選んでいます。" },
+      why: "いつも人の少ない時間だけを選んでいます。",
+      others: ["tide", "mist"],
+      meet: { when: "9/13 SAT · 16:00", where: "大黒湯 のれん前" },
+      history: [
+        { d: "09/12", t: "知らない路地を選んで帰る", s: "行った", went: true, with: [] },
+        { d: "09/10", t: "古本屋で背表紙だけ見る", s: "行った", went: true, with: ["mist"] },
+        { d: "09/07", t: "始発で海まで行く", s: "パス", went: false, with: [] }
+      ] },
     { id: "mio",  name: "みお", initial: "み", sub: "連続 9 日", cover: "citrus", editable: false,
       time: "今朝 7:00 に届きました",
       title: "知らない人の個展に、感想を言わずに行く",
       meta: ["谷中", "電車で34分", "所要 1.5時間"],
-      why: "アートに関する検索履歴が0件です。" }
+      why: "アートに関する検索履歴が0件です。",
+      others: ["dawn", "aurora"],
+      meet: { when: "9/13 SAT · 15:30", where: "谷中 ギャラリー前" },
+      history: [
+        { d: "09/11", t: "陶器市で一番安いものを買う", s: "行った", went: true, with: ["tide"] },
+        { d: "09/09", t: "屋上のある喫茶店を探す", s: "気になる", went: false, with: [] },
+        { d: "09/04", t: "誰も知らない映画を観る", s: "行った", went: true, with: ["aurora", "dawn"] }
+      ] }
   ];
 
   const phone = document.getElementById("phone");
@@ -904,6 +1002,20 @@
     });
   }
 
+  /* ---- 同行者の色（名前は出さない） -------------------------- */
+  function coverColor(id) {
+    const c = COVERS.find(x => x.id === id);
+    return c ? c.c[1] : "#C9D4E0";
+  }
+  function fillDots(el, covers, blank) {
+    el.textContent = "";
+    covers.forEach(id => {
+      const d = document.createElement("span");
+      d.style.background = blank ? "rgba(18,21,28,.10)" : coverColor(id);
+      el.append(d);
+    });
+  }
+
   /* ---- 画面 ------------------------------------------------ */
   function render() {
     const m = MEMBERS.find(x => x.id === viewing);
@@ -922,10 +1034,46 @@
     const meta = document.getElementById("proposalMeta");
     meta.textContent = "";
     m.meta.forEach(t => {
-      const s = document.createElement("span");
-      s.className = "tag";
-      s.textContent = t;
-      meta.append(s);
+      const s2 = document.createElement("span");
+      s2.className = "tag";
+      s2.textContent = t;
+      meta.append(s2);
+    });
+
+    // 押す前は、相手が何人いるかだけ。色は出ない
+    document.getElementById("withCount").textContent = m.others.length + "人";
+    fillDots(document.getElementById("withDots"), m.others, true);
+    // 押したあとに、はじめて色がわかる
+    fillDots(document.getElementById("meetDots"), [cover].concat(m.others), false);
+    document.getElementById("meetWhen").textContent = m.meet.when;
+    document.getElementById("meetWhere").textContent = m.meet.where;
+    document.getElementById("withBlock").hidden = false;
+    document.getElementById("meetBlock").hidden = true;
+
+    const rows = document.getElementById("historyRows");
+    rows.textContent = "";
+    m.history.forEach(h => {
+      const row = document.createElement("div");
+      row.className = "h-row";
+      const date = document.createElement("span");
+      date.className = "h-date";
+      date.textContent = h.d;
+      const title = document.createElement("span");
+      title.className = "h-title";
+      title.textContent = h.t;
+      row.append(date, title);
+      if (h.with.length) {
+        const dots = document.createElement("span");
+        dots.className = "h-dots";
+        fillDots(dots, h.with, false);
+        row.append(dots);
+      }
+      const st = document.createElement("span");
+      st.className = "h-state";
+      if (h.went) st.dataset.s = "went";
+      st.textContent = h.s;
+      row.append(st);
+      rows.append(row);
     });
 
     openBtn.disabled = !m.editable;
@@ -1005,7 +1153,19 @@
     if (!b) return;
     document.querySelectorAll(".act").forEach(a => a.setAttribute("aria-pressed", "false"));
     b.setAttribute("aria-pressed", "true");
-    toast(b.dataset.v === "今日はいい" ? "明日は別の種類を送ります" : "明日の提案に反映しました");
+
+    const m = MEMBERS.find(x => x.id === viewing);
+    const joined = b.dataset.v === "行く";
+    document.getElementById("withBlock").hidden = joined;
+    document.getElementById("meetBlock").hidden = !joined;
+
+    if (joined) {
+      toast((m.others.length + 1) + "人になりました");
+    } else if (b.dataset.v === "今日はいい") {
+      toast("明日は別の種類を送ります");
+    } else {
+      toast("明日の提案に反映しました");
+    }
   });
 
   /* ---- ページ下部のパレット --------------------------------- */
