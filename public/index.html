@@ -122,14 +122,14 @@
   <!-- ホーム -->
   <section id="tab-home">
     <div class="date" id="today"></div>
-    <h1 class="hello">Hello!<small id="helloSub">今日、自分では選ばない一手を。</small></h1>
+    <h1 class="hello">Hello!<small id="helloSub">今日、いつもと違うことしない？</small></h1>
 
     <div class="big" id="big">
       <!-- 提案が無いとき: 最小の入力 -->
       <div id="quick">
-        <div class="kicker">今日の未知</div>
+        <div class="kicker">今日なにする？</div>
         <form id="quickForm">
-          <label>いまいるエリア<input name="area" placeholder="例: 渋谷、名古屋駅、自宅" required></label>
+          <label>いまいるエリア<input name="area" placeholder="いまどこ？（渋谷、名古屋駅、家…）" required></label>
           <div class="row">
             <label>使える時間
               <select name="minutes">
@@ -142,7 +142,7 @@
                 <option>何か刺激がほしい</option><option>人と話したい</option><option>一人になりたい</option>
               </select></label>
           </div>
-          <button class="btn primary block" id="go">今日の未知を提案する</button>
+          <button class="btn primary block" id="go">なんか出して</button>
           <div class="note" id="quickNote"></div>
         </form>
       </div>
@@ -156,39 +156,39 @@
   <section id="tab-reco" hidden>
     <h2 class="title">アナタへのオススメ</h2>
     <div id="oneliner" class="note" style="font-size:15px;color:var(--ink);margin:0 0 12px"></div>
-    <div class="cards" id="cards"><div class="empty">まだ提案がありません。ホームで「今日の未知を提案する」を押してください。</div></div>
+    <div class="cards" id="cards"><div class="empty">まだ何もない。ホームで「なんか出して」押して。</div></div>
   </section>
 
   <!-- 友達 -->
   <section id="tab-friends" hidden>
     <h2 class="title">友達</h2>
-    <div class="count"><b id="friendCount">0</b><span>/ 100人 — リアルに会った人だけ数える</span></div>
+    <div class="count"><b id="friendCount">0</b><span>/ 100人 — ちゃんと会った人だけ数える</span></div>
     <div class="friends" id="friends"></div>
     <div class="addrow">
-      <input id="newFriend" placeholder="名前を追加（例: 同期のA）">
+      <input id="newFriend" placeholder="誰？（同期のA、とか）">
       <button class="btn" id="addFriend">追加</button>
     </div>
-    <div class="note">名前をタップすると「今日誘う人」になり、提案に反映されます。「会った」を押すと最後に会った日が更新されます。</div>
+    <div class="note">名前タップで「今日誘う人」になる。「会った」押すと、最後に会った日が今日になる。</div>
   </section>
 
   <!-- 設定 -->
   <section id="tab-settings" hidden>
     <h2 class="title">設定</h2>
     <form id="settingsForm">
-      <label>呼び名（Hello! の後に表示）<input name="name" placeholder="例: たて"></label>
-      <label>いつもの過ごし方・最近やったこと（「自分では選ばない」の根拠になります）
-        <textarea name="recent" placeholder="例: 休日はだいたい家で動画。外に出るときは決まったカフェ。人と会うのは月1回くらい。"></textarea></label>
+      <label>なんて呼ぶ？<input name="name" placeholder="たて、とか"></label>
+      <label>いつも何してる？ 最近何した？（ここを見て、外してくる）
+        <textarea name="recent" placeholder="休みはだいたい家で動画。出るときは決まったカフェ。人と会うのは月1くらい。"></textarea></label>
       <div class="row">
         <label>予算感
           <select name="budget">
             <option value="">こだわりなし</option><option>0円</option><option>〜1,000円</option><option>〜3,000円</option><option>〜10,000円</option>
           </select></label>
-        <label>よくいるエリア<input name="homeArea" placeholder="例: 渋谷"></label>
+        <label>だいたいどこにいる？<input name="homeArea" placeholder="渋谷"></label>
       </div>
-      <button class="btn primary" type="submit">保存</button>
+      <button class="btn primary" type="submit">これで</button>
     </form>
     <div class="note" id="mode"></div>
-    <div class="note">データはこの端末（ブラウザ）にだけ保存されます。</div>
+    <div class="note">データはこのスマホの中にしか置かない。</div>
   </section>
 
   <!-- 完了 -->
@@ -198,26 +198,26 @@
 
 <!-- ロック: 「これにする」からイベント完了まで、この画面しか使えない -->
 <div class="lock" id="lock" hidden>
-  <div class="top">進行中 ・ <span id="lockDate"></span></div>
+  <div class="top">やってる最中 ・ <span id="lockDate"></span></div>
   <div class="timer" id="lockTimer">--:--</div>
   <div class="cap" id="lockCap">残り時間</div>
   <h3 id="lockTitle"></h3>
   <div class="step" id="lockStep"></div>
   <div class="report" id="report" hidden>
-    <div style="font-size:13px;color:var(--sub)">完了の報告（写真は任意）</div>
+    <div style="font-size:13px;color:var(--sub)">どうだった？（写真あったら見せて）</div>
     <input type="file" id="reportPhoto" accept="image/*" capture="environment">
     <img id="reportPreview" hidden alt="">
-    <input id="reportNote" placeholder="一言（任意）">
+    <input id="reportNote" placeholder="ひとこと（なくてもいい）">
     <div class="actions">
-      <button class="btn primary" data-act="finish">完了にする</button>
+      <button class="btn primary" data-act="finish">終わった！</button>
       <button class="btn" data-act="report-cancel">戻る</button>
     </div>
   </div>
   <div class="actions" id="lockActions">
-    <button class="btn block" data-act="report">完了を報告する</button>
+    <button class="btn block" data-act="report">やってきた！</button>
     <button class="btn block ghost" data-act="lock-copy">誘い文をコピー</button>
   </div>
-  <div class="quit" id="quit">やめる（3秒長押し）</div>
+  <div class="quit" id="quit">やめる（3秒押し続ける）</div>
 </div>
 
 <nav class="tabs" aria-label="タブ">
@@ -279,7 +279,7 @@ function showTab(name) {
 // ---------- ホーム：生成 ----------
 const quickForm = $('quickForm');
 quickForm.elements.area.value = settings.homeArea || store.get('lastArea', '');
-$('quickNote').textContent = settings.recent ? '' : '設定で「いつもの過ごし方」を書くと、提案が刺さります。';
+$('quickNote').textContent = settings.recent ? '' : '設定で「いつも何してるか」書いとくと、もっとちゃんと外してくる。';
 
 quickForm.addEventListener('submit', (e) => { e.preventDefault(); generate(); });
 
@@ -292,7 +292,7 @@ async function generate() {
     budget: settings.budget || '', recent: settings.recent || '',
     companion: todayFriend ? todayFriend.name : (friends.length ? `友達リスト: ${friends.map(f => f.name).join('、')}` : ''),
   };
-  setStatus('あなたが選ばない選択肢を探しています…');
+  setStatus('ちょっと待って、考えてる…');
   $('go').disabled = true;
   try {
     const res = await fetch('/api/suggest', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(input) });
@@ -300,7 +300,7 @@ async function generate() {
     if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
     result = data; picked = null; focusIdx = 0;
     store.set('result', result); store.set('picked', null);
-    setStatus(data.mode === 'mock' ? '（モック表示：APIキー未設定）' : '');
+    setStatus(data.mode === 'mock' ? '（いまはサンプル。APIキー入れると本気で考える）' : '');
     $('recoBadge').hidden = false;
     renderAll();
   } catch (err) {
@@ -322,20 +322,20 @@ function renderFocus() {
   const i = focusIdx;
   const p = result.proposals[i];
   $('focus').innerHTML = `
-    <div class="kicker">今日の未知 ・ ${esc(result.one_liner)}</div>
-    <div class="note" style="margin:0">「これにする」を押すと、完了までこのアプリから出られません。</div>
+    <div class="kicker">${esc(result.one_liner)}</div>
+    <div class="note" style="margin:0">「これにする」押したら、終わるまでこのアプリから出られないよ。</div>
     <h3>${esc(p.title)}</h3>
     <div class="meta">${p.duration_min}分 ・ ${esc(p.cost_hint)} ・ ${esc(p.where_hint)}</div>
-    <div class="why"><strong>なぜ自分では選ばないか:</strong> ${esc(p.why_you_wouldnt_pick)}</div>
+    <div class="why"><strong>なんでこれかっていうと:</strong> ${esc(p.why_you_wouldnt_pick)}</div>
     <dl class="kv">
-      <dt>やること</dt><dd>${esc(p.what)}</dd>
-      <dt>誰を誘う</dt><dd>${esc(p.invite_who)}</dd>
-      <dt>最初の一歩</dt><dd>${esc(p.first_step)}</dd>
+      <dt>何するか</dt><dd>${esc(p.what)}</dd>
+      <dt>誰と</dt><dd>${esc(p.invite_who)}</dd>
+      <dt>まずこれ</dt><dd>${esc(p.first_step)}</dd>
     </dl>
     <div class="actions">
       <button class="btn primary" data-act="pick" data-i="${i}">これにする</button>
-      <button class="btn" data-act="next">別の案</button>
-      <button class="btn" data-act="regen">もう一度</button>
+      <button class="btn" data-act="next">ほかは？</button>
+      <button class="btn" data-act="regen">やり直す</button>
     </div>
     <div class="dots">${result.proposals.map((_, k) => `<i class="${k === i ? 'on' : ''}"></i>`).join('')}</div>`;
 }
@@ -349,9 +349,9 @@ function renderCards() {
       <div class="top"><h3>${esc(p.title)}</h3><span class="tag">${esc(p.category)}</span></div>
       <div class="meta" style="color:var(--sub);font-size:13px">${p.duration_min}分 ・ ${esc(p.cost_hint)} ・ ${esc(p.where_hint)}</div>
       <div class="why">${esc(p.why_you_wouldnt_pick)}</div>
-      <dl class="kv"><dt>やること</dt><dd>${esc(p.what)}</dd><dt>動く感情</dt><dd>${esc(p.emotion)}</dd></dl>
+      <dl class="kv"><dt>何するか</dt><dd>${esc(p.what)}</dd><dt>たぶんこうなる</dt><dd>${esc(p.emotion)}</dd></dl>
       <div class="actions">
-        <button class="btn primary" data-act="pick" data-i="${i}">${picked === i ? '選択中' : 'これにする'}</button>
+        <button class="btn primary" data-act="pick" data-i="${i}">${picked === i ? 'これ' : 'これにする'}</button>
         <button class="btn" data-act="copy" data-msg="${esc(p.invite_message)}">誘い文をコピー</button>
       </div>
     </article>`).join('');
@@ -360,13 +360,13 @@ function renderCards() {
 function renderFriends() {
   $('friendCount').textContent = friends.length;
   const box = $('friends');
-  if (!friends.length) { box.innerHTML = '<div class="empty">まだ誰もいません。まず1人、名前を追加してください。</div>'; return; }
+  if (!friends.length) { box.innerHTML = '<div class="empty">まだ誰もいない。まず一人、入れてみて。</div>'; return; }
   box.innerHTML = friends.map((f, i) => `
     <div class="friend ${f.today ? 'today' : ''}" data-i="${i}">
       <div class="avatar">${esc(f.name.slice(0, 1))}</div>
       <div class="grow">
         <div class="name">${esc(f.name)} ${f.today ? '<span class="tag">今日誘う</span>' : ''}</div>
-        <div class="last">${f.lastMet ? '最後に会った日: ' + f.lastMet : 'まだ会っていない'}</div>
+        <div class="last">${f.lastMet ? '最後に会ったのは ' + f.lastMet : 'まだ会ってない'}</div>
       </div>
       <button class="btn" data-act="met" data-i="${i}">会った</button>
       <button class="del" data-act="del" data-i="${i}" aria-label="削除">×</button>
@@ -390,15 +390,15 @@ document.querySelector('main').addEventListener('click', async (e) => {
     case 'next':   focusIdx = (focusIdx + 1) % result.proposals.length; renderFocus(); break;
     case 'regen':  result = null; picked = null; store.set('result', null); renderAll(); break;
     case 'copy':
-      try { await navigator.clipboard.writeText(b.dataset.msg); b.textContent = 'コピーした'; }
-      catch { prompt('コピーしてください', b.dataset.msg); }
+      try { await navigator.clipboard.writeText(b.dataset.msg); b.textContent = 'コピーしたよ'; }
+      catch { prompt('これコピーして', b.dataset.msg); }
       break;
     case 'met':    friends[i].lastMet = $('today').textContent; store.set('friends', friends); renderFriends(); break;
     case 'del':    friends.splice(i, 1); store.set('friends', friends); renderFriends(); break;
     case 'met-companion': {
       const f = friends.find(x => x.name === b.dataset.name);
       if (f) { f.lastMet = $('today').textContent; f.today = false; store.set('friends', friends); }
-      b.textContent = '記録した'; b.disabled = true; renderFriends(); break;
+      b.textContent = '記録したよ'; b.disabled = true; renderFriends(); break;
     }
     case 'go-home': showTab('home'); break;
   }
@@ -421,12 +421,12 @@ sf.addEventListener('submit', (e) => {
   renderHello();
   if (settings.homeArea && !quickForm.elements.area.value) quickForm.elements.area.value = settings.homeArea;
   $('quickNote').textContent = '';
-  $('mode').textContent = '保存しました。';
+  $('mode').textContent = 'おけ、覚えた。';
   setTimeout(() => showMode(), 1200);
 });
 async function showMode() {
   try { const h = await (await fetch('/api/health')).json();
-    $('mode').textContent = `生成モード: ${h.mode === 'live' ? 'ライブ（' + h.model + '）' : 'モック（APIキー未設定）'}`; } catch {}
+    $('mode').textContent = `いまの頭: ${h.mode === 'live' ? '本気モード（' + h.model + '）' : 'サンプルモード（APIキー未設定）'}`; } catch {}
 }
 showMode();
 
@@ -447,7 +447,7 @@ function renderLock() {
   if (!lock) return;
   $('lockDate').textContent = $('today').textContent;
   $('lockTitle').textContent = lock.proposal.title;
-  $('lockStep').textContent = '最初の一歩: ' + lock.proposal.first_step;
+  $('lockStep').textContent = 'まずこれ: ' + lock.proposal.first_step;
   $('report').hidden = true; $('lockActions').hidden = false;
   const update = () => {
     const remain = lock.durationMin * 60000 - (Date.now() - lock.startedAt);
@@ -455,10 +455,10 @@ function renderLock() {
     if (remain > 0) {
       const m = Math.floor(remain / 60000), s = Math.floor((remain % 60000) / 1000);
       t.textContent = `${m}:${String(s).padStart(2, '0')}`; t.classList.remove('over');
-      $('lockCap').textContent = '残り時間 — 終わるまでこの画面から出られません';
+      $('lockCap').textContent = '終わるまで、スマホはお預け';
     } else {
-      t.textContent = '時間です。'; t.classList.add('over');
-      $('lockCap').textContent = '完了を報告して、スマホを取り戻してください';
+      t.textContent = '時間だよ。'; t.classList.add('over');
+      $('lockCap').textContent = 'やってきたなら報告して、スマホ返してもらお';
     }
   };
   update(); tick = setInterval(update, 1000);
@@ -479,21 +479,21 @@ function renderDone(finished, minutes) {
   $('tab-done').innerHTML = `
     <div class="date">${$('today').textContent}</div>
     <h1>おかえり。</h1>
-    <p class="sub">未知を1つ、現実にした。</p>
+    <p class="sub">やったじゃん。</p>
     <div class="card">
       <h3 style="margin:0">${esc(finished.proposal.title)}</h3>
-      <div class="meta" style="color:var(--sub);font-size:13px">所要 ${minutes}分${finished.companion ? ' ・ 一緒に: ' + esc(finished.companion) : ''}</div>
+      <div class="meta" style="color:var(--sub);font-size:13px">${minutes}分${finished.companion ? ' ・ ' + esc(finished.companion) + 'と' : ''}</div>
       ${last.photo ? `<img src="${last.photo}" alt="報告写真" style="max-width:100%;border-radius:10px">` : ''}
       ${last.note ? `<div>${esc(last.note)}</div>` : ''}
     </div>
     <div class="stats">
-      <div class="stat"><b>${doneCount}</b><span>未知</span></div>
-      <div class="stat"><b>${friends.filter(f => f.lastMet).length}</b><span>/ 100人 会った</span></div>
-      <div class="stat"><b>${streak}</b><span>連続日</span></div>
+      <div class="stat"><b>${doneCount}</b><span>やった数</span></div>
+      <div class="stat"><b>${friends.filter(f => f.lastMet).length}</b><span>/ 100人 会えた</span></div>
+      <div class="stat"><b>${streak}</b><span>日連続</span></div>
     </div>
     <div class="actions">
-      ${finished.companion ? `<button class="btn primary" data-act="met-companion" data-name="${esc(finished.companion)}">${esc(finished.companion)}に会ったと記録する</button>` : ''}
-      <button class="btn" data-act="go-home">ホームへ</button>
+      ${finished.companion ? `<button class="btn primary" data-act="met-companion" data-name="${esc(finished.companion)}">${esc(finished.companion)}に会ったって記録</button>` : ''}
+      <button class="btn" data-act="go-home">ホームに戻る</button>
     </div>`;
   for (const s of document.querySelectorAll('main > section')) s.hidden = s.id !== 'tab-done';
   for (const b of document.querySelectorAll('nav.tabs button')) b.classList.remove('on');
@@ -518,17 +518,17 @@ $('lock').addEventListener('click', async (e) => {
     case 'report-cancel': $('report').hidden = true; $('lockActions').hidden = false; break;
     case 'finish': finishLock('done', $('reportNote').value.trim(), photoData); photoData = null; $('reportNote').value = ''; $('reportPreview').hidden = true; break;
     case 'lock-copy':
-      try { await navigator.clipboard.writeText(lock.proposal.invite_message); b.textContent = 'コピーした'; }
-      catch { prompt('コピーしてください', lock.proposal.invite_message); }
+      try { await navigator.clipboard.writeText(lock.proposal.invite_message); b.textContent = 'コピーしたよ'; }
+      catch { prompt('これコピーして', lock.proposal.invite_message); }
       break;
   }
 });
 // やめる: 3秒長押しだけ受け付ける（誤タップで抜けられないように）
 (function quitHold() {
   const q = $('quit'); let timer = null;
-  const arm = (e) => { e.preventDefault(); q.classList.add('arming'); q.textContent = 'そのまま押し続ける…';
+  const arm = (e) => { e.preventDefault(); q.classList.add('arming'); q.textContent = 'ほんとにやめる？そのまま…';
     timer = setTimeout(() => { finishLock('quit'); reset(); }, 3000); };
-  const reset = () => { clearTimeout(timer); q.classList.remove('arming'); q.textContent = 'やめる（3秒長押し）'; };
+  const reset = () => { clearTimeout(timer); q.classList.remove('arming'); q.textContent = 'やめる（3秒押し続ける）'; };
   for (const ev of ['pointerdown']) q.addEventListener(ev, arm);
   for (const ev of ['pointerup', 'pointerleave', 'pointercancel']) q.addEventListener(ev, reset);
 })();
