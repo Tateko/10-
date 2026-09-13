@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>michi PR video</title>
+<style>
+  /* 日本語は japanese サブセット、ラテンは latin サブセットに振り分ける */
+  @font-face { font-family: 'MSerif'; font-weight: 400; font-display: block;
+    src: url(./node_modules/@fontsource/noto-serif-jp/files/noto-serif-jp-japanese-400-normal.woff2) format('woff2'); }
+  @font-face { font-family: 'MSerif'; font-weight: 700; font-display: block;
+    src: url(./node_modules/@fontsource/noto-serif-jp/files/noto-serif-jp-japanese-700-normal.woff2) format('woff2'); }
+  @font-face { font-family: 'MSerif'; font-weight: 400; font-display: block; unicode-range: U+0000-00FF, U+2000-206F, U+2190-21FF, U+2460-24FF;
+    src: url(./node_modules/@fontsource/noto-serif-jp/files/noto-serif-jp-latin-400-normal.woff2) format('woff2'); }
+  @font-face { font-family: 'MSerif'; font-weight: 700; font-display: block; unicode-range: U+0000-00FF, U+2000-206F, U+2190-21FF, U+2460-24FF;
+    src: url(./node_modules/@fontsource/noto-serif-jp/files/noto-serif-jp-latin-700-normal.woff2) format('woff2'); }
+  @font-face { font-family: 'MSans'; font-weight: 400; font-display: block;
+    src: url(./node_modules/@fontsource/noto-sans-jp/files/noto-sans-jp-japanese-400-normal.woff2) format('woff2'); }
+  @font-face { font-family: 'MSans'; font-weight: 700; font-display: block;
+    src: url(./node_modules/@fontsource/noto-sans-jp/files/noto-sans-jp-japanese-700-normal.woff2) format('woff2'); }
+  @font-face { font-family: 'MSans'; font-weight: 400; font-display: block; unicode-range: U+0000-00FF, U+2000-206F, U+2190-21FF, U+2460-24FF;
+    src: url(./node_modules/@fontsource/noto-sans-jp/files/noto-sans-jp-latin-400-normal.woff2) format('woff2'); }
+  @font-face { font-family: 'MSans'; font-weight: 700; font-display: block; unicode-range: U+0000-00FF, U+2000-206F, U+2190-21FF, U+2460-24FF;
+    src: url(./node_modules/@fontsource/noto-sans-jp/files/noto-sans-jp-latin-700-normal.woff2) format('woff2'); }
+
+  :root {
+    --paper: #ECE7DE; --card: #FFFDF9; --ink: #1D2B22; --sub: #6B7169;
+    --green: #1F3D2B; --cream: #F3EFE8; --sand: #E6E0D4; --line: #D9D3C8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1920px; height: 1080px; overflow: hidden; background: var(--paper); }
+  body { font-family: 'MSans', sans-serif; color: var(--ink); -webkit-font-smoothing: antialiased; }
+  #stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; }
+  .scene { position: absolute; inset: 0; opacity: 0; will-change: opacity; }
+  .bg-green { background: var(--green); color: var(--cream); }
+  .ln { will-change: transform, opacity; }
+  .serif { font-family: 'MSerif', serif; }
+
+  /* 共通 */
+  .center { position: absolute; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 26px; text-align: center; }
+  .kicker { font-size: 22px; letter-spacing: .22em; color: var(--sub); }
+  .rule { height: 3px; background: var(--green); width: 0; }
+
+  /* S1 */
+  #s1 .a { font-size: 108px; font-weight: 700; letter-spacing: .02em; }
+  #s1 .b { font-size: 76px; color: var(--sub); letter-spacing: .02em; }
+
+  /* S2 */
+  #s2 .txt { position: absolute; left: 150px; top: 330px; width: 1020px; }
+  #s2 .l1 { font-size: 58px; line-height: 1.5; font-weight: 400; }
+  #s2 .l2 { font-size: 58px; line-height: 1.45; font-weight: 700; margin-top: 30px; position: relative; display: inline-block; }
+  #s2 .l2 .mark { position: absolute; left: 0; bottom: -6px; height: 10px; background: rgba(31,61,43,.18); }
+  #s2 .l3 { font-size: 34px; color: var(--sub); margin-top: 46px; line-height: 1.6; }
+  #s2 svg { position: absolute; right: 120px; top: 220px; }
+
+  /* S3 */
+  #s3 .mark { width: 190px; height: 190px; }
+  #s3 .word { font-size: 92px; font-weight: 700; letter-spacing: .06em; }
+  #s3 .word span { font-size: 48px; letter-spacing: .12em; opacity: .75; margin-left: 18px; }
+  #s3 .tag { font-size: 44px; line-height: 1.6; opacity: .92; }
+
+  /* S4 */
+  #s4 .phone { position: absolute; left: 1160px; top: 96px; width: 424px; height: 888px;
+    border: 2.5px solid var(--ink); border-radius: 46px; background: #000; padding: 10px;
+    box-shadow: 0 30px 60px rgba(29,43,34,.10); }
+  #s4 .phone img { width: 100%; height: 100%; object-fit: cover; border-radius: 36px; display: block; background: var(--card); }
+  #s4 .cap { position: absolute; left: 150px; top: 330px; width: 900px; }
+  #s4 .cap .k { font-size: 22px; letter-spacing: .2em; color: var(--green); font-weight: 700; margin-bottom: 22px; }
+  #s4 .cap .m { font-size: 56px; line-height: 1.45; font-weight: 700; }
+  #s4 .cap .s { font-size: 30px; line-height: 1.65; color: var(--sub); margin-top: 26px; }
+  #s4 .label { position: absolute; left: 150px; top: 120px; font-size: 20px; letter-spacing: .3em; color: var(--sub); }
+  #s4 .disc { position: absolute; left: 150px; bottom: 100px; font-size: 20px; color: var(--sub); line-height: 1.7; }
+  #s4 .steps { position: absolute; left: 150px; bottom: 190px; display: flex; gap: 10px; }
+  #s4 .steps i { width: 46px; height: 4px; background: var(--line); border-radius: 2px; }
+  #s4 .steps i.on { background: var(--green); }
+  #s4 .zoom { position: absolute; left: 150px; top: 636px; width: 864px; height: 366px;
+    border: 2.5px solid var(--ink); border-radius: 20px; overflow: hidden; background: var(--card);
+    box-shadow: 0 20px 40px rgba(29,43,34,.10); opacity: 0; }
+  #s4 .zoom img { position: absolute; width: 1053px; left: -101px; top: -898px; max-width: none; }
+  #s4 .zoomtag { position: absolute; left: 150px; top: 594px; font-size: 20px; letter-spacing: .2em;
+    color: var(--green); font-weight: 700; opacity: 0; }
+  #s4 .invite { position: absolute; left: 150px; top: 640px; width: 864px; background: var(--card);
+    border: 2.5px solid var(--ink); border-radius: 22px 22px 22px 6px; padding: 34px 36px; opacity: 0;
+    box-shadow: 0 20px 40px rgba(29,43,34,.10); }
+  #s4 .invite .q { font-size: 34px; line-height: 1.6; }
+  #s4 .invite .n { font-size: 22px; color: var(--sub); margin-top: 18px; }
+
+  /* S5 */
+  #s5 h2 { position: absolute; left: 150px; top: 150px; font-size: 62px; font-weight: 700; }
+  #s5 .sub { position: absolute; left: 150px; top: 250px; font-size: 30px; color: var(--sub); }
+  #s5 .row { position: absolute; left: 150px; top: 380px; display: flex; gap: 34px; }
+  #s5 .box { width: 520px; height: 340px; background: var(--card); border: 2px solid var(--ink);
+    border-radius: 26px; padding: 40px 38px; display: flex; flex-direction: column; gap: 18px; }
+  #s5 .box .n { font-size: 26px; color: var(--green); font-weight: 700; letter-spacing: .1em; }
+  #s5 .box .t { font-size: 44px; font-weight: 700; line-height: 1.3; }
+  #s5 .box .d { font-size: 26px; color: var(--sub); line-height: 1.6; }
+  #s5 .foot { position: absolute; left: 150px; top: 790px; width: 1620px; font-size: 30px; line-height: 1.7; }
+  #s5 .foot b { font-weight: 700; }
+  #s5 .foot .chips { display: flex; gap: 14px; margin-top: 24px; flex-wrap: wrap; }
+  #s5 .chip { border: 1.5px solid var(--ink); border-radius: 999px; padding: 10px 22px; font-size: 24px; }
+
+  /* S6 */
+  #s6 .quote { font-size: 66px; line-height: 1.6; font-weight: 400; text-align: center; }
+  #s6 .brand { display: flex; align-items: center; gap: 22px; }
+  #s6 .brand svg { width: 76px; height: 76px; }
+  #s6 .brand .w { font-size: 56px; font-weight: 700; letter-spacing: .06em; }
+  #s6 .url { font-size: 30px; letter-spacing: .04em; opacity: .8; }
+  #s6 .meta { font-size: 22px; opacity: .55; letter-spacing: .08em; }
+</style>
+</head>
+<body>
+<div id="stage">
+
+  <!-- 1. つかみ -->
+  <section class="scene" id="s1">
+    <div class="center">
+      <div class="ln a serif" data-i="0">今日、なにする？</div>
+      <div class="ln b serif" data-i="1">……で、結局いつもの店。</div>
+    </div>
+  </section>
+
+  <!-- 2. 問題 -->
+  <section class="scene" id="s2">
+    <div class="txt">
+      <div class="ln l1 serif" data-i="0">「おすすめ」は、<br>あなたが好きそうなものを出す。</div>
+      <div class="ln l2 serif" data-i="1">当たるほど、世界はせまくなる。<span class="mark"></span></div>
+      <div class="ln l3" data-i="2">歯医者に行くまで歯並びに気づかないのと同じで、<br>自分の「いつも」は、自分では見えない。</div>
+    </div>
+    <svg id="dots" width="640" height="640" viewBox="0 0 640 640"></svg>
+  </section>
+
+  <!-- 3. ロゴ -->
+  <section class="scene bg-green" id="s3">
+    <div class="center">
+      <svg class="ln mark" data-i="0" viewBox="0 0 100 100" fill="none">
+        <path d="M22 88 C 26 58, 40 42, 56 32 C 64 27, 70 22, 72 16" stroke="#F3EFE8" stroke-width="5" stroke-linecap="round"/>
+        <circle cx="74" cy="11" r="7" stroke="#F3EFE8" stroke-width="4"/>
+      </svg>
+      <div class="ln word" data-i="1">michi<span>未知</span></div>
+      <div class="ln tag serif" data-i="2">自分では選ばない体験を、<br>今日この後の予定にする。</div>
+    </div>
+  </section>
+
+  <!-- 4. デモ -->
+  <section class="scene" id="s4">
+    <div class="label">DEMO</div>
+    <div class="cap">
+      <div class="k"></div>
+      <div class="m serif"></div>
+      <div class="s"></div>
+    </div>
+    <div class="steps"></div>
+    <div class="disc">※ 画面は実際に動いているアプリ。提案文はAPIキー未設定時のサンプル応答<br>（キーを入れると同じ形式で Claude が生成する）</div>
+    <div class="zoomtag">選ばない理由</div>
+    <div class="zoom"><img id="zoomimg" alt=""></div>
+    <div class="invite">
+      <div class="q serif">「今から2駅先の知らない駅で降りて昼食べるんだけど、来ない？店は決めてない。」</div>
+      <div class="n">↑ ボタン1つでコピーされる文。考えるのは相手じゃなく、AIの仕事。</div>
+    </div>
+    <div class="phone"><img id="screen" alt=""></div>
+  </section>
+
+  <!-- 5. AIの使い方 -->
+  <section class="scene" id="s5">
+    <h2 class="ln serif" data-i="0">AIは「生成」じゃなく「判断」に使う。</h2>
+    <div class="ln sub" data-i="1">michi が Claude にやらせているのは、この3段だけ。</div>
+    <div class="row">
+      <div class="ln box" data-i="2"><div class="n">01 &nbsp;推定</div><div class="t serif">傾向を<br>言葉にする</div><div class="d">「休みは家で動画」から、<br>この人が選ばない領域を決める</div></div>
+      <div class="ln box" data-i="3"><div class="n">02 &nbsp;生成</div><div class="t serif">その外側を<br>3つ作る</div><div class="d">定番は禁止。今日・この時間・<br>この予算でできることだけ</div></div>
+      <div class="ln box" data-i="4"><div class="n">03 &nbsp;着地</div><div class="t serif">行動に<br>落とす</div><div class="d">誘う相手・誘い文・<br>60秒でできる最初の一歩まで</div></div>
+    </div>
+    <div class="ln foot" data-i="5">
+      <b>構造化出力（Zodスキーマ）</b>で、返ってくる形は毎回同じ。だからUIが崩れないし、キーが無い日はサンプルに落ちて<b>デモが止まらない</b>。
+      <div class="chips">
+        <div class="chip">無難・定番は出さない</div>
+        <div class="chip">存在しない店名を言わない</div>
+        <div class="chip">3案のうち1つは必ず人を誘う</div>
+        <div class="chip">必ず「選ばない理由」を付ける</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. 締め -->
+  <section class="scene bg-green" id="s6">
+    <div class="center">
+      <div class="ln quote serif" data-i="0">AIが判断を代わりにやる世界で、<br>人に残るのは、予想外に出会うことだ。</div>
+      <div class="ln brand" data-i="1" style="margin-top:40px">
+        <svg viewBox="0 0 100 100" fill="none">
+          <path d="M22 88 C 26 58, 40 42, 56 32 C 64 27, 70 22, 72 16" stroke="#F3EFE8" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="74" cy="11" r="7" stroke="#F3EFE8" stroke-width="4"/>
+        </svg>
+        <div class="w">michi<span style="font-size:30px;letter-spacing:.12em;opacity:.75;margin-left:14px">未知</span></div>
+      </div>
+      <div class="ln url" data-i="2">fuu-black-letter.tatetate0912-10969.workers.dev</div>
+      <div class="ln meta" data-i="3">未知イベント提案アプリ ・ AGIラボ ハッカソン 2026.09.13</div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+// ---------- 時間の道具 ----------
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const ease = (x) => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+const easeOut = (x) => 1 - Math.pow(1 - x, 3);
+// t が [s, s+d] のときの 0→1
+const at = (t, s, d) => ease(clamp((t - s) / d));
+const fade = (t, inS, inD, outS, outD) => clamp(at(t, inS, inD) - at(t, outS, outD), 0, 1);
+
+// ---------- 構成（秒） ----------
+const SCENES = [
+  { id: 's1', start: 0.0,  end: 6.2 },
+  { id: 's2', start: 6.2,  end: 15.0 },
+  { id: 's3', start: 15.0, end: 21.0 },
+  { id: 's4', start: 21.0, end: 54.0 },
+  { id: 's5', start: 54.0, end: 66.0 },
+  { id: 's6', start: 66.0, end: 78.0 },
+];
+const DURATION = 78.0;
+const XF = 0.5; // シーン間のクロスフェード
+
+// デモ: 動画の時刻 → 録っておいたアプリのフレーム番号
+const APP_KEYS = [
+  [21.0, 0], [22.6, 19], [24.0, 52], [25.2, 62], [27.0, 96], [31.9, 126],
+  [32.6, 131], [33.6, 160], [34.4, 190], [35.2, 222], [35.9, 244], [37.5, 300],
+  [38.3, 306], [39.4, 336], [39.9, 344], [41.8, 425], [42.6, 431], [45.0, 459],
+  [46.5, 479], [47.6, 505], [49.4, 555], [50.2, 563], [54.0, 618],
+];
+
+// デモの字幕
+const CAPS = [
+  [21.0, '1 ・ 入力', '書くのは、エリアと時間と気分だけ。', '今日なにするかを、ゼロから考えない。3つ埋めて押す。'],
+  [25.2, '2 ・ 提案', '出てくるのは、あなたが選ばない側の3案。', '好みの外側にあって、今日この時間・この予算でできることだけ。'],
+  [27.3, '3 ・ 根拠', '必ず「なんでこれか」を言う。', 'あなたが書いた「いつも」から理由を引いてくるから、逃げ道がない。'],
+  [32.5, '4 ・ 誘い文', 'そのまま送れる一文が付いてくる。', '3案のうち1つは必ず人を誘う案。誘う口実ごと渡す。'],
+  [39.5, '5 ・ 友達', 'ちゃんと会った人だけ、100人まで数える。', '提案の先には、いつも人がいる。'],
+  [42.5, '6 ・ ロック', '『これにする』を押すと、アプリは閉じる。', '終わるまで他の画面に戻れない。迷って戻る時間を消す。'],
+  [47.5, '7 ・ 完了', '帰ってきて報告したら、ロック解除。', 'おかえり。未知が1つ、現実になった。'],
+];
+
+// ---------- 点の図（世界がせまくなる） ----------
+(function buildDots() {
+  const svg = document.getElementById('dots');
+  let seed = 7;
+  const rnd = () => (seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648;
+  const ns = 'http://www.w3.org/2000/svg';
+  const ring = document.createElementNS(ns, 'circle');
+  ring.setAttribute('cx', 320); ring.setAttribute('cy', 320); ring.setAttribute('r', 96);
+  ring.setAttribute('fill', 'none'); ring.setAttribute('stroke', '#1F3D2B');
+  ring.setAttribute('stroke-width', '2'); ring.setAttribute('stroke-dasharray', '6 8');
+  ring.id = 'ring';
+  svg.appendChild(ring);
+  for (let i = 0; i < 64; i++) {
+    const a = rnd() * Math.PI * 2, r = 110 + rnd() * 190;
+    const c = document.createElementNS(ns, 'circle');
+    c.setAttribute('r', 5.5);
+    c.dataset.x = (320 + Math.cos(a) * r).toFixed(1);
+    c.dataset.y = (320 + Math.sin(a) * r).toFixed(1);
+    c.dataset.d = rnd().toFixed(3);
+    c.setAttribute('fill', '#1D2B22');
+    svg.appendChild(c);
+  }
+})();
+
+// ---------- 各シーンの描き方 ----------
+const el = (s) => document.querySelector(s);
+const lines = (id) => [...document.querySelectorAll('#' + id + ' .ln')];
+const rise = (node, k, dist = 26) => {
+  node.style.opacity = k;
+  node.style.transform = `translateY(${(1 - k) * dist}px)`;
+};
+
+function drawS1(u) {
+  const L = lines('s1');
+  rise(L[0], fade(u, 0.35, 0.9, 5.6, 0.6), 30);
+  rise(L[1], fade(u, 2.6, 0.9, 5.6, 0.6), 30);
+}
+
+function drawS2(u) {
+  const L = lines('s2');
+  rise(L[0], fade(u, 0.3, 0.8, 8.2, 0.6));
+  rise(L[1], fade(u, 2.4, 0.8, 8.2, 0.6));
+  rise(L[2], fade(u, 5.0, 0.8, 8.2, 0.6));
+  el('#s2 .l2 .mark').style.width = (easeOut(clamp((u - 3.2) / 1.1)) * 100) + '%';
+  // 点が中心に吸い込まれていく
+  const k = ease(clamp((u - 1.2) / 5.4));
+  const svg = document.getElementById('dots');
+  svg.style.opacity = fade(u, 0.4, 1.0, 8.2, 0.6);
+  for (const c of svg.querySelectorAll('circle')) {
+    if (c.id === 'ring') { c.setAttribute('opacity', 0.25 + 0.35 * k); continue; }
+    const x = +c.dataset.x, y = +c.dataset.y, d = +c.dataset.d;
+    const kk = clamp(k * (0.65 + d * 0.7));
+    c.setAttribute('cx', x + (320 - x) * kk * 0.86);
+    c.setAttribute('cy', y + (320 - y) * kk * 0.86);
+    c.setAttribute('opacity', (0.16 + 0.6 * kk).toFixed(3));
+  }
+}
+
+function drawS3(u) {
+  const L = lines('s3');
+  rise(L[0], fade(u, 0.3, 0.8, 5.3, 0.6), 20);
+  rise(L[1], fade(u, 0.9, 0.8, 5.3, 0.6), 20);
+  rise(L[2], fade(u, 1.9, 0.9, 5.3, 0.6), 20);
+}
+
+let capIdx = -1;
+function drawS4(t, u) {
+  // 字幕
+  let idx = 0;
+  for (let i = 0; i < CAPS.length; i++) if (t >= CAPS[i][0]) idx = i;
+  const [cs, k, m, s] = CAPS[idx];
+  if (idx !== capIdx) {
+    capIdx = idx;
+    el('#s4 .cap .k').textContent = k;
+    el('#s4 .cap .m').innerHTML = m;
+    el('#s4 .cap .s').innerHTML = s;
+  }
+  const kIn = ease(clamp((t - cs) / 0.5));
+  const cap = el('#s4 .cap');
+  cap.style.opacity = kIn * fade(u, 0.0, 0.5, 32.4, 0.6);
+  cap.style.transform = `translateY(${(1 - kIn) * 18}px)`;
+
+  // 進み具合のバー
+  const steps = el('#s4 .steps');
+  if (steps.children.length !== CAPS.length) {
+    steps.innerHTML = CAPS.map(() => '<i></i>').join('');
+  }
+  [...steps.children].forEach((n, i) => n.className = i <= idx ? 'on' : '');
+  steps.style.opacity = 0.9 * fade(u, 0.4, 0.6, 32.4, 0.6);
+
+  el('#s4 .label').style.opacity = 0.9 * fade(u, 0.2, 0.6, 32.4, 0.6);
+  el('#s4 .disc').style.opacity = 0.85 * fade(u, 1.2, 0.8, 12.0, 1.0);
+
+  // 「根拠」の拡大カット / 「誘い文」の実物
+  const zoom = el('#s4 .zoom'), ztag = el('#s4 .zoomtag'), inv = el('#s4 .invite');
+  const zk = fade(t, 28.3, 0.5, 31.9, 0.4);
+  zoom.style.opacity = zk;
+  ztag.style.opacity = zk;
+  zoom.style.transform = `translateY(${(1 - zk) * 16}px)`;
+  const ik = fade(t, 33.4, 0.5, 38.6, 0.4);
+  inv.style.opacity = ik;
+  inv.style.transform = `translateY(${(1 - ik) * 16}px)`;
+
+  const ph = el('#s4 .phone');
+  const kp = ease(clamp((u - 0.1) / 0.9));
+  ph.style.opacity = fade(u, 0.1, 0.9, 32.4, 0.6);
+  ph.style.transform = `translateY(${(1 - kp) * 40}px)`;
+}
+
+function drawS5(u) {
+  const L = lines('s5');
+  const outs = 11.4;
+  rise(L[0], fade(u, 0.25, 0.7, outs, 0.6));
+  rise(L[1], fade(u, 0.7, 0.7, outs, 0.6));
+  rise(L[2], fade(u, 1.4, 0.7, outs, 0.6), 34);
+  rise(L[3], fade(u, 2.0, 0.7, outs, 0.6), 34);
+  rise(L[4], fade(u, 2.6, 0.7, outs, 0.6), 34);
+  rise(L[5], fade(u, 4.0, 0.9, outs, 0.6), 24);
+}
+
+function drawS6(u) {
+  const L = lines('s6');
+  rise(L[0], at(u, 0.4, 1.0), 24);
+  rise(L[1], at(u, 2.2, 0.9), 18);
+  rise(L[2], at(u, 3.0, 0.9), 14);
+  rise(L[3], at(u, 3.6, 0.9), 14);
+}
+
+// ---------- アプリ映像 ----------
+function appFrame(t) {
+  const K = APP_KEYS;
+  if (t <= K[0][0]) return K[0][1];
+  for (let i = 1; i < K.length; i++) {
+    if (t <= K[i][0]) {
+      const [t0, f0] = K[i - 1], [t1, f1] = K[i];
+      return Math.round(f0 + (f1 - f0) * (t - t0) / (t1 - t0));
+    }
+  }
+  return K[K.length - 1][1];
+}
+window.__frameSrc = (t) => {
+  const base = window.__framesBase || '';
+  return base + '/f' + String(appFrame(t)).padStart(5, '0') + '.png';
+};
+window.__loadFrame = async (t) => {
+  const src = window.__frameSrc(t);
+  for (const id of ['screen', 'zoomimg']) {
+    const img = document.getElementById(id);
+    if (img.getAttribute('src') !== src) { img.src = src; try { await img.decode(); } catch {} }
+  }
+};
+
+// ---------- 全体 ----------
+window.seek = function seek(t) {
+  for (const sc of SCENES) {
+    const node = document.getElementById(sc.id);
+    const inWin = t >= sc.start - XF && t <= sc.end + XF;
+    node.style.display = inWin ? 'block' : 'none';
+    if (!inWin) continue;
+    const u = t - sc.start;
+    // シーン自体の出入り（最初と最後だけ黒フェードではなく紙のフェード）
+    const last = sc === SCENES[SCENES.length - 1];
+    const opa = clamp(at(t, sc.start - XF * 0.6, XF) - (last ? 0 : at(t, sc.end - XF * 0.4, XF)));
+    node.style.opacity = opa;
+    node.style.zIndex = String(Math.round(t >= sc.start ? 2 : 1));
+    if (sc.id === 's1') drawS1(u);
+    if (sc.id === 's2') drawS2(u);
+    if (sc.id === 's3') drawS3(u);
+    if (sc.id === 's4') drawS4(t, u);
+    if (sc.id === 's5') drawS5(u);
+    if (sc.id === 's6') drawS6(u);
+  }
+};
+window.__duration = DURATION;
+window.__scenes = SCENES;
+
+// ブラウザで見て確認するとき用（file://... #play）
+if (location.hash === '#play') {
+  const img = document.getElementById('screen');
+  const t0 = performance.now();
+  const loop = () => {
+    const t = ((performance.now() - t0) / 1000) % DURATION;
+    seek(t);
+    if (t >= 20.5 && t <= 54.5) window.__loadFrame(t);
+    requestAnimationFrame(loop);
+  };
+  loop();
+} else {
+  seek(0);
+}
+</script>
+</body>
+</html>
