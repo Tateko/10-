@@ -107,6 +107,31 @@ body{
 .slide.image{justify-content:center}
 .slide.image > :not(.figure){position:relative; z-index:1}
 .slide.image .support{max-width:34cqi}
+/* P5 の画像スロット。差し替えてもテキストが読めるよう、左のグラデーションは画像の上に残す */
+.figure img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block}
+.figure img[hidden]{display:none}
+.slide.image > .slot{
+  position:absolute; left:8cqi; bottom:3cqi; z-index:3;
+  display:flex; align-items:center; gap:1cqi; flex-wrap:wrap;
+  font-family:var(--mono); font-size:.88cqi; letter-spacing:.16em;
+}
+.slot button{
+  font:inherit; letter-spacing:inherit; cursor:pointer;
+  color:rgba(239,233,220,.42); background:none;
+  border:1px dashed rgba(239,233,220,.26); border-radius:2px; padding:.5cqi 1.1cqi;
+  transition:color .2s ease, border-color .2s ease;
+}
+.slot button:hover{color:var(--paper); border-color:rgba(239,233,220,.72)}
+.slot button[hidden]{display:none}
+.slot .msg-note{color:rgba(239,233,220,.5); letter-spacing:.1em}
+.dropzone{
+  position:absolute; inset:0; z-index:30; display:grid; place-items:center;
+  background:rgba(10,18,14,.72); border:.25cqi dashed rgba(239,233,220,.6);
+  font-family:var(--mono); font-size:1.4cqi; letter-spacing:.3em; color:var(--paper);
+  pointer-events:none;
+}
+.dropzone[hidden]{display:none}
+
 .slide.image > .credit{
   position:absolute; right:2cqi; bottom:1.6cqi; z-index:2;
   font-family:var(--mono); font-size:.85cqi; letter-spacing:.14em; color:rgba(239,233,220,.34);
@@ -234,7 +259,7 @@ body{
 @media print{
   @page{size:297mm 167mm; margin:0}
   body{display:block; overflow:visible; background:#fff}
-  .rail,.foot,.notes{display:none !important}
+  .rail,.foot,.notes,.slot,.dropzone{display:none !important}
   .wrap{display:block; padding:0}
   .stage{width:100%; height:auto; max-height:none; border:0}
   .slide{position:relative; opacity:1 !important; visibility:visible !important; break-after:page; aspect-ratio:16/9}
@@ -289,7 +314,7 @@ body{
 
     <!-- P5 -->
     <section class="slide image" aria-label="5. 未知との遭遇">
-      <div class="figure" aria-hidden="true"><svg preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="p5-t p5-d">
+      <div class="figure" id="p5fig" aria-hidden="true"><svg preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="p5-t p5-d">
 <title id="p5-t">未知との遭遇</title>
 <desc id="p5-d">暗い野原に一人で立つ人影の前に、封筒のフラップのかたちをした光の戸口が開いている。</desc>
 <defs>
@@ -350,12 +375,18 @@ body{
 
 <!-- 画面のふち。落ち着かせる -->
 <rect fill="none" stroke="#0A120E" stroke-width="0" />
-</svg></div>
+</svg><img id="p5img" alt="" hidden></div>
       <p class="eyebrow">答え</p>
       <h2 class="msg">未知との<br>遭遇。</h2>
       <div class="hr"></div>
       <p class="support">効率の外側にしか、感情は残っていない。予想外だけが、まだ人間の側にある。</p>
-      <p class="credit">ILLUSTRATION — 封 / 2036</p>
+      <p class="credit" id="p5credit">ILLUSTRATION — 封 / 2036</p>
+      <div class="slot" id="slot">
+        <button type="button" id="slotPick">画像を差し替える</button>
+        <button type="button" id="slotReset" hidden>元の絵に戻す</button>
+        <span class="msg-note" id="slotNote">ドラッグ &amp; ドロップ / ⌘V でも入る</span>
+        <input type="file" id="p5file" accept="image/*" hidden>
+      </div>
     </section>
 
     <!-- P6 -->
@@ -435,6 +466,7 @@ body{
       </div>
     </section>
 
+    <div class="dropzone" id="dz" hidden>ここに離す</div>
   </div>
 </div>
 
@@ -522,7 +554,89 @@ function prev(){
   if (i > 0) { i--; step = Math.max(0, steps(i) - 1); paint(); }
 }
 
+/* ───── P5 の画像スロット ───── */
+const P5 = 4, KEY = "fuu:p5image";
+const fig = document.getElementById("p5fig");
+const p5img = document.getElementById("p5img");
+const p5svg = fig.querySelector("svg");
+const pick = document.getElementById("slotPick");
+const reset = document.getElementById("slotReset");
+const note = document.getElementById("slotNote");
+const fileInput = document.getElementById("p5file");
+const credit = document.getElementById("p5credit");
+const dz = document.getElementById("dz");
+const stageEl = document.getElementById("stage");
+let noteTimer;
+
+function say(t, hold = 4000){
+  clearTimeout(noteTimer);
+  note.textContent = t;
+  noteTimer = setTimeout(() => {
+    note.textContent = p5img.hidden ? "ドラッグ & ドロップ / ⌘V でも入る" : "";
+  }, hold);
+}
+function showImage(src){
+  p5img.src = src; p5img.hidden = false;
+  p5svg.style.display = "none";
+  credit.hidden = true; reset.hidden = false;
+  pick.textContent = "別の画像にする";
+}
+function clearImage(){
+  p5img.removeAttribute("src"); p5img.hidden = true;
+  p5svg.style.display = "";
+  credit.hidden = false; reset.hidden = true;
+  pick.textContent = "画像を差し替える";
+  try { localStorage.removeItem(KEY); } catch {}
+  say("元の絵に戻した。");
+}
+try { const saved = localStorage.getItem(KEY); if (saved) showImage(saved); } catch {}
+
+function accept(blob){
+  if (!blob) return;
+  if (!blob.type.startsWith("image/")) { say("画像ファイルだけ受け付ける。"); return; }
+  const fr = new FileReader();
+  fr.onerror = () => say("ファイルを読めなかった。");
+  fr.onload = () => {
+    const im = new Image();
+    im.onerror = () => say("画像として開けなかった。");
+    im.onload = () => {
+      // 保存上限に収めるため長辺1920pxまで縮める
+      const max = 1920, k = Math.min(1, max / Math.max(im.width, im.height));
+      const c = document.createElement("canvas");
+      c.width = Math.round(im.width * k); c.height = Math.round(im.height * k);
+      c.getContext("2d").drawImage(im, 0, 0, c.width, c.height);
+      let url;
+      try { url = c.toDataURL("image/jpeg", .86); } catch { url = fr.result; }
+      showImage(url);
+      try { localStorage.setItem(KEY, url); say("差し替えた。この端末に残る。"); }
+      catch { say("大きすぎて保存できない。今回の表示だけ差し替えた。", 7000); }
+    };
+    im.src = fr.result;
+  };
+  fr.readAsDataURL(blob);
+}
+
+document.getElementById("slot").addEventListener("click", (e) => e.stopPropagation());
+pick.addEventListener("click", () => fileInput.click());
+reset.addEventListener("click", clearImage);
+fileInput.addEventListener("change", () => { accept(fileInput.files[0]); fileInput.value = ""; });
+stageEl.addEventListener("dragover", (e) => {
+  if (i !== P5) return;
+  e.preventDefault(); e.dataTransfer.dropEffect = "copy"; dz.hidden = false;
+});
+stageEl.addEventListener("dragleave", (e) => { if (!stageEl.contains(e.relatedTarget)) dz.hidden = true; });
+stageEl.addEventListener("drop", (e) => {
+  if (i !== P5) return;
+  e.preventDefault(); dz.hidden = true; accept(e.dataTransfer.files[0]);
+});
+addEventListener("paste", (e) => {
+  if (i !== P5) return;
+  const item = [...(e.clipboardData?.items || [])].find((x) => x.type.startsWith("image/"));
+  if (item) accept(item.getAsFile());
+});
+
 addEventListener("keydown", (e) => {
+  if (e.key === " " && e.target.closest("button")) return;   // ボタンのSpaceは本人に渡す
   if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") { e.preventDefault(); next(); }
   else if (e.key === "ArrowLeft" || e.key === "PageUp") { e.preventDefault(); prev(); }
   else if (e.key === "Home") go(0);
