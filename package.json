@@ -1,0 +1,17 @@
+{
+  "name": "michi",
+  "version": "0.1.0",
+  "private": true,
+  "description": "未知イベント提案アプリ — 自分では選ばない体験をAIが提案する",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "mock": "MOCK=1 node server.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.125.0",
+    "express": "^5.2.1",
+    "zod": "^4.6.4"
+  }
+}

@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>michi — 未知イベント提案</title>
+<style>
+  :root {
+    --bg: #f3efe8; --ink: #1d2b22; --sub: #6b7169; --line: #d9d3c8;
+    --card: #fffdf9; --accent: #1f3d2b; --accent-ink: #f3efe8; --tag: #e6e0d4;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+    font-family: "Hiragino Sans", "Noto Sans JP", system-ui, sans-serif; line-height: 1.6; }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 32px 16px 80px; }
+  header h1 { font-size: 28px; margin: 0; letter-spacing: .02em; }
+  header p { margin: 4px 0 24px; color: var(--sub); font-size: 14px; }
+  form { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 20px; display: grid; gap: 14px; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 520px) { .row { grid-template-columns: 1fr; } }
+  label { display: grid; gap: 4px; font-size: 13px; color: var(--sub); }
+  input, select, textarea { font: inherit; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: #fff; color: var(--ink); width: 100%; }
+  textarea { min-height: 72px; resize: vertical; }
+  button.primary { font: inherit; font-weight: 600; padding: 14px; border: 0; border-radius: 10px;
+    background: var(--accent); color: var(--accent-ink); cursor: pointer; }
+  button.primary[disabled] { opacity: .6; cursor: progress; }
+  .status { margin: 16px 0; color: var(--sub); font-size: 14px; min-height: 1.5em; }
+  .oneliner { font-size: 18px; margin: 24px 0 12px; font-weight: 600; }
+  .cards { display: grid; gap: 14px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; }
+  .card .top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+  .card h2 { margin: 0; font-size: 20px; }
+  .tag { font-size: 12px; background: var(--tag); border-radius: 999px; padding: 2px 10px; color: var(--sub); }
+  .meta { color: var(--sub); font-size: 13px; margin-top: 2px; }
+  .card dl { margin: 12px 0 0; display: grid; grid-template-columns: max-content 1fr; gap: 6px 14px; font-size: 15px; }
+  .card dt { color: var(--sub); font-size: 12px; padding-top: 3px; white-space: nowrap; }
+  .card dd { margin: 0; }
+  .why { background: #f7f3ec; border-left: 3px solid var(--accent); padding: 8px 12px; margin-top: 12px; font-size: 14px; }
+  .actions { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+  .actions button { font: inherit; font-size: 14px; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--line); background: #fff; cursor: pointer; }
+  .actions button.go { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .picked { outline: 2px solid var(--accent); }
+  footer { margin-top: 40px; font-size: 12px; color: var(--sub); }
+  .err { color: #a23b2a; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>michi</h1>
+    <p>自分では選ばない体験を、今日この後の予定として提案します。</p>
+  </header>
+
+  <form id="f">
+    <div class="row">
+      <label>いまいるエリア
+        <input name="area" placeholder="例: 渋谷、名古屋駅、自宅（世田谷）" required>
+      </label>
+      <label>使える時間
+        <select name="minutes">
+          <option value="30">30分</option>
+          <option value="60" selected>1時間</option>
+          <option value="120">2時間</option>
+          <option value="180">3時間</option>
+          <option value="300">半日</option>
+        </select>
+      </label>
+    </div>
+    <div class="row">
+      <label>気分
+        <select name="mood">
+          <option value="">特になし</option>
+          <option>疲れている</option>
+          <option>暇でだるい</option>
+          <option>何か刺激がほしい</option>
+          <option>人と話したい</option>
+          <option>一人になりたい</option>
+          <option>考え事をやめたい</option>
+        </select>
+      </label>
+      <label>予算感
+        <select name="budget">
+          <option value="">こだわりなし</option>
+          <option>0円</option>
+          <option>〜1,000円</option>
+          <option>〜3,000円</option>
+          <option>〜10,000円</option>
+        </select>
+      </label>
+    </div>
+    <label>最近やったこと・いつもの過ごし方（ここが「自分では選ばない」の根拠になります）
+      <textarea name="recent" placeholder="例: 休日はだいたい家で動画。外に出るときは決まったカフェ。人と会うのは月1回くらい。"></textarea>
+    </label>
+    <label>一緒に動ける人（任意）
+      <input name="companion" placeholder="例: 同期のA、最近会ってない大学の友人、一人">
+    </label>
+    <button class="primary" id="go">今日の未知を提案する</button>
+  </form>
+
+  <div class="status" id="status"></div>
+  <div id="out"></div>
+
+  <footer>michi — AIが「気づいていない選択肢」を出し、人と会う一歩まで用意する。</footer>
+</div>
+
+<script>
+const f = document.getElementById('f');
+const out = document.getElementById('out');
+const status = document.getElementById('status');
+const go = document.getElementById('go');
+
+try {
+  const saved = JSON.parse(localStorage.getItem('michi:input') || 'null');
+  if (saved) for (const [k, v] of Object.entries(saved)) if (f.elements[k]) f.elements[k].value = v;
+} catch {}
+
+f.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const input = Object.fromEntries(new FormData(f).entries());
+  try { localStorage.setItem('michi:input', JSON.stringify(input)); } catch {}
+  go.disabled = true;
+  out.innerHTML = '';
+  status.textContent = 'あなたが選ばない選択肢を探しています…';
+  try {
+    const res = await fetch('/api/suggest', {
+      method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(input),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+    status.textContent = data.mode === 'mock' ? '（モック表示：APIキー未設定）' : '';
+    render(data);
+  } catch (err) {
+    status.innerHTML = `<span class="err">${esc(err.message)}</span>`;
+  } finally {
+    go.disabled = false;
+  }
+});
+
+function render(data) {
+  const one = document.createElement('div');
+  one.className = 'oneliner';
+  one.textContent = data.one_liner;
+  out.appendChild(one);
+
+  const cards = document.createElement('div');
+  cards.className = 'cards';
+  data.proposals.forEach((p, i) => {
+    const el = document.createElement('article');
+    el.className = 'card';
+    el.innerHTML = `
+      <div class="top"><h2>${esc(p.title)}</h2><span class="tag">${esc(p.category)}</span></div>
+      <div class="meta">${p.duration_min}分 ・ ${esc(p.cost_hint)} ・ ${esc(p.where_hint)}</div>
+      <div class="why"><strong>なぜ自分では選ばないか:</strong> ${esc(p.why_you_wouldnt_pick)}</div>
+      <dl>
+        <dt>やること</dt><dd>${esc(p.what)}</dd>
+        <dt>誰を誘う</dt><dd>${esc(p.invite_who)}</dd>
+        <dt>最初の一歩</dt><dd>${esc(p.first_step)}</dd>
+        <dt>動く感情</dt><dd>${esc(p.emotion)}</dd>
+      </dl>
+      <div class="actions">
+        <button class="go" data-i="${i}">これにする</button>
+        <button class="copy" data-msg="${esc(p.invite_message)}">誘い文をコピー</button>
+      </div>`;
+    cards.appendChild(el);
+  });
+  out.appendChild(cards);
+
+  cards.addEventListener('click', async (e) => {
+    const b = e.target.closest('button');
+    if (!b) return;
+    if (b.classList.contains('go')) {
+      cards.querySelectorAll('.card').forEach(c => c.classList.remove('picked'));
+      b.closest('.card').classList.add('picked');
+      status.textContent = '決めた。あとは「最初の一歩」をやるだけ。';
+    }
+    if (b.classList.contains('copy')) {
+      try { await navigator.clipboard.writeText(b.dataset.msg); b.textContent = 'コピーした'; }
+      catch { prompt('コピーしてください', b.dataset.msg); }
+    }
+  });
+}
+
+function esc(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+</script>
+</body>
+</html>
