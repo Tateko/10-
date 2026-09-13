@@ -29,6 +29,7 @@ if (!MOCK) client = new Anthropic();
 const Proposal = z.object({
   title: z.string().describe("提案の見出し。15文字前後"),
   category: z.enum(["食", "移動・散歩", "人と会う", "文化・鑑賞", "身体を動かす", "学び", "その他"]),
+  distance: z.number().int().min(1).max(5).describe("未知度。この人の普段の行動からどれだけ離れているか。1=少し外側 / 3=はっきり外側 / 5=完全に圏外。3案は異なる値にする"),
   why_you_wouldnt_pick: z.string().describe("なぜこの人は自分ではこれを選ばないのか。入力から根拠を示す"),
   what: z.string().describe("具体的に何をするか。時間・場所感を含めて2〜3文"),
   where_hint: z.string().describe("場所のヒント。固有名詞は断定せず『〜のような場所』でよい"),
@@ -55,6 +56,7 @@ const SYSTEM = `あなたは「未知イベント提案」の秘書です。
 - 使える時間・予算・エリアの制約は守る。時間内に終わる。
 - 断定できない固有名詞（店名など）は出さない。存在しない店や施設をでっち上げない。
 - 説教しない。短く、具体的に、動きたくなる文で。
+- 3案の distance（未知度）はばらけさせる。1つは踏み出しやすい案、1つは明確に圏外の案にする。
 - 日本語で書く。`;
 
 function buildPrompt(input) {
@@ -79,6 +81,7 @@ function mockProposals(input) {
       {
         title: "知らない駅で降りて昼を決める",
         category: "移動・散歩",
+        distance: 2,
         why_you_wouldnt_pick: `「${input.recent || "いつも同じ店"}」と書いているので、店を事前に決めて動くタイプ。決めずに降りることは選ばない。`,
         what: `${input.area || "今いる場所"}から2駅先、降りたことのない駅で降りる。改札から見えた範囲で、一番人が入っていない店に入る。`,
         where_hint: "乗り換えなしで行ける、降りたことのない駅",
@@ -92,6 +95,7 @@ function mockProposals(input) {
       {
         title: "会話禁止で30分、同じものを見る",
         category: "文化・鑑賞",
+        distance: 4,
         why_you_wouldnt_pick: "効率を気にする記述が多い。目的なく何かを『ただ見る』時間を自分では作らない。",
         what: "近くの公園か川沿いのベンチに二人で座り、30分間しゃべらずに同じ方向を見る。終わったら見えたものを一つずつ言う。",
         where_hint: "歩いて10分以内の、座れる屋外",
@@ -105,6 +109,7 @@ function mockProposals(input) {
       {
         title: "初対面の人に一つ質問して帰る",
         category: "人と会う",
+        distance: 5,
         why_you_wouldnt_pick: "同行者の記述が身近な人に限られている。知らない人に自分から話しかける場面を選ばない。",
         what: "商店街や個人商店で、店の人に『この街で一番好きな場所はどこですか』と一つだけ聞く。答えの場所に実際に行く。",
         where_hint: "チェーンではない個人店が並ぶ通り",

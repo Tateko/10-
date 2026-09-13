@@ -3,406 +3,849 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>michi</title>
+<title>michi — 今日、自分では選ばない一手を。</title>
+<meta name="description" content="あなたが自分では選ばない体験を、選ばない理由・誘う相手・最初の一歩まで揃えて、今日この後の予定として差し出す。">
+<meta name="theme-color" content="#F2EFE8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="michi">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #ece7de; --phone: #f7f4ee; --ink: #1d2b22; --sub: #6b7169; --line: #d9d3c8;
-    --card: #fffdf9; --accent: #1f3d2b; --accent-ink: #f3efe8; --tag: #e6e0d4; --warn: #a23b2a;
-  }
-  * { box-sizing: border-box; }
-  [hidden] { display: none !important; }
-  html, body { height: 100%; }
-  body { margin: 0; background: var(--bg); color: var(--ink);
-    font-family: "Hiragino Sans", "Noto Sans JP", system-ui, sans-serif; line-height: 1.55; }
-  /* スマホ枠。PCでも中央に端末サイズで表示する */
-  .phone { max-width: 430px; min-height: 100dvh; margin: 0 auto; background: var(--phone);
-    display: flex; flex-direction: column; position: relative; }
-  @media (min-width: 480px) { .phone { min-height: 860px; height: 100dvh; box-shadow: 0 0 0 1px var(--line); } }
-  main { flex: 1; overflow-y: auto; padding: 24px 20px 96px; }
-  .date { color: var(--sub); font-size: 14px; letter-spacing: .06em; font-variant-numeric: tabular-nums; }
-  h1.hello { font-size: 40px; margin: 6px 0 18px; letter-spacing: .01em; font-weight: 700; }
-  h1.hello small { display: block; font-size: 14px; color: var(--sub); font-weight: 400; margin-top: 2px; }
-  h2.title { font-size: 20px; margin: 0 0 14px; }
+/* ============================================================
+   michi — design tokens
+   墨(sumi) / 生成(kinari) / 朱(shu)
+   黒 = 進む。朱 = 確定・不可逆。この2色しか強調に使わない。
+   ============================================================ */
+:root{
+  --paper:#F2EFE8; --paper-hi:#FBFAF6; --surface:#FFFFFF;
+  --sumi:#14150F; --sumi-soft:#3D3E35; --muted:#6F6C61; --faint:#9C988C;
+  --line:#DCD7CA; --line-soft:#EAE6DB;
+  --shu:#D93A14; --shu-deep:#A82C0C; --shu-wash:#FAEBE5;
+  --night:#101109; --night-2:#1B1C13;
+  --mincho:"Shippori Mincho B1","Hiragino Mincho ProN","Yu Mincho","Noto Serif JP",serif;
+  --sans:"Zen Kaku Gothic New","Hiragino Sans","Noto Sans JP",system-ui,sans-serif;
+  --ease:cubic-bezier(.16,1,.3,1);
+  --spring:cubic-bezier(.34,1.42,.64,1);
+  --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
+}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{margin:0;background:var(--night);color:var(--sumi);
+  font-family:var(--sans);font-size:15px;line-height:1.78;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  font-feature-settings:"palt" 1;overscroll-behavior:none}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;-webkit-tap-highlight-color:transparent}
+h1,h2,h3,p,dl,dd,figure{margin:0}
+img{max-width:100%;display:block}
+::selection{background:var(--shu);color:#fff}
 
-  /* 大きな1枚カード（スケッチの吹き出し枠） */
-  .big { background: var(--card); border: 1.5px solid var(--ink); border-radius: 22px 22px 22px 6px;
-    padding: 20px 20px 18px; min-height: 380px; display: flex; flex-direction: column; gap: 10px; }
-  .big .kicker { font-size: 12px; color: var(--sub); letter-spacing: .08em; }
-  .big h3 { margin: 0; font-size: 24px; line-height: 1.3; }
-  .big .meta { color: var(--sub); font-size: 13px; }
-  .why { background: #f5f0e7; border-left: 3px solid var(--accent); padding: 8px 12px; font-size: 14px; border-radius: 0 8px 8px 0; }
-  .kv { display: grid; grid-template-columns: max-content 1fr; gap: 6px 12px; font-size: 15px; margin: 4px 0 0; }
-  .kv dt { color: var(--sub); font-size: 12px; padding-top: 3px; white-space: nowrap; }
-  .kv dd { margin: 0; }
-  .dots { display: flex; gap: 6px; justify-content: center; margin-top: auto; padding-top: 8px; }
-  .dots i { width: 7px; height: 7px; border-radius: 50%; background: var(--line); }
-  .dots i.on { background: var(--ink); }
-  .actions { display: flex; gap: 8px; flex-wrap: wrap; }
-  button { font: inherit; cursor: pointer; }
-  .btn { padding: 10px 14px; border-radius: 10px; border: 1px solid var(--line); background: #fff; color: var(--ink); font-size: 14px; }
-  .btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); font-weight: 600; }
-  .btn.block { width: 100%; padding: 14px; font-size: 16px; }
-  .btn[disabled] { opacity: .55; cursor: progress; }
-  .status { min-height: 1.4em; font-size: 13px; color: var(--sub); margin: 10px 2px 0; }
-  .status.err { color: var(--warn); }
+/* ---------- desktop stage（PCで見せるときの舞台） ---------- */
+.stage{min-height:100dvh;display:grid;place-items:center;position:relative;isolation:isolate}
+.stage::before{content:"";position:absolute;inset:0;background:
+  radial-gradient(120% 90% at 78% 8%, #22241a 0%, transparent 60%),
+  radial-gradient(90% 70% at 10% 100%, #1a1b12 0%, transparent 55%), var(--night);z-index:-2}
+.stage::after{content:"";position:absolute;inset:0;background-image:var(--grain);opacity:.09;pointer-events:none;z-index:-1}
+.pitch{display:none}
 
-  /* フォーム */
-  form { display: grid; gap: 12px; }
-  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  label { display: grid; gap: 4px; font-size: 12px; color: var(--sub); }
-  input, select, textarea { font: inherit; font-size: 15px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: #fff; color: var(--ink); width: 100%; }
-  textarea { min-height: 84px; resize: vertical; }
+@media (min-width:1060px){
+  .stage{grid-template-columns:minmax(340px,460px) auto;gap:80px;justify-content:center;align-content:center;padding:56px 64px}
+  .pitch{display:block;color:var(--paper);max-width:460px}
+}
 
-  /* オススメ一覧 */
-  .cards { display: grid; gap: 12px; }
-  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px; display: grid; gap: 8px; }
-  .card .top { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
-  .card h3 { margin: 0; font-size: 18px; }
-  .tag { font-size: 11px; background: var(--tag); border-radius: 999px; padding: 2px 9px; color: var(--sub); white-space: nowrap; }
-  .card.picked { border-color: var(--ink); border-width: 1.5px; }
-  .empty { color: var(--sub); font-size: 14px; text-align: center; padding: 40px 12px; }
+.pitch .wm{display:flex;align-items:center;gap:12px;margin-bottom:34px}
+.pitch .wm svg{width:34px;height:34px;color:var(--shu)}
+.pitch .wm b{font:500 26px/1 var(--mincho);letter-spacing:.22em;color:var(--paper)}
+.pitch .wm em{font:400 11px/1 var(--sans);letter-spacing:.4em;color:var(--faint);font-style:normal;padding-top:3px}
+.pitch h1{font:500 46px/1.34 var(--mincho);letter-spacing:.02em;margin-bottom:22px}
+.pitch h1 i{font-style:normal;color:var(--shu);position:relative}
+.pitch h1 i::after{content:"";position:absolute;left:0;right:0;bottom:-2px;height:1px;background:var(--shu);opacity:.5}
+.pitch p{color:#A9A79A;font-size:14.5px;line-height:1.95;margin-bottom:30px;max-width:38em}
+.pitch ol{list-style:none;padding:0;margin:0 0 32px;display:grid;gap:0}
+.pitch ol li{display:grid;grid-template-columns:34px 1fr;gap:14px;padding:16px 0;border-top:1px solid rgba(242,239,232,.13);align-items:start}
+.pitch ol li:last-child{border-bottom:1px solid rgba(242,239,232,.13)}
+.pitch ol b{font:700 10px/1.8 var(--sans);letter-spacing:.16em;color:var(--shu)}
+.pitch ol span{font-size:13.5px;line-height:1.8;color:#C5C2B4}
+.pitch ol span em{font-style:normal;color:var(--paper);font-weight:500}
+.pitch .foot{font:400 11px/1.8 var(--sans);letter-spacing:.1em;color:#6E6B60}
 
-  /* 友達 */
-  .friends { display: grid; gap: 8px; }
-  .friend { display: flex; align-items: center; gap: 12px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
-  .friend .avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--tag); display: grid; place-items: center; font-weight: 700; color: var(--accent); flex: none; }
-  .friend .name { font-weight: 600; }
-  .friend .last { font-size: 12px; color: var(--sub); }
-  .friend .grow { flex: 1; min-width: 0; }
-  .friend.today { border-color: var(--ink); border-width: 1.5px; }
-  .friend .del { border: 0; background: none; color: var(--sub); font-size: 18px; padding: 4px; }
-  .count { display: flex; align-items: baseline; gap: 8px; margin-bottom: 12px; }
-  .count b { font-size: 36px; }
-  .count span { color: var(--sub); font-size: 13px; }
-  .addrow { display: flex; gap: 8px; margin-top: 12px; }
-  .addrow input { flex: 1; }
+/* ---------- device ---------- */
+.device{width:min(430px,100vw);height:100dvh;position:relative;overflow:hidden;background:var(--paper);flex:none}
+@media (min-width:1060px){
+  .device{width:430px;height:min(892px,calc(100dvh - 112px));border-radius:46px;
+    box-shadow:0 50px 90px -28px rgba(0,0,0,.75), 0 0 0 1px rgba(242,239,232,.14), 0 0 0 11px #0b0c06, 0 0 0 12px rgba(242,239,232,.1)}
+}
+.app{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--paper);overflow:hidden}
+.app::after{content:"";position:absolute;inset:0;background-image:var(--grain);opacity:.055;mix-blend-mode:multiply;pointer-events:none;z-index:5}
 
-  /* 下部タブ（スケッチの4アイコン） */
-  nav.tabs { position: absolute; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
-    padding: 10px 16px calc(12px + env(safe-area-inset-bottom)); background: var(--phone); border-top: 1px solid var(--line); }
-  nav.tabs button { border: 1.5px solid var(--ink); background: var(--card); border-radius: 14px; height: 56px; display: grid; place-items: center; gap: 0; color: var(--ink); position: relative; }
-  nav.tabs button svg { width: 26px; height: 26px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-  nav.tabs button.on { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
-  nav.tabs button .lbl { position: absolute; bottom: -18px; font-size: 10px; color: var(--sub); letter-spacing: .04em; }
-  nav.tabs button .badge { position: absolute; top: 6px; right: 8px; width: 8px; height: 8px; border-radius: 50%; background: var(--warn); }
-  section[hidden] { display: none; }
+/* ---------- topbar ---------- */
+.topbar{flex:none;height:54px;display:flex;align-items:center;gap:10px;padding:0 20px;
+  border-bottom:1px solid var(--line-soft);background:var(--paper);position:relative;z-index:4}
+.topbar .mark{width:20px;height:20px;color:var(--shu);flex:none}
+.topbar .mark svg{width:100%;height:100%}
+.topbar .nm{font:500 14px/1 var(--mincho);letter-spacing:.26em;color:var(--sumi)}
+.topbar .sp{flex:1}
+.topbar .dateline{font:500 11px/1 var(--sans);letter-spacing:.14em;color:var(--muted);font-variant-numeric:tabular-nums}
+.topbar .modepill{font:700 9px/1 var(--sans);letter-spacing:.16em;padding:4px 7px;border-radius:4px;
+  border:1px solid var(--line);color:var(--faint);background:var(--paper-hi)}
+.topbar .modepill.live{color:var(--shu-deep);border-color:#E8C9BE;background:var(--shu-wash)}
 
-  /* ロック画面: 完了までアプリ全体を占有する */
-  .lock { position: absolute; inset: 0; background: var(--accent); color: var(--accent-ink); display: flex; flex-direction: column;
-    padding: 28px 24px calc(20px + env(safe-area-inset-bottom)); z-index: 10; }
-  .lock[hidden] { display: none; }
-  .lock .top { font-size: 12px; letter-spacing: .1em; opacity: .75; }
-  .lock .timer { font-family: "Hiragino Mincho ProN", "Noto Serif JP", Georgia, serif; font-size: 84px; line-height: 1; margin: auto 0 4px; font-variant-numeric: tabular-nums; letter-spacing: .02em; }
-  .lock .timer.over { font-size: 40px; line-height: 1.25; }
-  .lock .cap { font-size: 13px; opacity: .75; margin-bottom: 28px; }
-  .lock h3 { margin: 0 0 6px; font-size: 22px; line-height: 1.3; }
-  .lock .step { font-size: 14px; opacity: .9; margin-bottom: 26px; }
-  .lock .btn { background: var(--accent-ink); color: var(--accent); border-color: var(--accent-ink); font-weight: 600; }
-  .lock .btn.ghost { background: transparent; color: var(--accent-ink); border-color: rgba(243,239,232,.4); font-weight: 400; }
-  .lock .quit { margin-top: 18px; text-align: center; font-size: 12px; opacity: .45; user-select: none; -webkit-user-select: none; }
-  .lock .quit.arming { opacity: .9; }
-  .report { background: var(--card); color: var(--ink); border-radius: 16px; padding: 16px; display: grid; gap: 10px; margin-bottom: 12px; }
-  .report input[type=file] { font-size: 13px; padding: 8px; }
-  .report img { max-width: 100%; border-radius: 10px; max-height: 180px; object-fit: cover; }
+/* ---------- scroll area ---------- */
+main{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding:0 20px 140px;position:relative;z-index:1}
+section{padding-top:22px}
+/* タブ切替のたびに再生される段差フェード */
+@media (prefers-reduced-motion:no-preference){
+  section:not([hidden])>*{animation:rise .58s var(--ease) both}
+  section>*:nth-child(1){animation-delay:.02s} section>*:nth-child(2){animation-delay:.07s}
+  section>*:nth-child(3){animation-delay:.12s} section>*:nth-child(4){animation-delay:.17s}
+  section>*:nth-child(5){animation-delay:.22s} section>*:nth-child(6){animation-delay:.27s}
+  section>*:nth-child(n+7){animation-delay:.32s}
+}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
 
-  /* 完了画面 */
-  .done h1 { font-family: "Hiragino Mincho ProN", "Noto Serif JP", Georgia, serif; font-size: 40px; margin: 8px 0 0; }
-  .done .sub { color: var(--sub); margin: 0 0 18px; }
-  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 14px 0; }
-  .stat { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 10px; text-align: center; }
-  .stat b { display: block; font-size: 24px; }
-  .stat span { font-size: 11px; color: var(--sub); }
-  .note { font-size: 12px; color: var(--sub); margin-top: 8px; }
+/* ---------- typography ---------- */
+.eyebrow{font:700 10px/1 var(--sans);letter-spacing:.2em;color:var(--shu-deep);display:block;margin-bottom:12px}
+.hello{font:500 34px/1.36 var(--mincho);letter-spacing:.015em;margin-bottom:8px}
+.hello .nmark{color:var(--shu)}
+.lede{color:var(--muted);font-size:13.5px;line-height:1.8;margin-bottom:20px}
+.h-page{font:500 30px/1.3 var(--mincho);letter-spacing:.03em;margin-bottom:6px}
+.h-sub{color:var(--muted);font-size:13px;margin-bottom:24px}
+.rule{height:1px;background:var(--line-soft);margin:22px 0}
+.tnum{font-variant-numeric:tabular-nums}
+
+/* ---------- controls ---------- */
+.field{width:100%;border:0;border-bottom:1.5px solid var(--line);background:transparent;border-radius:0;
+  padding:9px 2px;font:500 17px/1.5 var(--sans);color:var(--sumi);transition:border-color .25s var(--ease)}
+.field::placeholder{color:var(--faint);font-weight:400}
+.field:focus{outline:none;border-bottom-color:var(--shu)}
+textarea.field{border:1.5px solid var(--line);border-radius:12px;padding:13px 14px;min-height:104px;
+  resize:vertical;font-size:15px;line-height:1.8;background:var(--surface)}
+textarea.field:focus{border-color:var(--shu)}
+
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{border:1px solid var(--line);background:var(--surface);color:var(--sumi-soft);border-radius:999px;
+  padding:8px 15px;font:500 13.5px/1 var(--sans);transition:transform .18s var(--spring),background .2s,color .2s,border-color .2s}
+.chip[aria-pressed="true"]{background:var(--sumi);border-color:var(--sumi);color:var(--paper-hi)}
+.chip:active{transform:scale(.94)}
+
+.stepl{display:flex;align-items:baseline;gap:10px;margin:0 0 11px}
+.stepl b{font:700 10px/1 var(--sans);letter-spacing:.18em;color:var(--shu-deep);font-variant-numeric:tabular-nums}
+.stepl span{font:500 14px/1 var(--sans);color:var(--sumi)}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);
+  background:var(--surface);color:var(--sumi);border-radius:12px;padding:12px 18px;font:500 14px/1 var(--sans);
+  transition:transform .18s var(--spring),background .2s,border-color .2s,opacity .2s}
+.btn:active{transform:scale(.975)}
+.btn:disabled{opacity:.45;cursor:default;transform:none}
+.btn.dark{background:var(--sumi);border-color:var(--sumi);color:var(--paper-hi)}
+.btn.ghost{background:transparent;border-color:var(--line)}
+.btn.block{width:100%;padding:17px;font-size:15.5px;border-radius:14px;font-weight:700;letter-spacing:.04em}
+.btn.sm{padding:9px 13px;font-size:12.5px;border-radius:9px}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap}
+
+/* 長押しで確定するボタン（不可逆な決断） */
+.commit{position:relative;overflow:hidden;width:100%;border:0;border-radius:15px;background:var(--shu);
+  color:#fff;padding:0;isolation:isolate;box-shadow:0 12px 26px -14px rgba(217,58,20,.9);
+  transition:transform .2s var(--spring)}
+.commit:active{transform:scale(.985)}
+.commit .fill{position:absolute;inset:0;background:var(--shu-deep);transform:scaleX(0);transform-origin:left center;z-index:-1}
+.commit .lbl{display:grid;gap:3px;padding:15px 18px;place-items:center}
+.commit .lbl b{font:700 16px/1 var(--sans);letter-spacing:.06em}
+.commit .lbl em{font:400 10.5px/1 var(--sans);letter-spacing:.16em;font-style:normal;opacity:.82}
+.commit.armed .lbl em{opacity:1}
+
+/* ---------- card ---------- */
+.card{background:var(--surface);border-radius:20px;padding:20px 18px;
+  box-shadow:0 1px 0 rgba(20,21,15,.05),0 18px 40px -30px rgba(20,21,15,.5),0 0 0 1px var(--line-soft)}
+.card.flat{box-shadow:0 0 0 1px var(--line-soft)}
+
+/* 路線図ナビ = 3案 */
+.route{position:relative;display:flex;justify-content:space-between;padding:0 8px;margin:0 0 16px}
+.route::before{content:"";position:absolute;left:16px;right:16px;top:7px;height:1px;background:var(--line)}
+.route .node{position:relative;background:none;border:0;padding:0;display:grid;justify-items:center;gap:9px}
+.route .node i{width:15px;height:15px;border-radius:50%;background:var(--paper);
+  box-shadow:inset 0 0 0 1.5px var(--line);transition:.4s var(--spring)}
+.route .node b{font:500 10px/1 var(--sans);letter-spacing:.16em;color:var(--faint);transition:color .25s}
+.route .node.on i{background:var(--shu);box-shadow:inset 0 0 0 1.5px var(--shu),0 0 0 5px var(--shu-wash);transform:scale(1.12)}
+.route .node.on b{color:var(--shu-deep);font-weight:700}
+
+/* 未知度ゲージ */
+.dev{display:flex;align-items:center;gap:8px}
+.dev .lb{font:700 9.5px/1 var(--sans);letter-spacing:.15em;color:var(--faint)}
+.dev .bars{display:flex;gap:3px}
+.dev .bars i{width:13px;height:3px;border-radius:2px;background:var(--line);transition:background .4s var(--ease)}
+.dev .bars i.on{background:var(--shu)}
+
+.pill{font:500 10.5px/1 var(--sans);letter-spacing:.1em;background:var(--paper);color:var(--muted);
+  border-radius:999px;padding:5px 10px;white-space:nowrap;box-shadow:inset 0 0 0 1px var(--line-soft)}
+
+.p-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:16px}
+.p-title{font:500 25px/1.38 var(--mincho);letter-spacing:.015em;margin-bottom:10px}
+.p-meta{display:flex;flex-wrap:wrap;gap:6px 14px;font:500 12px/1 var(--sans);color:var(--muted);
+  font-variant-numeric:tabular-nums;margin-bottom:16px}
+.p-meta span{display:inline-flex;align-items:center;gap:6px}
+.p-meta span::before{content:"";width:3px;height:3px;border-radius:50%;background:var(--shu);flex:none}
+
+/* 主役: なぜ選ばないか */
+.why{position:relative;padding:2px 0 2px 15px;margin-bottom:16px}
+.why::before{content:"";position:absolute;left:0;top:4px;bottom:4px;width:2px;background:var(--shu);border-radius:2px}
+.why b{display:block;font:700 10px/1 var(--sans);letter-spacing:.16em;color:var(--shu-deep);margin-bottom:8px}
+.why p{font-size:14px;line-height:1.85;color:var(--sumi)}
+
+.kv{display:grid;gap:0}
+.kv>div{display:grid;grid-template-columns:66px 1fr;gap:12px;padding:11px 0;border-top:1px solid var(--line-soft);align-items:start}
+.kv dt{font:500 10.5px/1.9 var(--sans);letter-spacing:.08em;color:var(--faint)}
+.kv dd{font-size:14px;line-height:1.75}
+.kv dd.step1{font-weight:500}
+
+.lockwarn{display:flex;align-items:center;justify-content:center;gap:7px;font:500 11px/1 var(--sans);
+  letter-spacing:.06em;color:var(--faint);margin-top:12px}
+.lockwarn svg{width:12px;height:12px;flex:none}
+
+/* 生成中 */
+.thinking{display:grid;gap:0;padding:6px 0}
+.thinking .tl{display:grid;grid-template-columns:20px 1fr;gap:12px;align-items:center;padding:11px 0;opacity:.28;
+  transition:opacity .5s var(--ease)}
+.thinking .tl.on{opacity:1}
+.thinking .tl i{width:7px;height:7px;border-radius:50%;background:var(--line);margin-left:6px;transition:.45s var(--spring)}
+.thinking .tl.on i{background:var(--shu);box-shadow:0 0 0 4px var(--shu-wash)}
+.thinking .tl.on:last-child i{animation:pulse 1.4s ease-in-out infinite}
+.thinking .tl span{font-size:13.5px;color:var(--sumi-soft)}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 4px var(--shu-wash)}50%{box-shadow:0 0 0 8px rgba(217,58,20,.09)}}
+
+.status{min-height:1.5em;font-size:12.5px;color:var(--muted);margin:12px 2px 0;letter-spacing:.02em}
+.status.err{color:var(--shu-deep);font-weight:500}
+.hint{font-size:11.5px;line-height:1.8;color:var(--faint);letter-spacing:.02em}
+
+/* ---------- おすすめ一覧 ---------- */
+.stack{display:grid;gap:12px}
+.rcard{background:var(--surface);border-radius:18px;padding:19px 18px;position:relative;overflow:hidden;
+  box-shadow:0 0 0 1px var(--line-soft);transition:box-shadow .3s var(--ease),transform .3s var(--ease)}
+.rcard.picked{box-shadow:0 0 0 1.5px var(--shu),0 20px 40px -30px rgba(217,58,20,.8)}
+.rcard .idx{position:absolute;right:16px;bottom:10px;font:700 46px/1 var(--mincho);color:var(--line-soft);
+  font-variant-numeric:tabular-nums;pointer-events:none}
+.rcard h3{font:500 20px/1.45 var(--mincho);margin-bottom:9px;position:relative}
+.rcard .why{margin-bottom:14px}
+.rcard .why p{font-size:13.5px}
+
+.empty{text-align:center;padding:52px 18px;color:var(--muted)}
+.empty svg{width:40px;height:40px;color:var(--line);margin:0 auto 16px}
+.empty b{display:block;font:500 17px/1.5 var(--mincho);color:var(--sumi);margin-bottom:7px}
+.empty p{font-size:12.5px;line-height:1.85}
+
+/* ---------- 友達 ---------- */
+.bignum{display:flex;align-items:baseline;gap:4px;margin-bottom:4px}
+.bignum b{font:700 58px/1 var(--mincho);letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.bignum i{font:500 20px/1 var(--mincho);color:var(--faint);font-style:normal}
+.grid100{display:grid;grid-template-columns:repeat(10,1fr);gap:5px;margin:18px 0 24px;max-width:268px}
+.grid100 i{aspect-ratio:1;border-radius:50%;background:#E5E1D6}
+.grid100 i.reg{background:transparent;box-shadow:inset 0 0 0 1.5px var(--sumi);opacity:.35}
+.grid100 i.met{background:var(--shu);opacity:1;animation:pop .5s var(--spring) both}
+@keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
+
+.frow{display:flex;align-items:center;gap:13px;padding:13px 15px;background:var(--surface);border-radius:14px;
+  box-shadow:0 0 0 1px var(--line-soft);transition:box-shadow .25s var(--ease)}
+.frow.today{box-shadow:0 0 0 1.5px var(--shu)}
+.frow .av{width:36px;height:36px;border-radius:50%;flex:none;display:grid;place-items:center;
+  background:var(--paper);font:500 16px/1 var(--mincho);color:var(--sumi);box-shadow:inset 0 0 0 1px var(--line)}
+.frow.today .av{background:var(--shu);color:#fff;box-shadow:none}
+.frow .g{flex:1;min-width:0}
+.frow .nm{font-weight:500;font-size:14.5px;display:flex;align-items:center;gap:7px;line-height:1.5}
+.frow .nm .tg{font:700 9px/1 var(--sans);letter-spacing:.12em;color:var(--shu-deep);background:var(--shu-wash);
+  padding:4px 6px;border-radius:4px}
+.frow .lm{font-size:11px;color:var(--faint);letter-spacing:.03em;font-variant-numeric:tabular-nums}
+.frow .x{border:0;background:none;color:var(--faint);width:28px;height:28px;border-radius:50%;flex:none;
+  display:grid;place-items:center;font-size:17px;line-height:1}
+.addrow{display:flex;gap:8px;align-items:flex-end;margin-top:16px}
+.addrow .field{flex:1}
+
+/* ---------- 設定 ---------- */
+.fset{display:grid;gap:22px}
+.fset label{display:grid;gap:9px}
+.fset .lb{font:500 11px/1.6 var(--sans);letter-spacing:.12em;color:var(--faint)}
+.fset .lb em{font-style:normal;color:var(--muted);letter-spacing:0;display:block;font-size:11px;margin-top:2px}
+
+/* ---------- ロック ---------- */
+.lock{position:absolute;inset:0;z-index:20;background:var(--night);color:var(--paper);
+  display:flex;flex-direction:column;padding:calc(26px + env(safe-area-inset-top)) 24px calc(22px + env(safe-area-inset-bottom))}
+.lock::after{content:"";position:absolute;inset:0;background-image:var(--grain);opacity:.085;pointer-events:none}
+@media (prefers-reduced-motion:no-preference){ .lock{animation:seal .7s var(--ease) both} }
+@keyframes seal{from{clip-path:inset(100% 0 0 0)}to{clip-path:inset(0 0 0 0)}}
+.lock>*{position:relative;z-index:1}
+.lock .lhead{display:flex;align-items:center;justify-content:space-between;
+  font:500 10px/1 var(--sans);letter-spacing:.22em;color:#7C7A6E}
+.lock .lhead b{color:var(--shu);font-weight:700}
+.lock .track{height:2px;background:rgba(242,239,232,.13);border-radius:2px;margin:20px 0 clamp(44px,13vh,110px);overflow:hidden}
+.lock .track i{display:block;height:100%;background:var(--shu);border-radius:2px;
+  transform-origin:left center;transition:transform 1s linear}
+.lock .timer{font:500 92px/.94 var(--mincho);letter-spacing:.01em;font-variant-numeric:tabular-nums;
+  margin:0 0 6px;color:var(--paper)}
+.lock .timer.over{font-size:38px;line-height:1.3;letter-spacing:.02em}
+.lock .cap{font:400 12px/1.7 var(--sans);letter-spacing:.08em;color:#87857A;margin-bottom:auto;padding-bottom:28px}
+.lock .ltitle{font:500 24px/1.5 var(--mincho);margin-bottom:14px}
+.lock .lstep{display:grid;grid-template-columns:auto 1fr;gap:11px;align-items:start;
+  padding:14px 15px;border-radius:13px;background:rgba(242,239,232,.055);margin-bottom:22px;
+  box-shadow:inset 0 0 0 1px rgba(242,239,232,.09)}
+.lock .lstep b{font:700 9.5px/1.9 var(--sans);letter-spacing:.14em;color:var(--shu);white-space:nowrap}
+.lock .lstep span{font-size:13.5px;line-height:1.8;color:#DBD8CB}
+.lock .btn{background:var(--paper);border-color:var(--paper);color:var(--sumi)}
+.lock .btn.ghost{background:transparent;border-color:rgba(242,239,232,.22);color:var(--paper)}
+.lock .stackb{display:grid;gap:9px}
+.lock .quit{position:relative;margin-top:18px;height:34px;display:grid;place-items:center;overflow:hidden;
+  border-radius:8px;font:400 11px/1 var(--sans);letter-spacing:.12em;color:#57564C;
+  user-select:none;-webkit-user-select:none;touch-action:none}
+.lock .quit .qf{position:absolute;left:0;top:0;bottom:0;width:100%;background:rgba(242,239,232,.09);
+  transform:scaleX(0);transform-origin:left center}
+.lock .quit span{position:relative;z-index:1;transition:color .3s}
+.lock .quit.arming span{color:var(--paper)}
+.report{background:var(--paper);color:var(--sumi);border-radius:17px;padding:17px;display:grid;gap:13px;margin-bottom:12px}
+.report .rt{font:700 10px/1 var(--sans);letter-spacing:.16em;color:var(--shu-deep)}
+.shoot{display:grid;place-items:center;gap:8px;padding:22px;border-radius:13px;cursor:pointer;
+  border:1.5px dashed var(--line);color:var(--muted);font:500 12.5px/1 var(--sans);transition:.25s var(--ease)}
+.shoot:hover{border-color:var(--shu);color:var(--shu-deep)}
+.shoot svg{width:22px;height:22px}
+.report img{border-radius:11px;max-height:190px;width:100%;object-fit:cover}
+
+/* ---------- 完了 ---------- */
+.done{text-align:center}
+.sealwrap{display:grid;place-items:center;padding:14px 0 22px}
+.seal{width:104px;height:104px;color:var(--shu);opacity:.92}
+@media (prefers-reduced-motion:no-preference){ .seal{animation:stamp .62s var(--spring) both .1s} }
+@keyframes stamp{0%{transform:scale(1.9) rotate(6deg);opacity:0}60%{opacity:.92}100%{transform:scale(1) rotate(-7deg);opacity:.92}}
+.seal text{font-family:var(--mincho);font-weight:700}
+.done h1{font:500 42px/1.25 var(--mincho);margin-bottom:8px}
+.done .sub{color:var(--muted);font-size:13.5px;margin-bottom:26px}
+.done .card{text-align:left}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);margin:22px 0}
+.stat{text-align:center;padding:4px 0;position:relative}
+.stat+.stat::before{content:"";position:absolute;left:0;top:6px;bottom:6px;width:1px;background:var(--line-soft)}
+.stat b{display:block;font:700 32px/1.1 var(--mincho);font-variant-numeric:tabular-nums}
+.stat span{font:500 10px/1.6 var(--sans);letter-spacing:.11em;color:var(--faint)}
+
+/* ---------- タブバー ---------- */
+.tabbar{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom));
+  z-index:6;display:flex;gap:2px;padding:6px;border-radius:999px;background:rgba(255,255,255,.9);
+  backdrop-filter:blur(16px) saturate(1.5);-webkit-backdrop-filter:blur(16px) saturate(1.5);
+  box-shadow:0 0 0 1px var(--line),0 16px 34px -16px rgba(20,21,15,.5)}
+.tabbar button{display:flex;align-items:center;height:44px;padding:0 14px;border:0;border-radius:999px;
+  background:transparent;color:var(--muted);position:relative;
+  transition:background .32s var(--ease),color .28s var(--ease),padding .32s var(--ease)}
+.tabbar button svg{width:20px;height:20px;flex:none;stroke:currentColor;fill:none;stroke-width:1.6;
+  stroke-linecap:round;stroke-linejoin:round}
+.tabbar button .lbl{max-width:0;opacity:0;overflow:hidden;white-space:nowrap;
+  font:700 12px/1 var(--sans);letter-spacing:.04em;transition:max-width .34s var(--ease),opacity .24s,margin .34s var(--ease)}
+.tabbar button.on{background:var(--sumi);color:var(--paper-hi)}
+.tabbar button.on .lbl{max-width:88px;opacity:1;margin-left:7px}
+.tabbar button:active{transform:scale(.94)}
+.tabbar .dot{position:absolute;top:8px;right:11px;width:6px;height:6px;border-radius:50%;background:var(--shu);
+  box-shadow:0 0 0 2px rgba(255,255,255,.9);animation:fade .4s var(--ease) both}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
 </style>
 </head>
 <body>
-<div class="phone">
-<main>
+<div class="stage">
 
-  <!-- ホーム -->
-  <section id="tab-home">
-    <div class="date" id="today"></div>
-    <h1 class="hello">Hello!<small id="helloSub">今日、自分では選ばない一手を。</small></h1>
+  <!-- 左: PCで見せるときのピッチ面（スマホ幅では非表示） -->
+  <aside class="pitch">
+    <div class="wm">
+      <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M4 34C13 34 14 25 18 17S27 7 32.5 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><circle cx="32.5" cy="7" r="3.4" fill="none" stroke="currentColor" stroke-width="2.6"/></svg>
+      <b>michi</b><em>未知</em>
+    </div>
+    <h1>あなたが<br><i>選ばない一日</i>を、<br>今日にする。</h1>
+    <p>レコメンドは「好きそうなもの」を出して世界を狭める。michi は逆を行く。傾向の外側にあり、それでも今日この時間で実行できる行動だけを、根拠と誘い文と最初の一歩まで揃えて差し出す。</p>
+    <ol>
+      <li><b>01</b><span><em>傾向を推定する。</em>あなたの言葉から「この人が選ばないもの」を言語化する。</span></li>
+      <li><b>02</b><span><em>外側を生成する。</em>今日・この時間・この予算で実行できる行動を3つ作る。</span></li>
+      <li><b>03</b><span><em>逃げ道を消す。</em>決めた瞬間から完了報告まで、アプリはロック画面しか見せない。</span></li>
+    </ol>
+    <div class="foot">AGI LAB HACKATHON 2026 ・ TEAM michi</div>
+  </aside>
 
-    <div class="big" id="big">
-      <!-- 提案が無いとき: 最小の入力 -->
-      <div id="quick">
-        <div class="kicker">今日の未知</div>
-        <form id="quickForm">
-          <label>いまいるエリア<input name="area" placeholder="例: 渋谷、名古屋駅、自宅" required></label>
-          <div class="row">
-            <label>使える時間
-              <select name="minutes">
-                <option value="30">30分</option><option value="60" selected>1時間</option>
-                <option value="120">2時間</option><option value="180">3時間</option><option value="300">半日</option>
-              </select></label>
-            <label>気分
-              <select name="mood">
-                <option value="">特になし</option><option>疲れている</option><option>暇でだるい</option>
-                <option>何か刺激がほしい</option><option>人と話したい</option><option>一人になりたい</option>
-              </select></label>
+  <!-- 右: 端末 -->
+  <div class="device">
+  <div class="app">
+
+    <header class="topbar">
+      <span class="mark"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M4 34C13 34 14 25 18 17S27 7 32.5 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="32.5" cy="7" r="3.6" fill="none" stroke="currentColor" stroke-width="3"/></svg></span>
+      <span class="nm">michi</span>
+      <span class="sp"></span>
+      <span class="dateline" id="today"></span>
+      <span class="modepill" id="modePill">···</span>
+    </header>
+
+    <main>
+
+      <!-- ========== ホーム ========== -->
+      <section id="tab-home">
+        <div>
+          <h1 class="hello" id="hello">Hello.</h1>
+          <p class="lede" id="lede">今日、自分では選ばない一手を。</p>
+        </div>
+
+        <!-- 提案が無いとき -->
+        <div class="card" id="quick">
+          <form id="quickForm">
+            <div class="stepl"><b>01</b><span>いま、どこにいる？</span></div>
+            <input class="field" name="area" id="areaInput" placeholder="渋谷 / 名古屋駅 / 自宅" autocomplete="off" required>
+
+            <div class="stepl" style="margin-top:26px"><b>02</b><span>どれくらい時間がある？</span></div>
+            <div class="chips" id="chipsMinutes" role="group" aria-label="使える時間"></div>
+
+            <div class="rule"></div>
+            <div class="stepl"><b>03</b><span>いまの気分は？</span></div>
+            <div class="chips" id="chipsMood" role="group" aria-label="気分"></div>
+          </form>
+        </div>
+
+        <div id="quickCta">
+          <div style="height:16px"></div>
+          <button class="btn dark block" id="go" type="button">今日の未知を出す</button>
+          <div class="status" id="status"></div>
+        </div>
+
+        <!-- 生成中 -->
+        <div class="card" id="thinkingBox" hidden>
+          <div class="thinking" id="thinking">
+            <div class="tl"><i></i><span>あなたの傾向を読んでいます</span></div>
+            <div class="tl"><i></i><span>いつもの外側を探しています</span></div>
+            <div class="tl"><i></i><span>今日できる形に落としています</span></div>
           </div>
-          <button class="btn primary block" id="go">今日の未知を提案する</button>
-          <div class="note" id="quickNote"></div>
+        </div>
+
+        <!-- 提案があるとき -->
+        <div id="focus" hidden></div>
+      </section>
+
+      <!-- ========== アナタへのオススメ ========== -->
+      <section id="tab-reco" hidden>
+        <div>
+          <span class="eyebrow">TODAY'S THREE</span>
+          <h2 class="h-page">アナタへのオススメ</h2>
+          <p class="h-sub" id="oneliner">まだ今日の未知は出ていません。</p>
+        </div>
+        <div class="stack" id="cards"></div>
+      </section>
+
+      <!-- ========== 友達 ========== -->
+      <section id="tab-friends" hidden>
+        <div>
+          <span class="eyebrow">REAL MEETINGS ONLY</span>
+          <div class="bignum"><b id="friendMet">0</b><i>/ 100</i></div>
+          <p class="h-sub">リアルに会った人だけを数える。登録しただけでは埋まらない。</p>
+        </div>
+        <div class="grid100" id="grid100" aria-hidden="true"></div>
+        <div class="stack" id="friends"></div>
+        <div class="addrow">
+          <input class="field" id="newFriend" placeholder="名前を追加（例: 同期のA）" autocomplete="off">
+          <button class="btn" id="addFriend" type="button">追加</button>
+        </div>
+        <p class="hint" style="margin-top:14px">名前をタップすると「今日誘う人」になり、次の提案に反映される。「会った」で最後に会った日が入る。</p>
+      </section>
+
+      <!-- ========== 設定 ========== -->
+      <section id="tab-settings" hidden>
+        <div>
+          <span class="eyebrow">PROFILE</span>
+          <h2 class="h-page">設定</h2>
+          <p class="h-sub">ここに書いたことが「選ばない理由」の根拠になる。</p>
+        </div>
+        <form class="fset" id="settingsForm">
+          <label>
+            <span class="lb">呼び名</span>
+            <input class="field" name="name" placeholder="たて">
+          </label>
+          <label>
+            <span class="lb">いつもの過ごし方・最近やったこと<em>具体的なほど、提案は外側に飛ぶ</em></span>
+            <textarea class="field" name="recent" placeholder="休日はだいたい家で動画。外に出るときは決まったカフェ。人と会うのは月1回くらい。"></textarea>
+          </label>
+          <label>
+            <span class="lb">予算感</span>
+            <div class="chips" id="chipsBudget" role="group" aria-label="予算感"></div>
+            <input type="hidden" name="budget">
+          </label>
+          <label>
+            <span class="lb">よくいるエリア</span>
+            <input class="field" name="homeArea" placeholder="渋谷">
+          </label>
+          <button class="btn dark block" type="submit">保存する</button>
         </form>
+        <div class="rule"></div>
+        <p class="hint" id="modeNote"></p>
+        <p class="hint">データはこの端末のブラウザにだけ保存される。サーバーには残らない。</p>
+      </section>
+
+      <!-- ========== 完了 ========== -->
+      <section id="tab-done" class="done" hidden></section>
+
+    </main>
+
+    <!-- ========== ロック ========== -->
+    <div class="lock" id="lock" hidden>
+      <div class="lhead"><span>進行中 ・ <span id="lockDate"></span></span><b>LOCKED</b></div>
+      <div class="track"><i id="lockTrack"></i></div>
+      <div class="timer" id="lockTimer">--:--</div>
+      <div class="cap" id="lockCap">残り時間</div>
+      <h3 class="ltitle" id="lockTitle"></h3>
+      <div class="lstep"><b>最初の一歩</b><span id="lockStep"></span></div>
+
+      <div class="report" id="report" hidden>
+        <div class="rt">完了の報告</div>
+        <label class="shoot" id="shootLabel">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5A1.5 1.5 0 0 1 4.5 7H7l1.2-2h7.6L17 7h2.5A1.5 1.5 0 0 1 21 8.5v9A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5z"/><circle cx="12" cy="13" r="3.6"/></svg>
+          <span>写真を撮る（任意）</span>
+          <input type="file" id="reportPhoto" accept="image/*" capture="environment" hidden>
+        </label>
+        <img id="reportPreview" hidden alt="報告写真">
+        <input class="field" id="reportNote" placeholder="一言（任意）">
+        <div class="btn-row">
+          <button class="btn dark" style="flex:1" data-act="finish" type="button">完了にする</button>
+          <button class="btn ghost" data-act="report-cancel" type="button">戻る</button>
+        </div>
       </div>
-      <!-- 提案があるとき: 1案を大きく -->
-      <div id="focus" hidden></div>
-    </div>
-    <div class="status" id="status"></div>
-  </section>
 
-  <!-- アナタへのオススメ -->
-  <section id="tab-reco" hidden>
-    <h2 class="title">アナタへのオススメ</h2>
-    <div id="oneliner" class="note" style="font-size:15px;color:var(--ink);margin:0 0 12px"></div>
-    <div class="cards" id="cards"><div class="empty">まだ提案がありません。ホームで「今日の未知を提案する」を押してください。</div></div>
-  </section>
-
-  <!-- 友達 -->
-  <section id="tab-friends" hidden>
-    <h2 class="title">友達</h2>
-    <div class="count"><b id="friendCount">0</b><span>/ 100人 — リアルに会った人だけ数える</span></div>
-    <div class="friends" id="friends"></div>
-    <div class="addrow">
-      <input id="newFriend" placeholder="名前を追加（例: 同期のA）">
-      <button class="btn" id="addFriend">追加</button>
-    </div>
-    <div class="note">名前をタップすると「今日誘う人」になり、提案に反映されます。「会った」を押すと最後に会った日が更新されます。</div>
-  </section>
-
-  <!-- 設定 -->
-  <section id="tab-settings" hidden>
-    <h2 class="title">設定</h2>
-    <form id="settingsForm">
-      <label>呼び名（Hello! の後に表示）<input name="name" placeholder="例: たて"></label>
-      <label>いつもの過ごし方・最近やったこと（「自分では選ばない」の根拠になります）
-        <textarea name="recent" placeholder="例: 休日はだいたい家で動画。外に出るときは決まったカフェ。人と会うのは月1回くらい。"></textarea></label>
-      <div class="row">
-        <label>予算感
-          <select name="budget">
-            <option value="">こだわりなし</option><option>0円</option><option>〜1,000円</option><option>〜3,000円</option><option>〜10,000円</option>
-          </select></label>
-        <label>よくいるエリア<input name="homeArea" placeholder="例: 渋谷"></label>
+      <div class="stackb" id="lockActions">
+        <button class="btn block" data-act="report" type="button">完了を報告する</button>
+        <button class="btn block ghost" data-act="lock-copy" type="button">誘い文をコピー</button>
       </div>
-      <button class="btn primary" type="submit">保存</button>
-    </form>
-    <div class="note" id="mode"></div>
-    <div class="note">データはこの端末（ブラウザ）にだけ保存されます。</div>
-  </section>
 
-  <!-- 完了 -->
-  <section id="tab-done" class="done" hidden></section>
-
-</main>
-
-<!-- ロック: 「これにする」からイベント完了まで、この画面しか使えない -->
-<div class="lock" id="lock" hidden>
-  <div class="top">進行中 ・ <span id="lockDate"></span></div>
-  <div class="timer" id="lockTimer">--:--</div>
-  <div class="cap" id="lockCap">残り時間</div>
-  <h3 id="lockTitle"></h3>
-  <div class="step" id="lockStep"></div>
-  <div class="report" id="report" hidden>
-    <div style="font-size:13px;color:var(--sub)">完了の報告（写真は任意）</div>
-    <input type="file" id="reportPhoto" accept="image/*" capture="environment">
-    <img id="reportPreview" hidden alt="">
-    <input id="reportNote" placeholder="一言（任意）">
-    <div class="actions">
-      <button class="btn primary" data-act="finish">完了にする</button>
-      <button class="btn" data-act="report-cancel">戻る</button>
+      <div class="quit" id="quit"><span class="qf"></span><span>やめる — 3秒長押し</span></div>
     </div>
-  </div>
-  <div class="actions" id="lockActions">
-    <button class="btn block" data-act="report">完了を報告する</button>
-    <button class="btn block ghost" data-act="lock-copy">誘い文をコピー</button>
-  </div>
-  <div class="quit" id="quit">やめる（3秒長押し）</div>
-</div>
 
-<nav class="tabs" aria-label="タブ">
-  <button data-tab="reco" aria-label="アナタへのオススメ">
-    <svg viewBox="0 0 24 24"><path d="M12 4v10"/><circle cx="12" cy="19" r="1" fill="currentColor"/></svg>
-    <span class="badge" id="recoBadge" hidden></span>
-  </button>
-  <button data-tab="home" class="on" aria-label="ホーム">
-    <svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg>
-  </button>
-  <button data-tab="friends" aria-label="友達">
-    <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-  </button>
-  <button data-tab="settings" aria-label="設定">
-    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/></svg>
-  </button>
-</nav>
+    <!-- ========== タブバー ========== -->
+    <nav class="tabbar" id="tabbar" aria-label="メニュー">
+      <button data-tab="reco" type="button" aria-label="アナタへのオススメ">
+        <svg viewBox="0 0 24 24"><path d="M12 3v5"/><path d="M12 21v-5"/><path d="M3 12h5"/><path d="M21 12h-5"/><path d="m6.3 6.3 3 3"/><path d="m17.7 17.7-3-3"/><path d="m17.7 6.3-3 3"/><path d="m6.3 17.7 3-3"/></svg>
+        <span class="lbl">オススメ</span><span class="dot" id="recoBadge" hidden></span>
+      </button>
+      <button data-tab="home" class="on" type="button" aria-label="ホーム">
+        <svg viewBox="0 0 40 40" style="stroke-width:2.4"><path d="M4 34C13 34 14 25 18 17S27 7 32.5 7"/><circle cx="32.5" cy="7" r="3.4"/></svg>
+        <span class="lbl">ホーム</span>
+      </button>
+      <button data-tab="friends" type="button" aria-label="友達">
+        <svg viewBox="0 0 24 24"><circle cx="9.2" cy="12" r="5.6"/><circle cx="15.8" cy="12" r="5.6"/></svg>
+        <span class="lbl">友達</span>
+      </button>
+      <button data-tab="settings" type="button" aria-label="設定">
+        <svg viewBox="0 0 24 24"><path d="M4 8h16"/><path d="M4 16h16"/><circle cx="9.5" cy="8" r="2.4"/><circle cx="15" cy="16" r="2.4"/></svg>
+        <span class="lbl">設定</span>
+      </button>
+    </nav>
+
+  </div>
+  </div>
 </div>
 
 <script>
-// ---------- 保存（この端末だけ） ----------
+/* ============================================================
+   michi — client
+   ============================================================ */
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store = {
-  get(k, d) { try { return JSON.parse(localStorage.getItem('michi:' + k)) ?? d; } catch { return d; } },
+  get(k, d) { try { const v = localStorage.getItem('michi:' + k); return v === null ? d : (JSON.parse(v) ?? d); } catch { return d; } },
   set(k, v) { try { localStorage.setItem('michi:' + k, JSON.stringify(v)); } catch {} },
 };
+
 let settings = store.get('settings', {});
-let friends  = store.get('friends', []);          // [{name, lastMet, today}]
-let result   = store.get('result', null);         // 直近の提案 {one_liner, proposals, mode}
-let picked   = store.get('picked', null);         // 選んだ案の index
-let lock     = store.get('lock', null);           // 進行中 {proposal, startedAt, durationMin, companion}
-let history  = store.get('history', []);          // 完了・中断の記録
+let friends  = store.get('friends', []);        // [{name, lastMet, today}]
+let result   = store.get('result', null);       // {one_liner, proposals[], mode}
+let picked   = store.get('picked', null);
+let lock     = store.get('lock', null);         // {proposal, startedAt, durationMin, companion}
+let history  = store.get('history', []);
+let quick    = store.get('quick', { minutes: '60', mood: '' });
 let focusIdx = 0;
 
-const $ = (id) => document.getElementById(id);
+/* ---------- 日付・挨拶 ---------- */
+const WD = ['日','月','火','水','木','金','土'];
+const now = new Date();
+const TODAY = `${now.getFullYear()}/${now.getMonth() + 1}/${now.getDate()}`;
+$('today').textContent = `${TODAY} (${WD[now.getDay()]})`;
 
-// ---------- 日付・挨拶 ----------
-(function header() {
-  const d = new Date();
-  $('today').textContent = `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()}`;
-  renderHello();
-})();
 function renderHello() {
-  const h = document.querySelector('h1.hello');
-  h.firstChild.textContent = settings.name ? `Hello, ${settings.name}!` : 'Hello!';
+  const h = now.getHours();
+  const greet = h < 5 ? 'まだ起きてる' : h < 11 ? 'おはよう' : h < 17 ? 'こんにちは' : 'おつかれ';
+  $('hello').innerHTML = settings.name
+    ? `${esc(greet)}、<span class="nmark">${esc(settings.name)}</span>。`
+    : `${esc(greet)}。`;
+  $('lede').textContent = settings.recent
+    ? '今日、自分では選ばない一手を。'
+    : '今日、自分では選ばない一手を。設定に「いつもの過ごし方」を書くほど、提案は遠くまで飛ぶ。';
 }
 
-// ---------- タブ ----------
-document.querySelector('nav.tabs').addEventListener('click', (e) => {
+/* ---------- チップ ---------- */
+function chipset(el, options, current, onPick) {
+  el.innerHTML = options.map(o =>
+    `<button type="button" class="chip" role="switch" data-v="${esc(o.v)}" aria-pressed="${o.v === current}">${esc(o.l)}</button>`
+  ).join('');
+  el.onclick = (e) => {
+    const b = e.target.closest('.chip'); if (!b) return;
+    for (const c of el.children) c.setAttribute('aria-pressed', String(c === b));
+    onPick(b.dataset.v);
+  };
+}
+chipset($('chipsMinutes'), [
+  { v: '30', l: '30分' }, { v: '60', l: '1時間' }, { v: '120', l: '2時間' },
+  { v: '180', l: '3時間' }, { v: '300', l: '半日' },
+], quick.minutes, (v) => { quick.minutes = v; store.set('quick', quick); });
+chipset($('chipsMood'), [
+  { v: '', l: '特になし' }, { v: '疲れている', l: '疲れてる' }, { v: '暇でだるい', l: 'だるい' },
+  { v: '何か刺激がほしい', l: '刺激がほしい' }, { v: '人と話したい', l: '話したい' }, { v: '一人になりたい', l: '一人でいたい' },
+], quick.mood, (v) => { quick.mood = v; store.set('quick', quick); });
+
+/* ---------- タブ ---------- */
+$('tabbar').addEventListener('click', (e) => {
   const b = e.target.closest('button'); if (!b) return;
   showTab(b.dataset.tab);
 });
 function showTab(name) {
   for (const s of document.querySelectorAll('main > section')) s.hidden = s.id !== 'tab-' + name;
-  for (const b of document.querySelectorAll('nav.tabs button')) b.classList.toggle('on', b.dataset.tab === name);
+  for (const b of document.querySelectorAll('#tabbar button')) b.classList.toggle('on', b.dataset.tab === name);
   if (name === 'reco') $('recoBadge').hidden = true;
   document.querySelector('main').scrollTop = 0;
 }
 
-// ---------- ホーム：生成 ----------
-const quickForm = $('quickForm');
-quickForm.elements.area.value = settings.homeArea || store.get('lastArea', '');
-$('quickNote').textContent = settings.recent ? '' : '設定で「いつもの過ごし方」を書くと、提案が刺さります。';
+/* ---------- 生成 ---------- */
+let thinkTimers = [];
+function think(on) {
+  thinkTimers.forEach(clearTimeout); thinkTimers = [];
+  const lines = $('thinking').children;
+  for (const l of lines) l.classList.remove('on');
+  $('thinkingBox').hidden = !on;
+  $('quick').hidden = on;
+  $('quickCta').hidden = on;
+  if (!on) return;
+  [0, 1500, 3400].forEach((ms, i) => thinkTimers.push(setTimeout(() => lines[i].classList.add('on'), ms)));
+}
 
-quickForm.addEventListener('submit', (e) => { e.preventDefault(); generate(); });
+$('quickForm').addEventListener('submit', (e) => { e.preventDefault(); generate(); });
+$('go').addEventListener('click', generate);
 
 async function generate() {
-  const q = Object.fromEntries(new FormData(quickForm).entries());
-  store.set('lastArea', q.area);
+  const area = $('areaInput').value.trim();
+  if (!area) { $('areaInput').focus(); setStatus('いまいる場所だけ教えてほしい。', true); return; }
+  store.set('lastArea', area);
   const todayFriend = friends.find(f => f.today);
   const input = {
-    area: q.area, minutes: q.minutes, mood: q.mood,
+    area, minutes: quick.minutes, mood: quick.mood,
     budget: settings.budget || '', recent: settings.recent || '',
-    companion: todayFriend ? todayFriend.name : (friends.length ? `友達リスト: ${friends.map(f => f.name).join('、')}` : ''),
+    companion: todayFriend ? todayFriend.name
+      : (friends.length ? `友達リスト: ${friends.map(f => f.name).join('、')}` : ''),
   };
-  setStatus('あなたが選ばない選択肢を探しています…');
-  $('go').disabled = true;
+  setStatus(''); think(true);
   try {
-    const res = await fetch('/api/suggest', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(input) });
+    const res = await fetch('/api/suggest', {
+      method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(input),
+    });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
     result = data; picked = null; focusIdx = 0;
     store.set('result', result); store.set('picked', null);
-    setStatus(data.mode === 'mock' ? '（モック表示：APIキー未設定）' : '');
+    think(false);
+    setStatus('');
     $('recoBadge').hidden = false;
+    setMode(data.mode);
     renderAll();
   } catch (err) {
+    think(false);
     setStatus(err.message, true);
-  } finally {
-    $('go').disabled = false;
   }
 }
-function setStatus(msg, err = false) { const s = $('status'); s.textContent = msg; s.classList.toggle('err', err); }
+function setStatus(msg, err = false) {
+  const s = $('status'); s.textContent = msg; s.classList.toggle('err', err);
+}
+function setMode(mode) {
+  const p = $('modePill');
+  p.textContent = mode === 'live' ? 'LIVE' : 'MOCK';
+  p.classList.toggle('live', mode === 'live');
+}
 
-// ---------- 描画 ----------
+/* ---------- 描画 ---------- */
 function renderAll() { renderFocus(); renderCards(); renderFriends(); }
 
+const dist = (p) => Math.min(5, Math.max(1, Math.round(Number(p.distance)) || 3));
+const devHTML = (p) => `<div class="dev" aria-label="未知度 ${dist(p)} / 5"><span class="lb">未知度</span><span class="bars">${
+  [1,2,3,4,5].map(n => `<i class="${n <= dist(p) ? 'on' : ''}"></i>`).join('')}</span></div>`;
+
 function renderFocus() {
-  const has = result && result.proposals?.length;
+  const has = result && result.proposals && result.proposals.length;
   $('quick').hidden = !!has;
+  $('quickCta').hidden = !!has;
   $('focus').hidden = !has;
-  if (!has) return;
-  const i = focusIdx;
+  if (!has) { $('focus').innerHTML = ''; return; }
+  const i = Math.min(focusIdx, result.proposals.length - 1);
   const p = result.proposals[i];
   $('focus').innerHTML = `
-    <div class="kicker">今日の未知 ・ ${esc(result.one_liner)}</div>
-    <div class="note" style="margin:0">「これにする」を押すと、完了までこのアプリから出られません。</div>
-    <h3>${esc(p.title)}</h3>
-    <div class="meta">${p.duration_min}分 ・ ${esc(p.cost_hint)} ・ ${esc(p.where_hint)}</div>
-    <div class="why"><strong>なぜ自分では選ばないか:</strong> ${esc(p.why_you_wouldnt_pick)}</div>
-    <dl class="kv">
-      <dt>やること</dt><dd>${esc(p.what)}</dd>
-      <dt>誰を誘う</dt><dd>${esc(p.invite_who)}</dd>
-      <dt>最初の一歩</dt><dd>${esc(p.first_step)}</dd>
-    </dl>
-    <div class="actions">
-      <button class="btn primary" data-act="pick" data-i="${i}">これにする</button>
-      <button class="btn" data-act="next">別の案</button>
-      <button class="btn" data-act="regen">もう一度</button>
+    <div class="route" role="tablist">${result.proposals.map((_, k) => `
+      <button type="button" class="node ${k === i ? 'on' : ''}" data-act="node" data-i="${k}"
+        role="tab" aria-selected="${k === i}" aria-label="${k + 1}番目の案"><i></i><b>0${k + 1}</b></button>`).join('')}
     </div>
-    <div class="dots">${result.proposals.map((_, k) => `<i class="${k === i ? 'on' : ''}"></i>`).join('')}</div>`;
+    <article class="card" id="focusCard">
+      <div class="p-head"><span class="pill">${esc(p.category)}</span>${devHTML(p)}</div>
+      <h3 class="p-title">${esc(p.title)}</h3>
+      <div class="p-meta"><span>${esc(String(p.duration_min))}分</span><span>${esc(p.cost_hint)}</span></div>
+      <div class="why"><b>なぜ、あなたはこれを選ばないか</b><p>${esc(p.why_you_wouldnt_pick)}</p></div>
+      <dl class="kv">
+        <div><dt>やること</dt><dd>${esc(p.what)}</dd></div>
+        <div><dt>どこで</dt><dd>${esc(p.where_hint)}</dd></div>
+        <div><dt>誰を誘う</dt><dd>${esc(p.invite_who)}</dd></div>
+        <div><dt>最初の一歩</dt><dd class="step1">${esc(p.first_step)}</dd></div>
+      </dl>
+    </article>
+    <div style="height:16px"></div>
+    <button type="button" class="commit" data-hold="${i}">
+      <span class="fill"></span><span class="lbl"><b>これにする</b><em>長押しで確定</em></span>
+    </button>
+    <div class="lockwarn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="4.5" y="10.5" width="15" height="10" rx="2.5"/><path d="M8 10.5V7.8a4 4 0 0 1 8 0v2.7"/></svg>
+      確定すると、完了を報告するまでこの画面から出られない
+    </div>
+    <div style="height:14px"></div>
+    <div class="btn-row">
+      <button type="button" class="btn sm" data-act="copy" data-msg="${esc(p.invite_message)}">誘い文をコピー</button>
+      <button type="button" class="btn sm ghost" data-act="regen">出し直す</button>
+    </div>`;
+  bindHold($('focus').querySelector('.commit'));
+  bindSwipe($('focusCard'));
 }
 
 function renderCards() {
   const box = $('cards');
-  $('oneliner').textContent = result?.one_liner || '';
-  if (!result) return;
+  $('oneliner').textContent = result?.one_liner || 'まだ今日の未知は出ていません。';
+  if (!result) {
+    box.innerHTML = `<div class="empty">
+      <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 34C13 34 14 25 18 17S27 7 32.5 7"/><circle cx="32.5" cy="7" r="3.4"/></svg>
+      <b>まだ道がない</b><p>ホームで「今日の未知を出す」を押すと、<br>3つの案がここに並ぶ。</p></div>`;
+    return;
+  }
   box.innerHTML = result.proposals.map((p, i) => `
-    <article class="card ${picked === i ? 'picked' : ''}">
-      <div class="top"><h3>${esc(p.title)}</h3><span class="tag">${esc(p.category)}</span></div>
-      <div class="meta" style="color:var(--sub);font-size:13px">${p.duration_min}分 ・ ${esc(p.cost_hint)} ・ ${esc(p.where_hint)}</div>
-      <div class="why">${esc(p.why_you_wouldnt_pick)}</div>
-      <dl class="kv"><dt>やること</dt><dd>${esc(p.what)}</dd><dt>動く感情</dt><dd>${esc(p.emotion)}</dd></dl>
-      <div class="actions">
-        <button class="btn primary" data-act="pick" data-i="${i}">${picked === i ? '選択中' : 'これにする'}</button>
-        <button class="btn" data-act="copy" data-msg="${esc(p.invite_message)}">誘い文をコピー</button>
+    <article class="rcard ${picked === i ? 'picked' : ''}">
+      <span class="idx">0${i + 1}</span>
+      <div class="p-head"><span class="pill">${esc(p.category)}</span>${devHTML(p)}</div>
+      <h3>${esc(p.title)}</h3>
+      <div class="p-meta"><span>${esc(String(p.duration_min))}分</span><span>${esc(p.cost_hint)}</span></div>
+      <div class="why"><b>なぜ選ばないか</b><p>${esc(p.why_you_wouldnt_pick)}</p></div>
+      <div class="btn-row">
+        <button type="button" class="btn sm dark" data-act="open" data-i="${i}">これを見る</button>
+        <button type="button" class="btn sm" data-act="copy" data-msg="${esc(p.invite_message)}">誘い文をコピー</button>
       </div>
     </article>`).join('');
 }
 
 function renderFriends() {
-  $('friendCount').textContent = friends.length;
+  const met = friends.filter(f => f.lastMet).length;
+  $('friendMet').textContent = met;
+  $('grid100').innerHTML = Array.from({ length: 100 }, (_, k) => {
+    const f = friends[k];
+    return `<i class="${!f ? '' : (f.lastMet ? 'met' : 'reg')}"></i>`;
+  }).join('');
   const box = $('friends');
-  if (!friends.length) { box.innerHTML = '<div class="empty">まだ誰もいません。まず1人、名前を追加してください。</div>'; return; }
+  if (!friends.length) {
+    box.innerHTML = `<div class="empty">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9.2" cy="12" r="5.6"/><circle cx="15.8" cy="12" r="5.6"/></svg>
+      <b>まだ誰もいない</b><p>まず1人。名前だけでいい。</p></div>`;
+    return;
+  }
   box.innerHTML = friends.map((f, i) => `
-    <div class="friend ${f.today ? 'today' : ''}" data-i="${i}">
-      <div class="avatar">${esc(f.name.slice(0, 1))}</div>
-      <div class="grow">
-        <div class="name">${esc(f.name)} ${f.today ? '<span class="tag">今日誘う</span>' : ''}</div>
-        <div class="last">${f.lastMet ? '最後に会った日: ' + f.lastMet : 'まだ会っていない'}</div>
+    <div class="frow ${f.today ? 'today' : ''}" data-i="${i}">
+      <div class="av">${esc(f.name.slice(0, 1))}</div>
+      <div class="g">
+        <div class="nm">${esc(f.name)}${f.today ? '<span class="tg">今日誘う</span>' : ''}</div>
+        <div class="lm">${f.lastMet ? '最後に会った日 ' + esc(f.lastMet) : 'まだ会っていない'}</div>
       </div>
-      <button class="btn" data-act="met" data-i="${i}">会った</button>
-      <button class="del" data-act="del" data-i="${i}" aria-label="削除">×</button>
+      <button type="button" class="btn sm" data-act="met" data-i="${i}">会った</button>
+      <button type="button" class="x" data-act="del" data-i="${i}" aria-label="${esc(f.name)}を削除">×</button>
     </div>`).join('');
 }
 
-// ---------- 操作 ----------
+/* ---------- 長押しで確定 ---------- */
+const HOLD_MS = 700;
+function bindHold(btn) {
+  if (!btn) return;
+  const fill = btn.querySelector('.fill');
+  let t = null;
+  const down = (e) => {
+    if (e.button != null && e.button !== 0) return;
+    btn.classList.add('armed');
+    fill.style.transition = `transform ${HOLD_MS}ms linear`;
+    fill.style.transform = 'scaleX(1)';
+    t = setTimeout(() => { up(); commit(+btn.dataset.hold); }, HOLD_MS);
+  };
+  const up = () => {
+    clearTimeout(t); t = null;
+    btn.classList.remove('armed');
+    fill.style.transition = 'transform .18s ease-out';
+    fill.style.transform = 'scaleX(0)';
+  };
+  btn.addEventListener('pointerdown', down);
+  for (const ev of ['pointerup', 'pointerleave', 'pointercancel']) btn.addEventListener(ev, up);
+  btn.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); commit(+btn.dataset.hold); }
+  });
+}
+function commit(i) {
+  picked = i; store.set('picked', picked);
+  startLock(i);
+}
+
+/* ---------- スワイプで案を切り替える ---------- */
+function bindSwipe(el) {
+  if (!el) return;
+  let x0 = null, y0 = null;
+  el.addEventListener('pointerdown', (e) => { x0 = e.clientX; y0 = e.clientY; });
+  el.addEventListener('pointerup', (e) => {
+    if (x0 === null) return;
+    const dx = e.clientX - x0, dy = e.clientY - y0;
+    x0 = null;
+    if (Math.abs(dx) > 52 && Math.abs(dx) > Math.abs(dy) * 1.6) {
+      const n = result.proposals.length;
+      focusIdx = (focusIdx + (dx < 0 ? 1 : n - 1)) % n;
+      renderFocus();
+    }
+  });
+}
+
+/* ---------- 操作 ---------- */
 document.querySelector('main').addEventListener('click', async (e) => {
   const b = e.target.closest('[data-act]');
-  const friendRow = e.target.closest('.friend');
-  if (!b && friendRow) {                          // 友達の行タップ → 今日誘う人
-    const i = +friendRow.dataset.i;
+  const row = e.target.closest('.frow');
+  if (!b && row) {
+    const i = +row.dataset.i;
     friends = friends.map((f, k) => ({ ...f, today: k === i ? !f.today : false }));
     store.set('friends', friends); renderFriends(); return;
   }
   if (!b) return;
   const i = +b.dataset.i;
   switch (b.dataset.act) {
-    case 'pick':   picked = i; store.set('picked', picked); startLock(i); break;
-    case 'unpick': picked = null; store.set('picked', null); renderAll(); break;
-    case 'next':   focusIdx = (focusIdx + 1) % result.proposals.length; renderFocus(); break;
-    case 'regen':  result = null; picked = null; store.set('result', null); renderAll(); break;
-    case 'copy':
-      try { await navigator.clipboard.writeText(b.dataset.msg); b.textContent = 'コピーした'; }
-      catch { prompt('コピーしてください', b.dataset.msg); }
-      break;
-    case 'met':    friends[i].lastMet = $('today').textContent; store.set('friends', friends); renderFriends(); break;
-    case 'del':    friends.splice(i, 1); store.set('friends', friends); renderFriends(); break;
+    case 'node':  focusIdx = i; renderFocus(); break;
+    case 'open':  focusIdx = i; renderFocus(); showTab('home'); break;
+    case 'regen': result = null; picked = null; store.set('result', null); store.set('picked', null); renderAll(); break;
+    case 'copy':  copy(b, b.dataset.msg); break;
+    case 'met':   friends[i].lastMet = TODAY; friends[i].today = false; store.set('friends', friends); renderFriends(); break;
+    case 'del':   friends.splice(i, 1); store.set('friends', friends); renderFriends(); break;
     case 'met-companion': {
       const f = friends.find(x => x.name === b.dataset.name);
-      if (f) { f.lastMet = $('today').textContent; f.today = false; store.set('friends', friends); }
+      if (f) { f.lastMet = TODAY; f.today = false; store.set('friends', friends); }
       b.textContent = '記録した'; b.disabled = true; renderFriends(); break;
     }
     case 'go-home': showTab('home'); break;
   }
 });
+async function copy(btn, text) {
+  const label = btn.textContent;
+  try { await navigator.clipboard.writeText(text); btn.textContent = 'コピーした'; }
+  catch { prompt('コピーしてください', text); return; }
+  setTimeout(() => { btn.textContent = label; }, 1600);
+}
 
 $('addFriend').addEventListener('click', () => {
   const name = $('newFriend').value.trim(); if (!name) return;
@@ -411,26 +854,34 @@ $('addFriend').addEventListener('click', () => {
 });
 $('newFriend').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); $('addFriend').click(); } });
 
-// ---------- 設定 ----------
+/* ---------- 設定 ---------- */
 const sf = $('settingsForm');
 for (const [k, v] of Object.entries(settings)) if (sf.elements[k]) sf.elements[k].value = v;
+chipset($('chipsBudget'), [
+  { v: '', l: 'こだわらない' }, { v: '0円', l: '0円' }, { v: '〜1,000円', l: '〜1,000円' },
+  { v: '〜3,000円', l: '〜3,000円' }, { v: '〜10,000円', l: '〜10,000円' },
+], settings.budget || '', (v) => { sf.elements.budget.value = v; });
+sf.elements.budget.value = settings.budget || '';
 sf.addEventListener('submit', (e) => {
   e.preventDefault();
   settings = Object.fromEntries(new FormData(sf).entries());
   store.set('settings', settings);
   renderHello();
-  if (settings.homeArea && !quickForm.elements.area.value) quickForm.elements.area.value = settings.homeArea;
-  $('quickNote').textContent = '';
-  $('mode').textContent = '保存しました。';
-  setTimeout(() => showMode(), 1200);
+  if (settings.homeArea && !$('areaInput').value) $('areaInput').value = settings.homeArea;
+  $('modeNote').textContent = '保存した。';
+  setTimeout(showMode, 1400);
 });
 async function showMode() {
-  try { const h = await (await fetch('/api/health')).json();
-    $('mode').textContent = `生成モード: ${h.mode === 'live' ? 'ライブ（' + h.model + '）' : 'モック（APIキー未設定）'}`; } catch {}
+  try {
+    const h = await (await fetch('/api/health')).json();
+    setMode(h.mode);
+    $('modeNote').textContent = h.mode === 'live'
+      ? `生成モード: ライブ（${h.model}）`
+      : '生成モード: モック（APIキー未設定でも固定の3案で動く）';
+  } catch { $('modeNote').textContent = ''; }
 }
-showMode();
 
-// ---------- ロック ----------
+/* ---------- ロック ---------- */
 function startLock(i) {
   const p = result.proposals[i];
   const todayFriend = friends.find(f => f.today);
@@ -442,30 +893,34 @@ let tick = null;
 function renderLock() {
   const el = $('lock');
   el.hidden = !lock;
-  document.querySelector('nav.tabs').hidden = !!lock;
+  $('tabbar').hidden = !!lock;
   clearInterval(tick);
   if (!lock) return;
-  $('lockDate').textContent = $('today').textContent;
+  $('lockDate').textContent = TODAY;
   $('lockTitle').textContent = lock.proposal.title;
-  $('lockStep').textContent = '最初の一歩: ' + lock.proposal.first_step;
+  $('lockStep').textContent = lock.proposal.first_step;
   $('report').hidden = true; $('lockActions').hidden = false;
+  const total = lock.durationMin * 60000;
+  const t = $('lockTimer');
   const update = () => {
-    const remain = lock.durationMin * 60000 - (Date.now() - lock.startedAt);
-    const t = $('lockTimer');
+    const remain = total - (Date.now() - lock.startedAt);
+    $('lockTrack').style.transform = `scaleX(${Math.max(0, Math.min(1, remain / total))})`;
     if (remain > 0) {
       const m = Math.floor(remain / 60000), s = Math.floor((remain % 60000) / 1000);
-      t.textContent = `${m}:${String(s).padStart(2, '0')}`; t.classList.remove('over');
-      $('lockCap').textContent = '残り時間 — 終わるまでこの画面から出られません';
+      const txt = `${m}:${String(s).padStart(2, '0')}`;
+      t.textContent = txt; t.classList.remove('over');
+      t.style.fontSize = txt.length > 5 ? '62px' : '';
+      $('lockCap').textContent = '残り時間 — 終わるまでここから出られない';
     } else {
-      t.textContent = '時間です。'; t.classList.add('over');
-      $('lockCap').textContent = '完了を報告して、スマホを取り戻してください';
+      t.textContent = '時間です。'; t.classList.add('over'); t.style.fontSize = '';
+      $('lockCap').textContent = '完了を報告して、スマホを取り戻す';
     }
   };
   update(); tick = setInterval(update, 1000);
 }
 function finishLock(status, note, photo) {
   const minutes = Math.max(1, Math.round((Date.now() - lock.startedAt) / 60000));
-  history.push({ date: $('today').textContent, title: lock.proposal.title, status, minutes, companion: lock.companion, note: note || '', photo: photo || null });
+  history.push({ date: TODAY, title: lock.proposal.title, status, minutes, companion: lock.companion, note: note || '', photo: photo || null });
   store.set('history', history);
   const finished = lock; lock = null; store.set('lock', null);
   picked = null; store.set('picked', null);
@@ -474,29 +929,37 @@ function finishLock(status, note, photo) {
 }
 function renderDone(finished, minutes) {
   const doneCount = history.filter(h => h.status === 'done').length;
-  const streak = calcStreak();
   const last = history[history.length - 1];
   $('tab-done').innerHTML = `
-    <div class="date">${$('today').textContent}</div>
-    <h1>おかえり。</h1>
-    <p class="sub">未知を1つ、現実にした。</p>
-    <div class="card">
-      <h3 style="margin:0">${esc(finished.proposal.title)}</h3>
-      <div class="meta" style="color:var(--sub);font-size:13px">所要 ${minutes}分${finished.companion ? ' ・ 一緒に: ' + esc(finished.companion) : ''}</div>
-      ${last.photo ? `<img src="${last.photo}" alt="報告写真" style="max-width:100%;border-radius:10px">` : ''}
-      ${last.note ? `<div>${esc(last.note)}</div>` : ''}
+    <div class="sealwrap">
+      <svg class="seal" viewBox="0 0 120 120" aria-hidden="true">
+        <circle cx="60" cy="60" r="53" fill="none" stroke="currentColor" stroke-width="4.5"/>
+        <text x="60" y="52" text-anchor="middle" font-size="33" fill="currentColor">未</text>
+        <text x="60" y="92" text-anchor="middle" font-size="33" fill="currentColor">知</text>
+      </svg>
     </div>
+    <div>
+      <h1>おかえり。</h1>
+      <p class="sub">未知を1つ、現実にした。</p>
+    </div>
+    <article class="card">
+      <h3 class="p-title" style="font-size:22px;margin-bottom:8px">${esc(finished.proposal.title)}</h3>
+      <div class="p-meta" style="margin-bottom:0"><span>${minutes}分</span>${finished.companion ? `<span>${esc(finished.companion)}と</span>` : ''}<span>${esc(TODAY)}</span></div>
+      ${last.photo ? `<div style="height:14px"></div><img src="${last.photo}" alt="報告写真" style="border-radius:12px">` : ''}
+      ${last.note ? `<div class="rule"></div><p style="font-size:14.5px">${esc(last.note)}</p>` : ''}
+    </article>
     <div class="stats">
       <div class="stat"><b>${doneCount}</b><span>未知</span></div>
-      <div class="stat"><b>${friends.filter(f => f.lastMet).length}</b><span>/ 100人 会った</span></div>
-      <div class="stat"><b>${streak}</b><span>連続日</span></div>
+      <div class="stat"><b>${friends.filter(f => f.lastMet).length}</b><span>/ 100人</span></div>
+      <div class="stat"><b>${calcStreak()}</b><span>連続日</span></div>
     </div>
-    <div class="actions">
-      ${finished.companion ? `<button class="btn primary" data-act="met-companion" data-name="${esc(finished.companion)}">${esc(finished.companion)}に会ったと記録する</button>` : ''}
-      <button class="btn" data-act="go-home">ホームへ</button>
+    <div class="btn-row" style="justify-content:center">
+      ${finished.companion ? `<button type="button" class="btn dark" data-act="met-companion" data-name="${esc(finished.companion)}">${esc(finished.companion)}に会ったと記録する</button>` : ''}
+      <button type="button" class="btn ghost" data-act="go-home">ホームへ</button>
     </div>`;
   for (const s of document.querySelectorAll('main > section')) s.hidden = s.id !== 'tab-done';
-  for (const b of document.querySelectorAll('nav.tabs button')) b.classList.remove('on');
+  for (const b of document.querySelectorAll('#tabbar button')) b.classList.remove('on');
+  document.querySelector('main').scrollTop = 0;
 }
 function calcStreak() {
   const days = new Set(history.filter(h => h.status === 'done').map(h => h.date));
@@ -504,11 +967,16 @@ function calcStreak() {
   while (days.has(`${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()}`)) { n++; d.setDate(d.getDate() - 1); }
   return n;
 }
+
 let photoData = null;
 $('reportPhoto').addEventListener('change', (e) => {
   const f = e.target.files?.[0]; if (!f) { photoData = null; return; }
   const r = new FileReader();
-  r.onload = () => { photoData = r.result; $('reportPreview').src = photoData; $('reportPreview').hidden = false; };
+  r.onload = () => {
+    photoData = r.result;
+    $('reportPreview').src = photoData; $('reportPreview').hidden = false;
+    $('shootLabel').querySelector('span').textContent = '写真を撮り直す';
+  };
   r.readAsDataURL(f);
 });
 $('lock').addEventListener('click', async (e) => {
@@ -516,26 +984,40 @@ $('lock').addEventListener('click', async (e) => {
   switch (b.dataset.act) {
     case 'report': $('report').hidden = false; $('lockActions').hidden = true; break;
     case 'report-cancel': $('report').hidden = true; $('lockActions').hidden = false; break;
-    case 'finish': finishLock('done', $('reportNote').value.trim(), photoData); photoData = null; $('reportNote').value = ''; $('reportPreview').hidden = true; break;
-    case 'lock-copy':
-      try { await navigator.clipboard.writeText(lock.proposal.invite_message); b.textContent = 'コピーした'; }
-      catch { prompt('コピーしてください', lock.proposal.invite_message); }
+    case 'finish':
+      finishLock('done', $('reportNote').value.trim(), photoData);
+      photoData = null; $('reportNote').value = ''; $('reportPreview').hidden = true;
+      $('shootLabel').querySelector('span').textContent = '写真を撮る（任意）';
       break;
+    case 'lock-copy': copy(b, lock.proposal.invite_message); break;
   }
 });
-// やめる: 3秒長押しだけ受け付ける（誤タップで抜けられないように）
+
+/* やめる: 3秒長押しだけ受け付ける（誤タップで抜けられない） */
 (function quitHold() {
-  const q = $('quit'); let timer = null;
-  const arm = (e) => { e.preventDefault(); q.classList.add('arming'); q.textContent = 'そのまま押し続ける…';
-    timer = setTimeout(() => { finishLock('quit'); reset(); }, 3000); };
-  const reset = () => { clearTimeout(timer); q.classList.remove('arming'); q.textContent = 'やめる（3秒長押し）'; };
-  for (const ev of ['pointerdown']) q.addEventListener(ev, arm);
+  const q = $('quit'), fill = q.querySelector('.qf'), lbl = q.querySelector('span:last-child');
+  let t = null;
+  const arm = (e) => {
+    e.preventDefault();
+    q.classList.add('arming'); lbl.textContent = 'そのまま押し続ける…';
+    fill.style.transition = 'transform 3000ms linear'; fill.style.transform = 'scaleX(1)';
+    t = setTimeout(() => { reset(); finishLock('quit'); }, 3000);
+  };
+  const reset = () => {
+    clearTimeout(t); t = null;
+    q.classList.remove('arming'); lbl.textContent = 'やめる — 3秒長押し';
+    fill.style.transition = 'transform .2s ease-out'; fill.style.transform = 'scaleX(0)';
+  };
+  q.addEventListener('pointerdown', arm);
   for (const ev of ['pointerup', 'pointerleave', 'pointercancel']) q.addEventListener(ev, reset);
 })();
 
-function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+/* ---------- 起動 ---------- */
+$('areaInput').value = settings.homeArea || store.get('lastArea', '');
+renderHello();
 renderAll();
 renderLock();
+showMode();
 </script>
 </body>
 </html>
