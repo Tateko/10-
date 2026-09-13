@@ -3,6 +3,7 @@
 「自分では選ばない体験」を、今日この後の予定としてAIが3つ提案する。
 提案には必ず **なぜあなたはこれを選ばないか（根拠）** と **誰を誘うか・誘い文** と **60秒でできる最初の一歩** が付く。
 
+- **仕様書: [docs/spec.md](docs/spec.md)**
 - アイデアの経緯: [docs/2026-09-13-unknown-event-app.md](docs/2026-09-13-unknown-event-app.md)
 - ハッカソン要件・進行・発表構成: [docs/hackathon-brief.md](docs/hackathon-brief.md)
 
