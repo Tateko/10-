@@ -1,0 +1,741 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ひだまり傾聴室｜誰にも言えない話を、否定せずに聴きます</title>
+<meta name="description" content="仕事、恋愛、お金や借金のこと。身近な人には言いづらい悩みを、否定せず、急かさず、秘密を守って聴く傾聴サービスです。匿名・オンライン・電話で相談できます。">
+<meta property="og:title" content="ひだまり傾聴室｜誰にも言えない話を、否定せずに聴きます">
+<meta property="og:description" content="アドバイスより、まず聴いてほしい。そんな夜のための傾聴サービス。匿名OK・オンライン/電話対応。">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&family=Shippori+Mincho:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fbf7f1;
+    --bg-alt: #f4ede2;
+    --surface: #ffffff;
+    --ink: #3b3530;
+    --ink-soft: #6f655c;
+    --accent: #d98a5f;
+    --accent-deep: #b86a41;
+    --leaf: #7f9c85;
+    --line: #e7ddcf;
+    --shadow: 0 10px 30px rgba(120, 90, 60, .10);
+    --radius: 20px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", "Hiragino Sans", "Meiryo", sans-serif;
+    line-height: 1.9;
+    letter-spacing: .03em;
+    -webkit-font-smoothing: antialiased;
+  }
+  img { max-width: 100%; display: block; }
+  a { color: inherit; }
+  .container { width: min(1080px, 100% - 32px); margin-inline: auto; }
+  .serif { font-family: "Shippori Mincho", "Yu Mincho", serif; }
+
+  /* header */
+  header.site {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(251, 247, 241, .88);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  header.site .container { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+  .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; text-decoration: none; font-size: 1.05rem; }
+  .logo-mark { width: 30px; height: 30px; }
+  nav.global { display: flex; gap: 24px; font-size: .9rem; }
+  nav.global a { text-decoration: none; color: var(--ink-soft); }
+  nav.global a:hover { color: var(--accent-deep); }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 14px 28px; border-radius: 999px; border: 0;
+    background: var(--accent); color: #fff; font: inherit; font-weight: 700;
+    text-decoration: none; cursor: pointer;
+    box-shadow: 0 6px 18px rgba(217, 138, 95, .35);
+    transition: transform .15s ease, background .15s ease;
+  }
+  .btn:hover { background: var(--accent-deep); transform: translateY(-2px); }
+  .btn.small { padding: 9px 18px; font-size: .88rem; }
+  .btn.ghost { background: transparent; color: var(--accent-deep); border: 2px solid var(--accent); box-shadow: none; }
+  .btn.ghost:hover { background: #fff3ea; }
+  .btn.line { background: #06c755; box-shadow: 0 6px 18px rgba(6, 199, 85, .3); }
+  .btn.line:hover { background: #05a647; }
+
+  /* hero */
+  .hero { position: relative; overflow: hidden; padding: 96px 0 110px; }
+  .hero::before, .hero::after {
+    content: ""; position: absolute; border-radius: 50%; filter: blur(60px); z-index: 0;
+  }
+  .hero::before { width: 420px; height: 420px; background: #f6d3b8; top: -120px; right: -80px; opacity: .8; }
+  .hero::after { width: 360px; height: 360px; background: #d8e4d6; bottom: -160px; left: -100px; opacity: .8; }
+  .hero .container { position: relative; z-index: 1; display: grid; grid-template-columns: 1.15fr .85fr; gap: 48px; align-items: center; }
+  .eyebrow {
+    display: inline-block; font-size: .85rem; color: var(--leaf); font-weight: 700;
+    background: #eef3ec; padding: 4px 14px; border-radius: 999px; margin-bottom: 20px;
+  }
+  .hero h1 { font-size: clamp(2rem, 5vw, 3.2rem); line-height: 1.5; margin: 0 0 24px; font-weight: 600; letter-spacing: .06em; }
+  .hero h1 em { font-style: normal; background: linear-gradient(transparent 62%, #f8d9c3 62%); }
+  .hero p.lead { font-size: 1.05rem; color: var(--ink-soft); margin: 0 0 36px; }
+  .hero .cta-row { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+  .badges { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; padding: 0; list-style: none; }
+  .badges li { font-size: .85rem; background: var(--surface); border: 1px solid var(--line); padding: 6px 14px; border-radius: 999px; }
+  .badges li::before { content: "✓ "; color: var(--leaf); font-weight: 700; }
+  .hero-card {
+    background: var(--surface); border-radius: 28px; padding: 32px 28px; box-shadow: var(--shadow);
+    position: relative;
+  }
+  .bubble { padding: 14px 18px; border-radius: 18px; margin-bottom: 14px; font-size: .95rem; max-width: 90%; }
+  .bubble.them { background: var(--bg-alt); border-bottom-left-radius: 4px; }
+  .bubble.me { background: #fdebdf; margin-left: auto; border-bottom-right-radius: 4px; }
+  .hero-card .caption { font-size: .8rem; color: var(--ink-soft); text-align: center; margin-top: 12px; }
+
+  /* sections */
+  section { padding: 96px 0; }
+  section.alt { background: var(--bg-alt); }
+  .section-head { text-align: center; margin-bottom: 56px; }
+  .section-head .en { display: block; font-size: .8rem; letter-spacing: .3em; color: var(--accent); font-weight: 700; margin-bottom: 8px; }
+  .section-head h2 { font-size: clamp(1.5rem, 3.4vw, 2.1rem); margin: 0; line-height: 1.6; font-weight: 600; }
+  .section-head p { color: var(--ink-soft); margin: 16px auto 0; max-width: 640px; }
+
+  /* worries */
+  .worries { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; list-style: none; padding: 0; margin: 0; }
+  .worries li {
+    background: var(--surface); border-radius: var(--radius); padding: 22px 22px 22px 54px;
+    position: relative; box-shadow: 0 2px 0 var(--line);
+  }
+  .worries li::before {
+    content: ""; position: absolute; left: 22px; top: 30px; width: 18px; height: 18px; border-radius: 50%;
+    border: 2px solid var(--accent); background: #fff6ef;
+  }
+  .worries-note { text-align: center; margin-top: 40px; font-size: 1.15rem; }
+  .worries-note strong { color: var(--accent-deep); }
+
+  /* about listening */
+  .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+  .compare { display: grid; gap: 16px; }
+  .compare .row { background: var(--surface); border-radius: var(--radius); padding: 22px 24px; box-shadow: var(--shadow); }
+  .compare .label { font-size: .8rem; font-weight: 700; letter-spacing: .1em; }
+  .compare .row.ng .label { color: #a3988e; }
+  .compare .row.ok .label { color: var(--leaf); }
+  .compare .row.ng p { color: var(--ink-soft); text-decoration: line-through; text-decoration-color: #cbbfb3; }
+  .compare p { margin: 6px 0 0; }
+  .about-text p { margin: 0 0 18px; }
+
+  /* promises */
+  .promises { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .promise { background: var(--surface); border-radius: var(--radius); padding: 36px 28px; text-align: center; box-shadow: var(--shadow); }
+  .promise .num { font-family: "Shippori Mincho", serif; font-size: 2.4rem; color: var(--accent); line-height: 1; }
+  .promise h3 { margin: 14px 0 12px; font-size: 1.2rem; }
+  .promise p { margin: 0; color: var(--ink-soft); font-size: .95rem; text-align: left; }
+
+  /* topics */
+  .topics { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; }
+  .topic { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 26px 24px; }
+  .topic .icon { width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; background: #fdebdf; margin-bottom: 14px; }
+  .topic .icon svg { width: 24px; height: 24px; stroke: var(--accent-deep); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .topic h3 { margin: 0 0 6px; font-size: 1.08rem; }
+  .topic p { margin: 0; font-size: .92rem; color: var(--ink-soft); }
+  .topics-note { margin-top: 28px; font-size: .9rem; color: var(--ink-soft); text-align: center; }
+
+  /* profile */
+  .profile { display: grid; grid-template-columns: 280px 1fr; gap: 48px; align-items: center; background: var(--surface); border-radius: 32px; padding: 48px; box-shadow: var(--shadow); }
+  .avatar { width: 100%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #fbe3d1, #e9c3a6); display: grid; place-items: center; }
+  .avatar svg { width: 55%; }
+  .profile h3 { margin: 0 0 4px; font-size: 1.4rem; }
+  .profile .role { color: var(--leaf); font-weight: 700; font-size: .9rem; margin-bottom: 18px; display: block; }
+  .profile p { margin: 0 0 14px; }
+  .stats { display: flex; gap: 32px; margin-top: 22px; flex-wrap: wrap; }
+  .stats div { font-size: .85rem; color: var(--ink-soft); }
+  .stats b { display: block; font-family: "Shippori Mincho", serif; font-size: 2rem; color: var(--accent-deep); line-height: 1.3; }
+
+  /* voices */
+  .voices { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .voice { background: var(--surface); border-radius: var(--radius); padding: 28px; position: relative; box-shadow: var(--shadow); }
+  .voice::before { content: "“"; font-family: "Shippori Mincho", serif; font-size: 4rem; color: #f3cdb3; position: absolute; top: -6px; left: 18px; line-height: 1; }
+  .voice p { margin: 18px 0 16px; }
+  .voice .who { font-size: .85rem; color: var(--ink-soft); }
+  .sample-tag { display: inline-block; font-size: .72rem; background: #eee6da; color: #857a6f; padding: 1px 10px; border-radius: 999px; margin-left: 6px; }
+
+  /* pricing */
+  .plans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; align-items: stretch; }
+  .plan { background: var(--surface); border-radius: 24px; padding: 36px 28px; box-shadow: var(--shadow); display: flex; flex-direction: column; border: 2px solid transparent; position: relative; }
+  .plan.featured { border-color: var(--accent); }
+  .plan .ribbon { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); background: var(--accent); color: #fff; font-size: .8rem; font-weight: 700; padding: 3px 16px; border-radius: 999px; white-space: nowrap; }
+  .plan h3 { margin: 0; font-size: 1.1rem; }
+  .plan .time { color: var(--ink-soft); font-size: .9rem; }
+  .plan .price { font-family: "Shippori Mincho", serif; font-size: 2.4rem; margin: 14px 0 4px; color: var(--ink); }
+  .plan .price small { font-size: .9rem; font-family: "Zen Maru Gothic", sans-serif; color: var(--ink-soft); }
+  .plan ul { padding: 0; margin: 16px 0 28px; list-style: none; flex: 1; }
+  .plan li { font-size: .92rem; padding: 6px 0 6px 24px; position: relative; border-bottom: 1px dashed var(--line); }
+  .plan li::before { content: "●"; position: absolute; left: 4px; color: var(--leaf); font-size: .6rem; top: 12px; }
+  .plan .btn { width: 100%; }
+  .pricing-note { text-align: center; color: var(--ink-soft); font-size: .88rem; margin-top: 28px; }
+
+  /* flow */
+  .flow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; counter-reset: step; list-style: none; padding: 0; margin: 0; }
+  .flow li { background: var(--surface); border-radius: var(--radius); padding: 28px 22px; position: relative; counter-increment: step; }
+  .flow li::before { content: "STEP " counter(step); display: block; font-size: .78rem; letter-spacing: .15em; font-weight: 700; color: var(--accent); margin-bottom: 8px; }
+  .flow h3 { margin: 0 0 8px; font-size: 1.05rem; }
+  .flow p { margin: 0; font-size: .9rem; color: var(--ink-soft); }
+
+  /* faq */
+  .faq { max-width: 780px; margin: 0 auto; }
+  .faq details { background: var(--surface); border-radius: 16px; margin-bottom: 12px; border: 1px solid var(--line); }
+  .faq summary { cursor: pointer; padding: 20px 56px 20px 24px; font-weight: 700; list-style: none; position: relative; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::before { content: "Q."; color: var(--accent); margin-right: 8px; font-family: "Shippori Mincho", serif; }
+  .faq summary::after { content: "+"; position: absolute; right: 24px; top: 50%; transform: translateY(-50%); font-size: 1.4rem; color: var(--accent); transition: transform .2s; }
+  .faq details[open] summary::after { transform: translateY(-50%) rotate(45deg); }
+  .faq .answer { padding: 0 24px 22px; color: var(--ink-soft); }
+  .faq .answer p { margin: 0; }
+
+  /* contact */
+  .contact { background: linear-gradient(160deg, #f7dcc8, #f3e8d8 55%, #dfe8dc); }
+  .contact-box { background: var(--surface); border-radius: 32px; padding: 48px; box-shadow: var(--shadow); max-width: 820px; margin: 0 auto; }
+  .contact-quick { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; margin-bottom: 36px; }
+  .divider { display: flex; align-items: center; gap: 16px; color: var(--ink-soft); font-size: .85rem; margin-bottom: 28px; }
+  .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+  form .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  form label { display: block; font-size: .88rem; font-weight: 700; margin-bottom: 6px; }
+  form .opt { font-weight: 400; color: var(--ink-soft); font-size: .78rem; margin-left: 6px; }
+  form input, form select, form textarea {
+    width: 100%; font: inherit; color: var(--ink); background: var(--bg);
+    border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px;
+  }
+  form input:focus, form select:focus, form textarea:focus { outline: 2px solid #f1c3a4; border-color: var(--accent); }
+  form .full { grid-column: 1 / -1; }
+  form textarea { min-height: 120px; resize: vertical; }
+  .form-foot { text-align: center; margin-top: 26px; }
+  .form-foot small { display: block; color: var(--ink-soft); margin-top: 12px; }
+
+  /* safety */
+  .safety { background: #fff; border: 1px solid var(--line); border-radius: 20px; padding: 28px 32px; margin-top: 48px; }
+  .safety h3 { margin: 0 0 10px; font-size: 1rem; color: var(--accent-deep); }
+  .safety p { margin: 0 0 12px; font-size: .9rem; color: var(--ink-soft); }
+  .safety ul { margin: 0; padding-left: 1.2em; font-size: .9rem; }
+  .safety li { margin-bottom: 4px; }
+
+  footer.site { background: #3b3530; color: #e9e0d5; padding: 48px 0 32px; font-size: .88rem; }
+  footer.site .container { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 24px; }
+  footer.site nav { display: flex; gap: 20px; flex-wrap: wrap; }
+  footer.site a { color: #e9e0d5; text-decoration: none; }
+  footer.site .copy { width: 100%; text-align: center; color: #a89d91; margin-top: 16px; font-size: .8rem; }
+
+  /* floating cta (mobile) */
+  .float-cta { display: none; }
+
+  /* reveal */
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity .8s ease, transform .8s ease; }
+  .reveal.in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; transition: none; }
+    html { scroll-behavior: auto; }
+  }
+
+  @media (max-width: 900px) {
+    nav.global { display: none; }
+    .hero { padding: 56px 0 72px; }
+    .hero .container, .about-grid, .profile { grid-template-columns: 1fr; }
+    .worries, .promises, .voices, .plans { grid-template-columns: 1fr; }
+    .flow { grid-template-columns: 1fr 1fr; }
+    .profile { padding: 32px 24px; gap: 28px; text-align: center; }
+    .profile .avatar { max-width: 180px; margin: 0 auto; }
+    .stats { justify-content: center; }
+    .plan.featured { order: -1; }
+    section { padding: 72px 0; }
+    .float-cta {
+      display: flex; position: fixed; left: 16px; right: 16px; bottom: 16px; z-index: 60;
+      box-shadow: 0 10px 30px rgba(120, 70, 40, .35);
+    }
+    body { padding-bottom: 80px; }
+  }
+  @media (max-width: 560px) {
+    .flow { grid-template-columns: 1fr; }
+    form .grid { grid-template-columns: 1fr; }
+    .contact-box { padding: 32px 20px; }
+    .safety { padding: 22px 20px; }
+    header.site .btn.small { display: none; }
+    .hero p.lead br { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="container">
+    <a href="#top" class="logo" aria-label="ひだまり傾聴室 トップへ">
+      <svg class="logo-mark" viewBox="0 0 32 32" aria-hidden="true">
+        <circle cx="16" cy="16" r="15" fill="#fdebdf"/>
+        <circle cx="16" cy="13" r="6" fill="#d98a5f"/>
+        <path d="M6 24c3-3 6.5-4.5 10-4.5S23 21 26 24" stroke="#7f9c85" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+      </svg>
+      ひだまり傾聴室
+    </a>
+    <nav class="global" aria-label="メインメニュー">
+      <a href="#about">傾聴とは</a>
+      <a href="#topics">相談内容</a>
+      <a href="#profile">プロフィール</a>
+      <a href="#price">料金</a>
+      <a href="#faq">よくある質問</a>
+    </nav>
+    <a href="#contact" class="btn small">相談を予約する</a>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container">
+      <div>
+        <span class="eyebrow">匿名OK・オンライン／電話で相談</span>
+        <h1 class="serif">誰にも言えない話を、<br><em>否定せずに</em>、<br>ただ聴きます。</h1>
+        <p class="lead">
+          仕事のこと、恋愛のこと、お金や借金のこと。<br>
+          身近な人だからこそ言えない悩みがあります。<br>
+          アドバイスも、お説教もしません。<br>
+          あなたが話したいことを、話したいペースで。
+        </p>
+        <div class="cta-row">
+          <a href="#contact" class="btn">初回30分 お試し相談を予約する</a>
+          <a href="#about" class="btn ghost">傾聴について知る</a>
+        </div>
+        <ul class="badges">
+          <li>秘密厳守</li>
+          <li>匿名・顔出しなし</li>
+          <li>夜間も対応</li>
+        </ul>
+      </div>
+      <div class="hero-card reveal" aria-hidden="true">
+        <div class="bubble them">うまく言えないんですけど…</div>
+        <div class="bubble me">うまく言えなくて大丈夫ですよ。ゆっくりで。</div>
+        <div class="bubble them">実は、誰にも言ってない借金があって。</div>
+        <div class="bubble me">そうだったんですね。ずっと一人で抱えてきたんですね。</div>
+        <div class="bubble them">…話したら、少し楽になりました。</div>
+        <p class="caption">※ 相談のイメージです</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- WORRIES -->
+  <section class="alt">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="en">WORRIES</span>
+        <h2 class="serif">こんな気持ち、<br>ひとりで抱えていませんか？</h2>
+      </div>
+      <ul class="worries">
+        <li class="reveal">職場の人間関係に疲れた。でも同僚には話せない</li>
+        <li class="reveal">恋人や夫婦のこと、友達に話すと噂になりそうで怖い</li>
+        <li class="reveal">借金のことを家族に知られたくない。誰にも言えない</li>
+        <li class="reveal">相談すると「こうすれば？」と言われて、余計につらくなる</li>
+        <li class="reveal">カウンセリングや病院に行くほどではない気がする</li>
+        <li class="reveal">何に悩んでいるのか、自分でもよく分からない</li>
+      </ul>
+      <p class="worries-note reveal serif">その気持ち、<strong>話すだけで軽くなる</strong>ことがあります。</p>
+    </div>
+  </section>
+
+  <!-- ABOUT LISTENING -->
+  <section id="about">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="en">ABOUT</span>
+        <h2 class="serif">「傾聴」ってなに？</h2>
+      </div>
+      <div class="about-grid">
+        <div class="about-text reveal">
+          <p>傾聴とは、相手の話を<strong>否定も評価もせず、心を傾けて聴く</strong>ことです。</p>
+          <p>人は、自分の気持ちを言葉にして誰かに受け止めてもらうだけで、頭の中が整理され、自分で答えを見つけられることがよくあります。</p>
+          <p>ひだまり傾聴室は「正しい答え」を押しつける場所ではありません。あなたが安心して本音を話せる、<strong>ひだまりのような時間</strong>をお渡しします。</p>
+        </div>
+        <div class="compare reveal">
+          <div class="row ng">
+            <span class="label">よくある「相談」</span>
+            <p>「それはあなたも悪いよ」「私ならこうする」</p>
+          </div>
+          <div class="row ok">
+            <span class="label">ひだまり傾聴室</span>
+            <p>「そう感じたんですね」「それはしんどかったですね」</p>
+          </div>
+          <div class="row ok">
+            <span class="label">話し終えたあと</span>
+            <p>気持ちが整理されて、次の一歩が自分で見えてくる。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROMISES -->
+  <section class="alt">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="en">PROMISE</span>
+        <h2 class="serif">3つのお約束</h2>
+      </div>
+      <div class="promises">
+        <div class="promise reveal">
+          <div class="num">01</div>
+          <h3>否定しません</h3>
+          <p>どんな内容でも、責めたり、説教したり、「普通は」と比べたりしません。あなたの感じたことを、そのまま受け止めます。</p>
+        </div>
+        <div class="promise reveal">
+          <div class="num">02</div>
+          <h3>秘密を守ります</h3>
+          <p>お聞きした内容を外部に話すことは一切ありません。ニックネームでの相談もOK。録音もしません。</p>
+        </div>
+        <div class="promise reveal">
+          <div class="num">03</div>
+          <h3>急かしません</h3>
+          <p>沈黙も大切な時間です。まとまっていなくても、泣いてしまっても大丈夫。あなたのペースで話してください。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TOPICS -->
+  <section id="topics">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="en">TOPICS</span>
+        <h2 class="serif">こんなお話を聴いています</h2>
+        <p>「こんなことで相談していいのかな」と思う内容こそ、どうぞ。</p>
+      </div>
+      <div class="topics">
+        <div class="topic reveal">
+          <div class="icon"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></div>
+          <h3>仕事・職場</h3>
+          <p>上司や同僚との関係、転職の迷い、やりがいのなさ、職場で言えない本音。</p>
+        </div>
+        <div class="topic reveal">
+          <div class="icon"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"/></svg></div>
+          <h3>恋愛・夫婦</h3>
+          <p>片思い、失恋、パートナーとのすれ違い、誰にも言えない関係の悩み。</p>
+        </div>
+        <div class="topic reveal">
+          <div class="icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M9 9l3 4 3-4M9 13h6M12 13v4"/></svg></div>
+          <h3>お金・借金</h3>
+          <p>家族に隠している借金、返済の不安、お金のことで眠れない夜の気持ち。</p>
+        </div>
+        <div class="topic reveal">
+          <div class="icon"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg></div>
+          <h3>家族・人間関係</h3>
+          <p>親や子どものこと、友人関係、ママ友、ご近所づきあいのモヤモヤ。</p>
+        </div>
+        <div class="topic reveal">
+          <div class="icon"><svg viewBox="0 0 24 24"><path d="M4 15a8 8 0 1 1 3 3l-4 2 1-5z"/></svg></div>
+          <h3>ただ聴いてほしい</h3>
+          <p>愚痴、嬉しかったこと、うまく言葉にならない気持ち。テーマがなくても大丈夫。</p>
+        </div>
+      </div>
+      <p class="topics-note reveal">※ お金・借金のご相談では、気持ちの整理をお手伝いします。具体的な法律・債務整理の手続きについては、弁護士・司法書士や公的窓口へのご相談をおすすめしています。</p>
+    </div>
+  </section>
+
+  <!-- PROFILE -->
+  <section id="profile" class="alt">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="en">PROFILE</span>
+        <h2 class="serif">聴き手について</h2>
+      </div>
+      <div class="profile reveal">
+        <div class="avatar" aria-hidden="true">
+          <svg viewBox="0 0 100 100">
+            <circle cx="50" cy="38" r="18" fill="#fff" opacity=".9"/>
+            <path d="M18 88c4-18 17-28 32-28s28 10 32 28" fill="#fff" opacity=".9"/>
+          </svg>
+        </div>
+        <div>
+          <h3>〇〇（ニックネーム）</h3>
+          <span class="role">ひだまり傾聴室 主宰／聴き手</span>
+          <p>昔から、友人や会社の同僚に「あなたには話しやすい」と言われ、仕事の悩み、恋愛の悩み、そして誰にも言えなかった借金の悩みなど、たくさんの打ち明け話を聴いてきました。</p>
+          <p>話し終えた人が「なんだかスッキリした」「自分で決められそう」と表情を変えていく瞬間に立ち会ううちに、「ただ聴く」ことには大きな力があると確信するようになりました。</p>
+          <p>身近な人には言えない話を、身近ではない私に。安心して置いていける場所をつくりたくて、ひだまり傾聴室を始めました。</p>
+          <div class="stats">
+            <div><b>10人以上</b>これまでに聴いてきた<br>身近な人の悩み相談</div>
+            <div><b>3分野</b>仕事・恋愛・お金の<br>相談経験</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VOICES -->
+  <section>
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="en">VOICES</span>
+        <h2 class="serif">話してくれた人の声</h2>
+      </div>
+      <div class="voices">
+        <div class="voice reveal">
+          <p>アドバイスをされないのが新鮮でした。話しているうちに、自分が本当はどうしたいのかが見えてきました。</p>
+          <div class="who">30代・会社員／仕事の悩み<span class="sample-tag">掲載例</span></div>
+        </div>
+        <div class="voice reveal">
+          <p>借金のことを初めて人に話せました。責められなかったことで、ようやく専門家に相談する勇気が出ました。</p>
+          <div class="who">40代・男性／お金の悩み<span class="sample-tag">掲載例</span></div>
+        </div>
+        <div class="voice reveal">
+          <p>友達には言えない恋愛の話。途中で泣いてしまったけど、ずっと待っていてくれて安心しました。</p>
+          <div class="who">20代・女性／恋愛の悩み<span class="sample-tag">掲載例</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICE -->
+  <section id="price" class="alt">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="en">PRICE</span>
+        <h2 class="serif">料金プラン</h2>
+        <p>まずは気軽にお試しから。無理な継続のおすすめは一切しません。</p>
+      </div>
+      <div class="plans">
+        <div class="plan reveal">
+          <h3>ちょっと聴いて</h3>
+          <span class="time">30分</span>
+          <div class="price">¥2,000<small>（税込）</small></div>
+          <ul>
+            <li>短い時間で気持ちを吐き出したい方に</li>
+            <li>電話・オンライン（顔出しなし可）</li>
+            <li>チャット相談にも対応</li>
+          </ul>
+          <a href="#contact" class="btn ghost" data-plan="30分プラン">このプランで予約</a>
+        </div>
+        <div class="plan featured reveal">
+          <span class="ribbon">初めての方におすすめ</span>
+          <h3>初回お試し</h3>
+          <span class="time">30分</span>
+          <div class="price">¥1,000<small>（税込）</small></div>
+          <ul>
+            <li>初めての方限定・1回のみ</li>
+            <li>どんな雰囲気か、まず試してみたい方に</li>
+            <li>合わなければそれきりでOK</li>
+          </ul>
+          <a href="#contact" class="btn" data-plan="初回お試し30分">お試しで予約する</a>
+        </div>
+        <div class="plan reveal">
+          <h3>じっくり聴いて</h3>
+          <span class="time">60分</span>
+          <div class="price">¥3,500<small>（税込）</small></div>
+          <ul>
+            <li>時間を気にせず話したい方に</li>
+            <li>電話・オンライン（顔出しなし可）</li>
+            <li>夜間（22時〜24時）も対応</li>
+          </ul>
+          <a href="#contact" class="btn ghost" data-plan="60分プラン">このプランで予約</a>
+        </div>
+      </div>
+      <p class="pricing-note reveal">お支払い方法：銀行振込・各種キャッシュレス決済（予約確定後にご案内します）</p>
+    </div>
+  </section>
+
+  <!-- FLOW -->
+  <section>
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="en">FLOW</span>
+        <h2 class="serif">ご相談までの流れ</h2>
+      </div>
+      <ol class="flow">
+        <li class="reveal"><h3>予約フォーム・LINEから申し込み</h3><p>ニックネームと希望日時だけでOK。悩みの内容は書かなくても大丈夫です。</p></li>
+        <li class="reveal"><h3>日時の確定・お支払い</h3><p>24時間以内にご連絡します。お支払い方法もあわせてご案内します。</p></li>
+        <li class="reveal"><h3>当日、お話しする</h3><p>電話・オンライン通話・チャットからお選びいただけます。顔出しは不要です。</p></li>
+        <li class="reveal"><h3>話し終えたら、おしまい</h3><p>次回の予約は、また話したくなった時だけで大丈夫です。</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="alt">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="en">FAQ</span>
+        <h2 class="serif">よくあるご質問</h2>
+      </div>
+      <div class="faq">
+        <details class="reveal">
+          <summary>本名や住所を伝えないといけませんか？</summary>
+          <div class="answer"><p>いいえ、ニックネームで大丈夫です。連絡先としてメールアドレスかLINEだけ教えてください。</p></div>
+        </details>
+        <details class="reveal">
+          <summary>何を話せばいいか分からないのですが…</summary>
+          <div class="answer"><p>それで大丈夫です。「何から話せばいいか分からない」というところから始める方もたくさんいらっしゃいます。こちらから無理に聞き出すことはありません。</p></div>
+        </details>
+        <details class="reveal">
+          <summary>アドバイスはもらえないのですか？</summary>
+          <div class="answer"><p>基本は「聴く」ことに徹しています。ただ、あなたから「どう思いますか？」と聞かれた場合は、押しつけにならない範囲でお伝えすることもあります。</p></div>
+        </details>
+        <details class="reveal">
+          <summary>借金の解決方法を教えてもらえますか？</summary>
+          <div class="answer"><p>ひだまり傾聴室は法律の専門家ではないため、債務整理などの具体的な手続きについての助言は行っていません。その代わり、不安や焦りでいっぱいの気持ちを受け止め、整理するお手伝いをします。専門家に相談する前の「最初の一歩」としてご利用ください。</p></div>
+        </details>
+        <details class="reveal">
+          <summary>カウンセリングとは何が違いますか？</summary>
+          <div class="answer"><p>傾聴は医療行為や心理療法ではなく、「話を聴く」ことに特化したサービスです。診断や治療は行いません。心身の不調が続く場合は、医療機関や専門のカウンセラーへのご相談もあわせてご検討ください。</p></div>
+        </details>
+        <details class="reveal">
+          <summary>途中で話すのをやめてもいいですか？</summary>
+          <div class="answer"><p>もちろんです。話したくないことは話さなくて大丈夫ですし、途中で終了されても構いません。</p></div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="contact">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="en">CONTACT</span>
+        <h2 class="serif">話してみませんか</h2>
+        <p>ここまで読んでくださって、ありがとうございます。<br>その一歩を踏み出したあなたを、否定せずにお待ちしています。</p>
+      </div>
+      <div class="contact-box reveal">
+        <div class="contact-quick">
+          <!-- TODO: LINE公式アカウントのURLに差し替え -->
+          <a href="#" class="btn line" id="line-link">LINEで気軽に予約する</a>
+        </div>
+        <div class="divider">またはフォームから予約</div>
+        <form id="booking" novalidate>
+          <div class="grid">
+            <div>
+              <label for="f-name">ニックネーム</label>
+              <input id="f-name" name="name" required autocomplete="nickname" placeholder="例）ひなた">
+            </div>
+            <div>
+              <label for="f-email">メールアドレス</label>
+              <input id="f-email" name="email" type="email" required autocomplete="email" placeholder="example@mail.com">
+            </div>
+            <div>
+              <label for="f-plan">ご希望のプラン</label>
+              <select id="f-plan" name="plan">
+                <option>初回お試し30分</option>
+                <option>30分プラン</option>
+                <option>60分プラン</option>
+              </select>
+            </div>
+            <div>
+              <label for="f-method">相談方法</label>
+              <select id="f-method" name="method">
+                <option>電話</option>
+                <option>オンライン通話（顔出しなし）</option>
+                <option>オンライン通話（顔出しあり）</option>
+                <option>チャット</option>
+              </select>
+            </div>
+            <div class="full">
+              <label for="f-date">ご希望の日時<span class="opt">第3希望まであると助かります</span></label>
+              <input id="f-date" name="date" required placeholder="例）10/5(土) 21時〜、10/6(日) 午後ならいつでも">
+            </div>
+            <div class="full">
+              <label for="f-msg">伝えておきたいこと<span class="opt">任意・空欄でOK</span></label>
+              <textarea id="f-msg" name="message" placeholder="相談したいテーマや、話すときに気をつけてほしいことなど。書かなくても大丈夫です。"></textarea>
+            </div>
+          </div>
+          <div class="form-foot">
+            <button type="submit" class="btn">この内容で予約を申し込む</button>
+            <small>送信内容は予約のご連絡のみに使用し、第三者に提供することはありません。</small>
+          </div>
+        </form>
+      </div>
+
+      <div class="safety reveal">
+        <h3>いま、とてもつらい状況にある方へ</h3>
+        <p>ひだまり傾聴室は予約制のため、すぐにお話しできない場合があります。「消えてしまいたい」「今すぐ誰かと話したい」と感じているときは、以下の窓口にもご相談ください。</p>
+        <ul>
+          <li>いのちの電話（ナビダイヤル）：0570-783-556</li>
+          <li>よりそいホットライン（24時間・無料）：0120-279-338</li>
+          <li>借金・法律の相談｜法テラス サポートダイヤル：0570-078374</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site">
+  <div class="container">
+    <div>
+      <strong>ひだまり傾聴室</strong><br>
+      誰にも言えない話を、否定せずに聴きます。
+    </div>
+    <nav aria-label="フッターメニュー">
+      <a href="#about">傾聴とは</a>
+      <a href="#price">料金</a>
+      <a href="#faq">よくある質問</a>
+      <a href="#contact">ご予約</a>
+    </nav>
+    <p class="copy">本サービスは医療行為・心理療法・法律相談ではありません。 © ひだまり傾聴室</p>
+  </div>
+</footer>
+
+<a href="#contact" class="btn float-cta">初回お試し ¥1,000 で話してみる</a>
+
+<script>
+  // 予約の受付先（公開前に差し替えてください）
+  const CONTACT_EMAIL = "your-address@example.com";
+  const LINE_URL = ""; // 例: "https://lin.ee/xxxxxxx"
+
+  const lineLink = document.getElementById("line-link");
+  if (LINE_URL) lineLink.href = LINE_URL;
+  else lineLink.addEventListener("click", (e) => {
+    e.preventDefault();
+    document.getElementById("f-name").focus();
+  });
+
+  // 料金カードのボタンからプランを引き継ぐ
+  document.querySelectorAll("[data-plan]").forEach((a) => {
+    a.addEventListener("click", () => {
+      document.getElementById("f-plan").value = a.dataset.plan;
+    });
+  });
+
+  // フォーム送信 → メールアプリを開く（サーバー不要）
+  document.getElementById("booking").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const f = e.target.elements;
+    const required = ["name", "email", "date"];
+    for (const key of required) {
+      const el = f[key];
+      if (!el.value.trim() || !el.checkValidity()) {
+        el.focus();
+        el.reportValidity();
+        return;
+      }
+    }
+    const body = [
+      "ニックネーム：" + f.name.value,
+      "メール：" + f.email.value,
+      "プラン：" + f.plan.value,
+      "相談方法：" + f.method.value,
+      "希望日時：" + f.date.value,
+      "",
+      "伝えておきたいこと：",
+      f.message.value || "（なし）",
+    ].join("\n");
+    location.href = "mailto:" + CONTACT_EMAIL +
+      "?subject=" + encodeURIComponent("【ひだまり傾聴室】ご予約申し込み") +
+      "&body=" + encodeURIComponent(body);
+  });
+
+  // スクロールでふわっと表示
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((en) => {
+      if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
+</script>
+</body>
+</html>
