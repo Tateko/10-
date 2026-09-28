@@ -8,6 +8,13 @@
 <meta property="og:title" content="ひだまり傾聴室｜誰にも言えない話を、否定せずに聴きます">
 <meta property="og:description" content="アドバイスより、まず聴いてほしい。そんな夜のための傾聴サービス。匿名OK・オンライン/電話対応。">
 <meta property="og:type" content="website">
+<meta property="og:site_name" content="ひだまり傾聴室">
+<meta property="og:locale" content="ja_JP">
+<!-- 公開URLが決まったら、og:url と og:image を公開先の絶対URLに合わせる -->
+<meta property="og:url" content="https://tateko.github.io/10-/listening-site/">
+<meta property="og:image" content="https://tateko.github.io/10-/listening-site/images/ogp.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%23fdebdf'/%3E%3Ccircle cx='16' cy='13' r='6' fill='%23d98a5f'/%3E%3Cpath d='M6 24c3-3 6.5-4.5 10-4.5S23 21 26 24' stroke='%237f9c85' stroke-width='2.2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&family=Shippori+Mincho:wght@500;600&display=swap" rel="stylesheet">
@@ -537,8 +544,8 @@
     </div>
   </section>
 
-  <!-- VOICES -->
-  <section>
+  <!-- VOICES：実際の利用者から掲載許可をもらった声が集まったら、hidden を外し「掲載例」タグを消して差し替える -->
+  <section hidden>
     <div class="container">
       <div class="section-head reveal">
         <span class="en">VOICES</span>
@@ -819,12 +826,9 @@
   const CONTACT_EMAIL = "your-address@example.com";
   const LINE_URL = ""; // 例: "https://lin.ee/xxxxxxx"
 
-  const lineLink = document.getElementById("line-link");
-  if (LINE_URL) lineLink.href = LINE_URL;
-  else lineLink.addEventListener("click", (e) => {
-    e.preventDefault();
-    document.getElementById("f-name").focus();
-  });
+  // LINE公式アカウントが未設定のあいだは、LINEボタンと区切り線を出さない
+  if (LINE_URL) document.getElementById("line-link").href = LINE_URL;
+  else document.querySelectorAll(".contact-quick, .divider").forEach((el) => (el.hidden = true));
 
   // ===== 予約カレンダーの設定（営業時間に合わせて変更してください） =====
   const BOOKING = {
