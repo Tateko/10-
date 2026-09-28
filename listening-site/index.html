@@ -226,6 +226,19 @@
   .gcal-note { font-size: .85rem; color: var(--ink-soft); margin: 14px 0 0; text-align: center; }
   .pay-step { text-align: center; margin-top: 18px; }
 
+  /* submit result */
+  .submit-error { color: #c0503a; font-size: .9rem; text-align: center; margin: 14px 0 0; }
+  .linkish { border: 0; background: none; padding: 0; font: inherit; color: var(--accent-deep); text-decoration: underline; cursor: pointer; }
+  .done { text-align: center; outline: none; }
+  .done, #booking, #booker, section[id] { scroll-margin-top: 80px; }
+  .done-title { font-family: "Shippori Mincho", serif; font-size: 1.4rem; margin: 0 0 12px; color: var(--accent-deep); }
+  .done-lead { color: var(--ink-soft); margin: 0 0 20px; }
+  .done-steps { text-align: left; max-width: 560px; margin: 0 auto 20px; padding-left: 1.4em; color: var(--ink-soft); }
+  .done-to { font-weight: 700; color: var(--ink); user-select: all; word-break: break-all; }
+  .done-actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-bottom: 28px; }
+  .done-label { font-size: .85rem; font-weight: 700; margin: 0 0 6px; text-align: left; }
+  .done-summary { text-align: left; white-space: pre-wrap; word-break: break-word; background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 16px; font: inherit; font-size: .9rem; margin: 0 0 18px; user-select: all; }
+
   /* payment */
   .pay-box { margin-top: 36px; padding-top: 28px; border-top: 1px dashed var(--line); text-align: center; }
   .pay-title { font-family: "Shippori Mincho", serif; font-size: 1.3rem; margin: 0 0 6px; }
@@ -737,7 +750,30 @@
             <button type="submit" class="btn">この内容で予約を申し込む</button>
             <small>送信後、24時間以内にヒロから日時確定のご連絡をお送りします（それまでは仮予約です）。<br>送信内容は予約のご連絡のみに使用し、第三者に提供することはありません。</small>
           </div>
+          <p class="submit-error" id="submit-error" role="alert" hidden>
+            送信できませんでした。通信状況を確かめて、もう一度お試しください。<br>
+            続けてうまくいかない場合は <button type="button" class="linkish" id="submit-fallback">メールで申し込む</button>
+          </p>
         </form>
+
+        <!-- 申し込み後の確認画面 -->
+        <div class="done" id="done" tabindex="-1" hidden>
+          <p class="done-title" id="done-title"></p>
+          <p class="done-lead" id="done-lead">24時間以内に、ヒロから日時確定のメールをお送りします。<br>メールが届かない場合は、迷惑メールフォルダもご確認ください。</p>
+          <div id="done-manual">
+            <ol class="done-steps">
+              <li>下の「メールアプリで送る」を押して、そのまま送信してください。</li>
+              <li>メールアプリが開かない場合は「内容をコピー」を押し、<span class="done-to" id="done-to"></span> 宛てにメールで送ってください。</li>
+            </ol>
+            <div class="done-actions">
+              <a class="btn" id="done-mail" href="#">メールアプリで送る</a>
+              <button type="button" class="btn ghost" id="done-copy">内容をコピー</button>
+            </div>
+          </div>
+          <p class="done-label">申し込み内容</p>
+          <pre class="done-summary" id="done-summary"></pre>
+          <button type="button" class="linkish" id="done-back">← 入力画面に戻って直す</button>
+        </div>
 
         <!-- オンライン決済（PAYMENT_LINKS にURLを入れると表示） -->
         <div class="pay-box" id="pay-box" hidden>
@@ -1029,9 +1065,69 @@
     });
   });
 
-  // フォーム送信 → メールアプリを開く（サーバー不要）
-  document.getElementById("booking").addEventListener("submit", (e) => {
+  // ===== 申し込みの送信 =====
+  // Formspree（https://formspree.io）で作ったフォームのURLを入れると、申し込みがヒロのメールに直接届きます。
+  // 空欄の場合は、確認画面から「メールアプリで送る」「内容をコピー」で送ってもらいます。
+  const FORM_ENDPOINT = ""; // 例: "https://formspree.io/f/xxxxxxxx"
+
+  const bookingForm = document.getElementById("booking");
+  const done = document.getElementById("done");
+  const submitBtn = bookingForm.querySelector('button[type="submit"]');
+  const submitError = document.getElementById("submit-error");
+  document.getElementById("done-to").textContent = CONTACT_EMAIL;
+
+  function buildSummary(f) {
+    return [
+      "ニックネーム：" + f.name.value,
+      "メール：" + f.email.value,
+      "プラン：" + f.plan.value,
+      "相談方法：" + f.method.value,
+      "",
+      "希望日時：",
+      ...picks.map((p, i) => "  第" + (i + 1) + "希望　" + fmtPick(p)),
+      "",
+      "伝えておきたいこと：",
+      f.message.value || "（なし）",
+    ].join("\n");
+  }
+
+  function showDone(sent, summary) {
+    document.getElementById("done-title").textContent = sent ? "予約の申し込みを受け付けました" : "あと一歩で申し込み完了です";
+    document.getElementById("done-lead").hidden = !sent;
+    document.getElementById("done-manual").hidden = sent;
+    document.getElementById("done-summary").textContent = summary;
+    const mail = document.getElementById("done-mail");
+    mail.href = "mailto:" + CONTACT_EMAIL +
+      "?subject=" + encodeURIComponent("【ひだまり傾聴室】ご予約申し込み") +
+      "&body=" + encodeURIComponent(summary);
+    bookingForm.hidden = true;
+    done.hidden = false;
+    done.scrollIntoView({ behavior: "smooth", block: "start" });
+    done.focus({ preventScroll: true });
+  }
+
+  document.getElementById("done-copy").addEventListener("click", (e) => {
+    const btn = e.currentTarget;
+    const text = document.getElementById("done-summary").textContent;
+    const selectText = () => {
+      const r = document.createRange();
+      r.selectNodeContents(document.getElementById("done-summary"));
+      const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+      btn.textContent = "選択しました。長押しでコピーしてください";
+    };
+    try {
+      navigator.clipboard.writeText(text).then(() => { btn.textContent = "コピーしました"; }, selectText);
+    } catch (_) { selectText(); }
+  });
+  document.getElementById("done-back").addEventListener("click", () => {
+    done.hidden = true;
+    bookingForm.hidden = false;
+    bookingForm.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
+  bookingForm.addEventListener("submit", async (e) => {
     e.preventDefault();
+    submitError.hidden = true;
     const f = e.target.elements;
     for (const key of ["name", "email"]) {
       const el = f[key];
@@ -1047,21 +1143,37 @@
       booker.scrollIntoView({ behavior: "smooth", block: "center" });
       return;
     }
-    const body = [
-      "ニックネーム：" + f.name.value,
-      "メール：" + f.email.value,
-      "プラン：" + f.plan.value,
-      "相談方法：" + f.method.value,
-      "",
-      "希望日時：",
-      ...picks.map((p, i) => "  第" + (i + 1) + "希望　" + fmtPick(p)),
-      "",
-      "伝えておきたいこと：",
-      f.message.value || "（なし）",
-    ].join("\n");
-    location.href = "mailto:" + CONTACT_EMAIL +
-      "?subject=" + encodeURIComponent("【ひだまり傾聴室】ご予約申し込み") +
-      "&body=" + encodeURIComponent(body);
+    const body = buildSummary(f);
+
+    if (!FORM_ENDPOINT) { showDone(false, body); return; }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = "送信しています…";
+    try {
+      const res = await fetch(FORM_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          _subject: "【ひだまり傾聴室】ご予約申し込み（" + f.name.value + " さん）",
+          email: f.email.value,
+          ニックネーム: f.name.value,
+          プラン: f.plan.value,
+          相談方法: f.method.value,
+          希望日時: picks.map((p, i) => "第" + (i + 1) + "希望 " + fmtPick(p)).join(" ／ "),
+          伝えておきたいこと: f.message.value || "（なし）",
+        }),
+      });
+      if (!res.ok) throw new Error(res.status);
+      showDone(true, body);
+    } catch (_) {
+      submitError.hidden = false;
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = "この内容で予約を申し込む";
+    }
+  });
+  document.getElementById("submit-fallback").addEventListener("click", () => {
+    showDone(false, buildSummary(bookingForm.elements));
   });
 
   // スクロールでふわっと表示

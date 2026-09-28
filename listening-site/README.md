@@ -9,6 +9,7 @@
 | --- | --- |
 | `index.html` 末尾の `CONTACT_EMAIL` | 予約メールの受付アドレス |
 | `index.html` 末尾の `LINE_URL` | LINE公式アカウントの友だち追加URL（空のままだとフォームへ移動） |
+| `index.html` 末尾の `FORM_ENDPOINT` | [Formspree](https://formspree.io) のフォームURL。入れると申し込みがメールに直接届く（空欄なら確認画面から利用者がメールで送る） |
 | `index.html` 末尾の `GCAL_SCHEDULES` | Googleカレンダー予約スケジュールのURL（下記参照）。入れるとGoogleの予約画面に切り替わる |
 | `index.html` 末尾の `BOOKING` | Google未設定時に使う簡易カレンダーの営業時間・定休日など |
 | 料金プランの金額 | 仮の金額です（初回1,000円 / 30分2,000円 / 60分3,500円） |
