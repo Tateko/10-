@@ -26,6 +26,7 @@
     --radius: 20px;
   }
   * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
   html { scroll-behavior: smooth; }
   body {
     margin: 0;
@@ -214,6 +215,15 @@
   form .full { grid-column: 1 / -1; }
   form textarea { min-height: 120px; resize: vertical; }
   .field-label { display: block; font-size: .88rem; font-weight: 700; margin-bottom: 8px; }
+
+  /* Google calendar booking */
+  .plan-tabs { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin-bottom: 24px; }
+  .plan-tab { border: 2px solid var(--line); background: var(--bg); border-radius: 14px; padding: 12px 10px; font: inherit; color: var(--ink); cursor: pointer; text-align: center; line-height: 1.5; }
+  .plan-tab small { display: block; color: var(--ink-soft); font-size: .8rem; }
+  .plan-tab[aria-selected="true"] { border-color: var(--accent); background: #fff6ef; font-weight: 700; }
+  .gcal-frame-wrap { border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: #fff; }
+  #gcal-frame { display: block; width: 100%; height: 700px; border: 0; }
+  .gcal-note { font-size: .85rem; color: var(--ink-soft); margin: 14px 0 0; text-align: center; }
 
   /* booking calendar */
   .booker { display: grid; grid-template-columns: 1.05fr 1fr; gap: 18px; background: var(--bg); border: 1px solid var(--line); border-radius: 16px; padding: 18px; }
@@ -642,7 +652,22 @@
           <!-- TODO: LINE公式アカウントのURLに差し替え -->
           <a href="#" class="btn line" id="line-link">LINEで気軽に予約する</a>
         </div>
-        <div class="divider">またはフォームから予約</div>
+        <div class="divider">またはカレンダーから予約</div>
+
+        <!-- Googleカレンダー予約スケジュール（GCAL_SCHEDULES にURLを入れると表示） -->
+        <div id="gcal-booking" hidden>
+          <p class="field-label" id="gcal-label">1. プランを選ぶ</p>
+          <div class="plan-tabs" id="gcal-tabs" role="tablist" aria-labelledby="gcal-label"></div>
+          <p class="field-label">2. 日付と時間を選んで、予約を確定する</p>
+          <div class="gcal-frame-wrap">
+            <iframe id="gcal-frame" title="予約カレンダー" loading="lazy"></iframe>
+          </div>
+          <p class="gcal-note">
+            お名前はニックネームで大丈夫です。予約が確定すると、確認メールとカレンダーの招待が届きます。<br>
+            日時の変更・キャンセルは、確認メール内のリンクからいつでもできます。
+          </p>
+        </div>
+
         <form id="booking" novalidate>
           <div class="grid">
             <div>
@@ -898,11 +923,57 @@
   }
   renderCalendar(); renderSlots(); renderPicks();
 
+  // ===== Googleカレンダー予約スケジュール =====
+  // Googleカレンダーで作った予約ページのURLをプランごとに入れると、
+  // 上の自作カレンダーの代わりにGoogleの予約画面が表示されます（空き状況の自動反映・二重予約防止・確認メール）。
+  // 同じ予約ページを複数のプランで使ってもOKです。空欄のプランは表示されません。
+  const GCAL_SCHEDULES = [
+    { plan: "初回お試し30分", price: "¥1,000", url: "" },
+    { plan: "30分プラン",     price: "¥2,000", url: "" },
+    { plan: "60分プラン",     price: "¥3,500", url: "" },
+  ].filter((s) => s.url);
+
+  const gcalBox = document.getElementById("gcal-booking");
+  const gcalFrame = document.getElementById("gcal-frame");
+  const gcalTabs = document.getElementById("gcal-tabs");
+
+  function embedUrl(url) {
+    // 予約ページのURLに gv=true を付けると、埋め込み用の表示になる
+    if (!/calendar\.google\.com/.test(url) || /[?&]gv=true/.test(url)) return url;
+    return url + (url.includes("?") ? "&" : "?") + "gv=true";
+  }
+  function selectGcalPlan(plan) {
+    const s = GCAL_SCHEDULES.find((x) => x.plan === plan) || GCAL_SCHEDULES[0];
+    gcalTabs.querySelectorAll(".plan-tab").forEach((t) => t.setAttribute("aria-selected", t.dataset.plan === s.plan));
+    const src = embedUrl(s.url);
+    if (gcalFrame.getAttribute("src") !== src) gcalFrame.setAttribute("src", src);
+  }
+
+  if (GCAL_SCHEDULES.length) {
+    gcalBox.hidden = false;
+    document.getElementById("booking").hidden = true;
+    if (GCAL_SCHEDULES.length === 1) gcalTabs.previousElementSibling.hidden = gcalTabs.hidden = true;
+    GCAL_SCHEDULES.forEach((s) => {
+      const t = document.createElement("button");
+      t.type = "button";
+      t.className = "plan-tab";
+      t.setAttribute("role", "tab");
+      t.dataset.plan = s.plan;
+      t.innerHTML = "<span></span><small></small>";
+      t.firstChild.textContent = s.plan;
+      t.lastChild.textContent = s.price;
+      t.addEventListener("click", () => selectGcalPlan(s.plan));
+      gcalTabs.appendChild(t);
+    });
+    selectGcalPlan(GCAL_SCHEDULES[0].plan);
+  }
+
   // 料金カードのボタンからプランを引き継ぐ
   document.querySelectorAll("[data-plan]").forEach((a) => {
     a.addEventListener("click", () => {
       planSelect.value = a.dataset.plan;
       planSelect.dispatchEvent(new Event("change"));
+      if (GCAL_SCHEDULES.length) selectGcalPlan(a.dataset.plan);
     });
   });
 
