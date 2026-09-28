@@ -148,8 +148,8 @@
 
   /* profile */
   .profile { display: grid; grid-template-columns: 280px 1fr; gap: 48px; align-items: center; background: var(--surface); border-radius: 32px; padding: 48px; box-shadow: var(--shadow); }
-  .avatar { width: 100%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #fbe3d1, #e9c3a6); display: grid; place-items: center; }
-  .avatar svg { width: 55%; }
+  .avatar { margin: 0; width: 100%; max-width: 100%; aspect-ratio: 3 / 4; border-radius: 24px; overflow: hidden; background: #e9dccb; box-shadow: 0 14px 30px rgba(120, 90, 60, .18); }
+  .avatar img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 60%; }
   .profile h3 { margin: 0 0 4px; font-size: 1.4rem; }
   .profile .role { color: var(--leaf); font-weight: 700; font-size: .9rem; margin-bottom: 18px; display: block; }
   .profile p { margin: 0 0 14px; }
@@ -317,7 +317,7 @@
     .booker { grid-template-columns: 1fr; }
     .slot-grid { max-height: none; }
     .profile { padding: 32px 24px; gap: 28px; text-align: center; }
-    .profile .avatar { max-width: 180px; margin: 0 auto; }
+    .profile .avatar { max-width: 260px; margin: 0 auto; }
     .stats { justify-content: center; }
     .plan.featured { order: -1; }
     section { padding: 72px 0; }
@@ -519,12 +519,9 @@
         <h2 class="serif">聴き手について</h2>
       </div>
       <div class="profile reveal">
-        <div class="avatar" aria-hidden="true">
-          <svg viewBox="0 0 100 100">
-            <circle cx="50" cy="38" r="18" fill="#fff" opacity=".9"/>
-            <path d="M18 88c4-18 17-28 32-28s28 10 32 28" fill="#fff" opacity=".9"/>
-          </svg>
-        </div>
+        <figure class="avatar">
+          <img src="images/hiro.jpg" width="900" height="1200" loading="lazy" alt="滝を見つめるヒロの後ろ姿">
+        </figure>
         <div>
           <h3>ヒロ</h3>
           <span class="role">ひだまり傾聴室 主宰／聴き手</span>

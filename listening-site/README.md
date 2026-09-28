@@ -64,6 +64,12 @@ const PAYMENT_LINKS = [
 ネットで有料サービスを売るには、特定商取引法に基づく表記が必要です（Squareの審査でも確認されます）。
 `tokushoho.html` の黄色い部分（氏名・連絡先・キャンセル規定）を記入してください。フッターからリンクしています。
 
+## PR動画（`promo/`）
+
+- `promo/promo.mp4`：SNS用の縦型動画（1080×1920・30fps・35秒・音なし）。Instagramリール／TikTok／YouTubeショート／Xにそのまま投稿できます
+- BGMは各アプリの投稿画面で、アプリ内の音楽ライブラリから付けてください（著作権の許諾が済んだ曲を使えます）
+- 文言や写真を変えたいときは `promo/promo.html` を編集し、`promo/` で `npm i playwright ffmpeg-static && node record-promo.mjs` を実行すると書き出し直せます
+
 ## 構成
 
 1. ヒーロー（キャッチコピー＋会話イメージ）
