@@ -224,6 +224,18 @@
   .gcal-frame-wrap { border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: #fff; }
   #gcal-frame { display: block; width: 100%; height: 700px; border: 0; }
   .gcal-note { font-size: .85rem; color: var(--ink-soft); margin: 14px 0 0; text-align: center; }
+  .pay-step { text-align: center; margin-top: 18px; }
+
+  /* payment */
+  .pay-box { margin-top: 36px; padding-top: 28px; border-top: 1px dashed var(--line); text-align: center; }
+  .pay-title { font-family: "Shippori Mincho", serif; font-size: 1.3rem; margin: 0 0 6px; }
+  .pay-lead { color: var(--ink-soft); font-size: .92rem; margin: 0 0 18px; }
+  .pay-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+  .pay-btn { display: block; text-decoration: none; border: 2px solid var(--accent); border-radius: 14px; padding: 12px 10px; background: #fff6ef; color: var(--ink); line-height: 1.5; transition: background .15s; }
+  .pay-btn:hover { background: #fdebdf; }
+  .pay-btn b { display: block; }
+  .pay-btn small { color: var(--accent-deep); font-weight: 700; }
+  .pay-note { font-size: .8rem; color: var(--ink-soft); margin: 14px 0 0; }
 
   /* booking calendar */
   .booker { display: grid; grid-template-columns: 1.05fr 1fr; gap: 18px; background: var(--bg); border: 1px solid var(--line); border-radius: 16px; padding: 18px; }
@@ -583,7 +595,7 @@
           <a href="#contact" class="btn ghost" data-plan="60分プラン">このプランで予約</a>
         </div>
       </div>
-      <p class="pricing-note reveal">お支払い方法：銀行振込・各種キャッシュレス決済（予約確定後にご案内します）</p>
+      <p class="pricing-note reveal" id="pricing-note">お支払い方法：銀行振込・各種キャッシュレス決済（予約確定後にご案内します）</p>
     </div>
   </section>
 
@@ -666,6 +678,7 @@
             お名前はニックネームで大丈夫です。予約が確定すると、確認メールとカレンダーの招待が届きます。<br>
             日時の変更・キャンセルは、確認メール内のリンクからいつでもできます。
           </p>
+          <p class="field-label pay-step" data-pay-only hidden>3. 下の「お支払い」から料金をお支払いください</p>
         </div>
 
         <form id="booking" novalidate>
@@ -725,6 +738,15 @@
             <small>送信後、24時間以内にヒロから日時確定のご連絡をお送りします（それまでは仮予約です）。<br>送信内容は予約のご連絡のみに使用し、第三者に提供することはありません。</small>
           </div>
         </form>
+
+        <!-- オンライン決済（PAYMENT_LINKS にURLを入れると表示） -->
+        <div class="pay-box" id="pay-box" hidden>
+          <p class="pay-title">お支払い</p>
+          <p class="pay-lead">ご予約のあと、相談日の前日までに、ご予約のプランのボタンからお支払いください。</p>
+          <div class="pay-grid" id="pay-grid"></div>
+          <p class="pay-note">お支払いページは決済サービス Square の画面で開きます。カード情報がこのサイトに送られることはありません。<br>
+            キャンセル・返金については<a href="tokushoho.html">特定商取引法に基づく表記</a>をご確認ください。</p>
+        </div>
       </div>
 
       <div class="safety reveal">
@@ -751,6 +773,7 @@
       <a href="#price">料金</a>
       <a href="#faq">よくある質問</a>
       <a href="#contact">ご予約</a>
+      <a href="tokushoho.html">特定商取引法に基づく表記</a>
     </nav>
     <p class="copy">本サービスは医療行為・心理療法・法律相談ではありません。 © ひだまり傾聴室</p>
   </div>
@@ -966,6 +989,35 @@
       gcalTabs.appendChild(t);
     });
     selectGcalPlan(GCAL_SCHEDULES[0].plan);
+  }
+
+  // ===== オンライン決済（Square 決済リンク） =====
+  // Square の管理画面で作った「決済リンク」（例: https://square.link/u/xxxxxx）をプランごとに入れると、
+  // 予約欄の下にお支払いボタンが表示されます。空欄のプランは表示されません。
+  const PAYMENT_SERVICE = "クレジットカード・電子マネー等／Square";   // 料金表の「お支払い方法」に表示
+  const PAYMENT_LINKS = [
+    { plan: "初回お試し30分", price: "¥1,000", url: "" },
+    { plan: "30分プラン",     price: "¥2,000", url: "" },
+    { plan: "60分プラン",     price: "¥3,500", url: "" },
+  ].filter((p) => p.url);
+
+  if (PAYMENT_LINKS.length) {
+    const grid = document.getElementById("pay-grid");
+    PAYMENT_LINKS.forEach((p) => {
+      const a = document.createElement("a");
+      a.className = "pay-btn";
+      a.href = p.url;
+      a.target = "_blank";
+      a.rel = "noopener";
+      a.innerHTML = "<b></b><small></small>";
+      a.firstChild.textContent = p.plan;
+      a.lastChild.textContent = p.price + " を支払う →";
+      grid.appendChild(a);
+    });
+    document.getElementById("pay-box").hidden = false;
+    document.querySelectorAll("[data-pay-only]").forEach((el) => (el.hidden = false));
+    document.getElementById("pricing-note").textContent =
+      "お支払い方法：オンライン決済" + (PAYMENT_SERVICE ? "（" + PAYMENT_SERVICE + "）" : "") + "／ご予約後、相談日の前日までにお支払いください";
   }
 
   // 料金カードのボタンからプランを引き継ぐ
