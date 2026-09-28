@@ -213,6 +213,39 @@
   form input:focus, form select:focus, form textarea:focus { outline: 2px solid #f1c3a4; border-color: var(--accent); }
   form .full { grid-column: 1 / -1; }
   form textarea { min-height: 120px; resize: vertical; }
+  .field-label { display: block; font-size: .88rem; font-weight: 700; margin-bottom: 8px; }
+
+  /* booking calendar */
+  .booker { display: grid; grid-template-columns: 1.05fr 1fr; gap: 18px; background: var(--bg); border: 1px solid var(--line); border-radius: 16px; padding: 18px; }
+  .booker.invalid { border-color: #d9674f; }
+  .cal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .cal-head strong { font-size: 1rem; }
+  .cal-nav { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface); font: inherit; font-size: 1.2rem; line-height: 1; color: var(--ink); cursor: pointer; }
+  .cal-nav:disabled { opacity: .3; cursor: default; }
+  .cal-week, .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; }
+  .cal-week span { font-size: .75rem; color: var(--ink-soft); padding-bottom: 4px; }
+  .cal-week .sun { color: #c9604a; } .cal-week .sat { color: #5a7fa8; }
+  .cal-day { aspect-ratio: 1; border: 0; border-radius: 10px; background: var(--surface); font: inherit; font-size: .9rem; color: var(--ink); cursor: pointer; position: relative; }
+  .cal-day:hover:not(:disabled) { background: #fdebdf; }
+  .cal-day:disabled { background: transparent; color: #cbc1b6; cursor: default; }
+  .cal-day.today::after { content: ""; position: absolute; left: 50%; bottom: 5px; width: 4px; height: 4px; margin-left: -2px; border-radius: 50%; background: var(--leaf); }
+  .cal-day.has-pick { box-shadow: inset 0 0 0 2px #f1c3a4; }
+  .cal-day.active { background: var(--accent); color: #fff; font-weight: 700; }
+  .slots-title { margin: 6px 0 12px; font-weight: 700; font-size: .95rem; }
+  .slot-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(78px, 1fr)); gap: 8px; max-height: 300px; overflow-y: auto; padding-right: 2px; }
+  .slot-grid .empty { grid-column: 1 / -1; color: var(--ink-soft); font-size: .88rem; margin: 0; }
+  .slot { border: 1px solid var(--line); background: var(--surface); border-radius: 10px; padding: 9px 4px; font: inherit; font-size: .9rem; color: var(--ink); cursor: pointer; }
+  .slot:hover:not(:disabled) { border-color: var(--accent); }
+  .slot.picked { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 700; }
+  .slot:disabled { opacity: .35; cursor: default; }
+  .slot-group { grid-column: 1 / -1; font-size: .75rem; color: var(--ink-soft); letter-spacing: .1em; margin-top: 4px; }
+  .picks { display: grid; gap: 8px; margin-top: 14px; }
+  .pick { display: flex; align-items: center; gap: 12px; background: #fff6ef; border: 1px solid #f3d4bf; border-radius: 12px; padding: 10px 14px; font-size: .92rem; }
+  .pick .rank { font-size: .75rem; font-weight: 700; color: #fff; background: var(--accent); border-radius: 999px; padding: 1px 10px; white-space: nowrap; }
+  .pick .when { flex: 1; }
+  .pick button { border: 0; background: none; font: inherit; color: var(--ink-soft); cursor: pointer; padding: 2px 6px; }
+  .picks-hint { font-size: .82rem; color: var(--ink-soft); margin: 0; }
+  .pick-error { color: #c0503a; font-size: .85rem; margin: 8px 0 0; }
   .form-foot { text-align: center; margin-top: 26px; }
   .form-foot small { display: block; color: var(--ink-soft); margin-top: 12px; }
 
@@ -246,6 +279,8 @@
     .hero .container, .about-grid, .profile { grid-template-columns: 1fr; }
     .worries, .promises, .voices, .plans { grid-template-columns: 1fr; }
     .flow { grid-template-columns: 1fr 1fr; }
+    .booker { grid-template-columns: 1fr; }
+    .slot-grid { max-height: none; }
     .profile { padding: 32px 24px; gap: 28px; text-align: center; }
     .profile .avatar { max-width: 180px; margin: 0 auto; }
     .stats { justify-content: center; }
@@ -456,13 +491,13 @@
           </svg>
         </div>
         <div>
-          <h3>〇〇（ニックネーム）</h3>
+          <h3>ヒロ</h3>
           <span class="role">ひだまり傾聴室 主宰／聴き手</span>
           <p>昔から、友人や会社の同僚に「あなたには話しやすい」と言われ、仕事の悩み、恋愛の悩み、そして誰にも言えなかった借金の悩みなど、たくさんの打ち明け話を聴いてきました。</p>
           <p>話し終えた人が「なんだかスッキリした」「自分で決められそう」と表情を変えていく瞬間に立ち会ううちに、「ただ聴く」ことには大きな力があると確信するようになりました。</p>
           <p>身近な人には言えない話を、身近ではない私に。安心して置いていける場所をつくりたくて、ひだまり傾聴室を始めました。</p>
           <div class="stats">
-            <div><b>10人以上</b>これまでに聴いてきた<br>身近な人の悩み相談</div>
+            <div><b>50人以上</b>これまでに聴いてきた<br>身近な人の悩み相談</div>
             <div><b>3分野</b>仕事・恋愛・お金の<br>相談経験</div>
           </div>
         </div>
@@ -636,8 +671,24 @@
               </select>
             </div>
             <div class="full">
-              <label for="f-date">ご希望の日時<span class="opt">第3希望まであると助かります</span></label>
-              <input id="f-date" name="date" required placeholder="例）10/5(土) 21時〜、10/6(日) 午後ならいつでも">
+              <span class="field-label" id="booker-label">ご希望の日時<span class="opt">日付 → 時間の順に選択（第3希望まで追加できます）</span></span>
+              <div class="booker" id="booker" role="group" aria-labelledby="booker-label">
+                <div class="cal">
+                  <div class="cal-head">
+                    <button type="button" class="cal-nav" id="cal-prev" aria-label="前の月">‹</button>
+                    <strong id="cal-title"></strong>
+                    <button type="button" class="cal-nav" id="cal-next" aria-label="次の月">›</button>
+                  </div>
+                  <div class="cal-week" aria-hidden="true"><span class="sun">日</span><span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span class="sat">土</span></div>
+                  <div class="cal-grid" id="cal-grid"></div>
+                </div>
+                <div class="slots">
+                  <p class="slots-title" id="slots-title">カレンダーから日付を選んでください</p>
+                  <div class="slot-grid" id="slot-grid"></div>
+                </div>
+              </div>
+              <div class="picks" id="picks" aria-live="polite"></div>
+              <p class="pick-error" id="pick-error" hidden>ご希望の日時を1つ以上選んでください</p>
             </div>
             <div class="full">
               <label for="f-msg">伝えておきたいこと<span class="opt">任意・空欄でOK</span></label>
@@ -646,7 +697,7 @@
           </div>
           <div class="form-foot">
             <button type="submit" class="btn">この内容で予約を申し込む</button>
-            <small>送信内容は予約のご連絡のみに使用し、第三者に提供することはありません。</small>
+            <small>送信後、24時間以内にヒロから日時確定のご連絡をお送りします（それまでは仮予約です）。<br>送信内容は予約のご連絡のみに使用し、第三者に提供することはありません。</small>
           </div>
         </form>
       </div>
@@ -694,10 +745,164 @@
     document.getElementById("f-name").focus();
   });
 
+  // ===== 予約カレンダーの設定（営業時間に合わせて変更してください） =====
+  const BOOKING = {
+    openHour: 10,          // 最初の開始時刻（10:00）
+    closeHour: 24,         // この時刻までに終わる枠だけ表示（24:00）
+    stepMinutes: 30,       // 枠の間隔
+    daysAhead: 30,         // 何日先まで予約できるか
+    minLeadHours: 3,       // 今から何時間後以降を予約可にするか
+    closedWeekdays: [],    // 定休日（0=日 … 6=土）例: [3] で水曜休み
+    closedDates: [],       // 臨時休業日 例: ["2026-10-12"]
+    maxPicks: 3,           // 第何希望まで選べるか
+  };
+
+  const WEEK = ["日", "月", "火", "水", "木", "金", "土"];
+  const planSelect = document.getElementById("f-plan");
+  const calGrid = document.getElementById("cal-grid");
+  const calTitle = document.getElementById("cal-title");
+  const calPrev = document.getElementById("cal-prev");
+  const calNext = document.getElementById("cal-next");
+  const slotGrid = document.getElementById("slot-grid");
+  const slotsTitle = document.getElementById("slots-title");
+  const picksEl = document.getElementById("picks");
+  const pickError = document.getElementById("pick-error");
+  const booker = document.getElementById("booker");
+
+  const pad = (n) => String(n).padStart(2, "0");
+  const ymd = (d) => d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+  const duration = () => (planSelect.value.includes("60") ? 60 : 30);
+  const fmtTime = (min) => pad(Math.floor(min / 60)) + ":" + pad(min % 60);
+  const fmtDate = (d) => (d.getMonth() + 1) + "月" + d.getDate() + "日（" + WEEK[d.getDay()] + "）";
+  const fmtPick = (p) => fmtDate(p.date) + " " + fmtTime(p.start) + "〜" + fmtTime(p.start + duration());
+
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const lastDay = new Date(today); lastDay.setDate(lastDay.getDate() + BOOKING.daysAhead);
+
+  let viewMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+  let activeDate = null;
+  let picks = []; // { date: Date, start: 分 }
+
+  function slotsFor(date) {
+    const earliest = Date.now() + BOOKING.minLeadHours * 3600e3;
+    const out = [];
+    for (let m = BOOKING.openHour * 60; m + duration() <= BOOKING.closeHour * 60; m += BOOKING.stepMinutes) {
+      const t = new Date(date); t.setMinutes(m);
+      out.push({ start: m, disabled: t.getTime() < earliest });
+    }
+    return out;
+  }
+  function isOpen(date) {
+    if (date < today || date > lastDay) return false;
+    if (BOOKING.closedWeekdays.includes(date.getDay())) return false;
+    if (BOOKING.closedDates.includes(ymd(date))) return false;
+    return slotsFor(date).some((s) => !s.disabled);
+  }
+  const samePick = (a, b) => ymd(a.date) === ymd(b.date) && a.start === b.start;
+
+  function renderCalendar() {
+    calTitle.textContent = viewMonth.getFullYear() + "年 " + (viewMonth.getMonth() + 1) + "月";
+    calPrev.disabled = viewMonth <= new Date(today.getFullYear(), today.getMonth(), 1);
+    calNext.disabled = new Date(viewMonth.getFullYear(), viewMonth.getMonth() + 1, 1) > lastDay;
+    calGrid.innerHTML = "";
+    for (let i = 0; i < viewMonth.getDay(); i++) calGrid.appendChild(document.createElement("span"));
+    const days = new Date(viewMonth.getFullYear(), viewMonth.getMonth() + 1, 0).getDate();
+    for (let d = 1; d <= days; d++) {
+      const date = new Date(viewMonth.getFullYear(), viewMonth.getMonth(), d);
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "cal-day";
+      b.textContent = d;
+      b.setAttribute("aria-label", fmtDate(date));
+      if (!isOpen(date)) b.disabled = true;
+      if (ymd(date) === ymd(today)) b.classList.add("today");
+      if (activeDate && ymd(date) === ymd(activeDate)) { b.classList.add("active"); b.setAttribute("aria-pressed", "true"); }
+      if (picks.some((p) => ymd(p.date) === ymd(date))) b.classList.add("has-pick");
+      b.addEventListener("click", () => { activeDate = date; renderCalendar(); renderSlots(); });
+      calGrid.appendChild(b);
+    }
+  }
+
+  function renderSlots() {
+    slotGrid.innerHTML = "";
+    if (!activeDate) { slotsTitle.textContent = "カレンダーから日付を選んでください"; return; }
+    slotsTitle.textContent = fmtDate(activeDate) + " の空き時間（" + duration() + "分）" +
+      (picks.length >= BOOKING.maxPicks ? " ※第" + BOOKING.maxPicks + "希望まで選択済み。変更は下の「取消」から" : "");
+    const slots = slotsFor(activeDate).filter((s) => !s.disabled);
+    if (!slots.length) { slotGrid.innerHTML = '<p class="empty">この日は選べる時間がありません</p>'; return; }
+    let group = "";
+    slots.forEach((s) => {
+      const g = s.start < 12 * 60 ? "午前" : s.start < 18 * 60 ? "午後" : "夜";
+      if (g !== group) {
+        group = g;
+        const h = document.createElement("span");
+        h.className = "slot-group"; h.textContent = g;
+        slotGrid.appendChild(h);
+      }
+      const pick = { date: activeDate, start: s.start };
+      const picked = picks.some((p) => samePick(p, pick));
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "slot" + (picked ? " picked" : "");
+      b.textContent = fmtTime(s.start);
+      b.setAttribute("aria-pressed", picked);
+      if (!picked && picks.length >= BOOKING.maxPicks) b.disabled = true;
+      b.addEventListener("click", () => togglePick(pick));
+      slotGrid.appendChild(b);
+    });
+  }
+
+  function renderPicks() {
+    picksEl.innerHTML = "";
+    if (!picks.length) {
+      picksEl.innerHTML = '<p class="picks-hint">まだ選ばれていません。ご都合のよい時間を第' + BOOKING.maxPicks + '希望まで選べます。</p>';
+      return;
+    }
+    picks.forEach((p, i) => {
+      const row = document.createElement("div");
+      row.className = "pick";
+      row.innerHTML = '<span class="rank">第' + (i + 1) + '希望</span><span class="when"></span><button type="button" aria-label="この希望を取り消す">✕ 取消</button>';
+      row.querySelector(".when").textContent = fmtPick(p);
+      row.querySelector("button").addEventListener("click", () => togglePick(p));
+      picksEl.appendChild(row);
+    });
+    if (picks.length < BOOKING.maxPicks) {
+      const hint = document.createElement("p");
+      hint.className = "picks-hint";
+      hint.textContent = "別の候補も選んでおくと、予約がスムーズに確定します。";
+      picksEl.appendChild(hint);
+    }
+  }
+
+  function togglePick(pick) {
+    const i = picks.findIndex((p) => samePick(p, pick));
+    if (i >= 0) picks.splice(i, 1);
+    else if (picks.length < BOOKING.maxPicks) picks.push(pick); // 選んだ順＝希望順
+    pickError.hidden = true;
+    booker.classList.remove("invalid");
+    renderCalendar(); renderSlots(); renderPicks();
+  }
+
+  calPrev.addEventListener("click", () => { viewMonth = new Date(viewMonth.getFullYear(), viewMonth.getMonth() - 1, 1); renderCalendar(); });
+  calNext.addEventListener("click", () => { viewMonth = new Date(viewMonth.getFullYear(), viewMonth.getMonth() + 1, 1); renderCalendar(); });
+
+  // 60分プランに変えたとき、24時を超える枠を外す
+  planSelect.addEventListener("change", () => {
+    picks = picks.filter((p) => p.start + duration() <= BOOKING.closeHour * 60);
+    renderSlots(); renderPicks(); renderCalendar();
+  });
+
+  // 最初に選べる日を開いておく
+  for (let d = new Date(today); d <= lastDay; d.setDate(d.getDate() + 1)) {
+    if (isOpen(d)) { activeDate = new Date(d); viewMonth = new Date(d.getFullYear(), d.getMonth(), 1); break; }
+  }
+  renderCalendar(); renderSlots(); renderPicks();
+
   // 料金カードのボタンからプランを引き継ぐ
   document.querySelectorAll("[data-plan]").forEach((a) => {
     a.addEventListener("click", () => {
-      document.getElementById("f-plan").value = a.dataset.plan;
+      planSelect.value = a.dataset.plan;
+      planSelect.dispatchEvent(new Event("change"));
     });
   });
 
@@ -705,8 +910,7 @@
   document.getElementById("booking").addEventListener("submit", (e) => {
     e.preventDefault();
     const f = e.target.elements;
-    const required = ["name", "email", "date"];
-    for (const key of required) {
+    for (const key of ["name", "email"]) {
       const el = f[key];
       if (!el.value.trim() || !el.checkValidity()) {
         el.focus();
@@ -714,12 +918,20 @@
         return;
       }
     }
+    if (!picks.length) {
+      pickError.hidden = false;
+      booker.classList.add("invalid");
+      booker.scrollIntoView({ behavior: "smooth", block: "center" });
+      return;
+    }
     const body = [
       "ニックネーム：" + f.name.value,
       "メール：" + f.email.value,
       "プラン：" + f.plan.value,
       "相談方法：" + f.method.value,
-      "希望日時：" + f.date.value,
+      "",
+      "希望日時：",
+      ...picks.map((p, i) => "  第" + (i + 1) + "希望　" + fmtPick(p)),
       "",
       "伝えておきたいこと：",
       f.message.value || "（なし）",
