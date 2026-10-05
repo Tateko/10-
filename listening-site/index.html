@@ -766,7 +766,7 @@
           <p class="done-lead" id="done-lead">24時間以内に、ヒロから日時確定のメールをお送りします。<br>メールが届かない場合は、迷惑メールフォルダもご確認ください。</p>
           <div id="done-manual">
             <ol class="done-steps">
-              <li>下の「メールアプリで送る」を押して、そのまま送信してください。</li>
+              <li>下の「メールアプリで送る」を押すと、申し込み内容が入ったメールが開きます。そのまま送信してください。</li>
               <li>メールアプリが開かない場合は「内容をコピー」を押し、<span class="done-to" id="done-to"></span> 宛てにメールで送ってください。</li>
             </ol>
             <div class="done-actions">
@@ -1074,6 +1074,8 @@
   const bookingForm = document.getElementById("booking");
   const done = document.getElementById("done");
   const submitBtn = bookingForm.querySelector('button[type="submit"]');
+  // メールで送ってもらう方式のときは、ボタンを押したあとに確認画面が出ることを伝える
+  if (!FORM_ENDPOINT) submitBtn.textContent = "申し込み内容を確認する";
   const submitError = document.getElementById("submit-error");
   document.getElementById("done-to").textContent = CONTACT_EMAIL;
 
@@ -1093,7 +1095,7 @@
   }
 
   function showDone(sent, summary) {
-    document.getElementById("done-title").textContent = sent ? "予約の申し込みを受け付けました" : "あと一歩で申し込み完了です";
+    document.getElementById("done-title").textContent = sent ? "予約の申し込みを受け付けました" : "最後に、メールを送って申し込み完了です";
     document.getElementById("done-lead").hidden = !sent;
     document.getElementById("done-manual").hidden = sent;
     document.getElementById("done-summary").textContent = summary;
