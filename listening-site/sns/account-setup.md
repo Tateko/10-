@@ -19,7 +19,7 @@ X・Threads（Instagram）・Formspree・Square・Googleカレンダー予約を
 | 項目 | 入力する内容 |
 | --- | --- |
 | 名前（表示名） | `ヒロ｜ひだまり傾聴室` |
-| ユーザー名（@〜） | 候補：`hidamari_keicho` / `hidamari_hiro` / `hiro_keicho`（空いているもの） |
+| ユーザー名（@〜） | 作成済み：`@hidamari_keicho` |
 | プロフィール画像 | `sns/icon.png` |
 | ヘッダー画像 | `sns/x-header.jpg` |
 | 自己紹介 | 下の「X 自己紹介」 |
