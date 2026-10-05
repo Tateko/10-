@@ -89,14 +89,17 @@ const PAYMENT_LINKS = [
 - 借金の相談については「気持ちの整理」に留め、具体的な債務整理の助言はしない旨を明記しています（弁護士・司法書士以外が法律事務を扱うことは弁護士法で制限されています）。
 - 医療行為・心理療法ではない旨と、緊急時の公的相談窓口（いのちの電話・よりそいホットライン・法テラス）を掲載しています。番号は公開前に最新情報をご確認ください。
 
-## GitHub Pages で公開する
+## GitHub Pages で公開する（ひだまり専用アカウント）
 
-1. GitHub のリポジトリ `Tateko/10-` を開き、`Settings` → `Pages`
-2. `Build and deployment` の `Source` を **Deploy from a branch** にする
-3. `Branch` で公開したいブランチ（PRをマージしたらデフォルトブランチ）と `/ (root)` を選んで `Save`
-4. 1〜2分後、`https://tateko.github.io/10-/listening-site/` で表示される
+サイトは、このリポジトリとは別の、ひだまり専用 GitHub アカウントのリポジトリで公開します。
 
-公開URLが上と違う場合は、`index.html` の `og:url` と `og:image` を実際のURLに直してください（SNSでリンクを貼ったときの画像に使われます）。
+1. サービス用の Gmail で GitHub アカウントを作る（ユーザー名の例：`hidamari-keicho`）
+2. 新しいリポジトリを **Public** で作る。名前を `ユーザー名.github.io`（例：`hidamari-keicho.github.io`）にすると、URL が `https://hidamari-keicho.github.io/` になる
+3. 「uploading an existing file」から `index.html`・`tokushoho.html`・`images` フォルダ（`hiro.jpg`・`ogp.jpg`）をアップロードして `Commit changes`
+4. `Settings` → `Pages` で `Deploy from a branch` / `main` / `/ (root)` を選んで `Save`
+5. 1〜3分後、`https://ユーザー名.github.io/` で表示される
+
+ユーザー名が `hidamari-keicho` 以外になった場合は、`index.html` の `og:url` と `og:image` を実際のURLに直してください（SNSでリンクを貼ったときの画像に使われます）。
 
 ### 公開前チェック
 
