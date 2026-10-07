@@ -1033,10 +1033,9 @@
   // Square の管理画面で作った「決済リンク」（例: https://square.link/u/xxxxxx）をプランごとに入れると、
   // 予約欄の下にお支払いボタンが表示されます。空欄のプランは表示されません。
   const PAYMENT_SERVICE = "クレジットカード／Square";   // 料金表の「お支払い方法」に表示
+  // 1つの決済ページで全プランを選べる場合は、price を空にした1行だけにする
   const PAYMENT_LINKS = [
-    { plan: "初回お試し30分", price: "¥1,000", url: "" },
-    { plan: "30分プラン",     price: "¥2,000", url: "" },
-    { plan: "60分プラン",     price: "¥3,500", url: "" },
+    { plan: "初回お試し30分・30分プラン・60分プラン", price: "", url: "https://checkout.square.site/merchant/MLGSXJ4QXTPMF/checkout/4SQBBDNN6OF2CNHJC6MDKEL4" },
   ].filter((p) => p.url);
 
   if (PAYMENT_LINKS.length) {
@@ -1049,7 +1048,7 @@
       a.rel = "noopener";
       a.innerHTML = "<b></b><small></small>";
       a.firstChild.textContent = p.plan;
-      a.lastChild.textContent = p.price + " を支払う →";
+      a.lastChild.textContent = p.price ? p.price + " を支払う →" : "お支払いページへ →";
       grid.appendChild(a);
     });
     document.getElementById("pay-box").hidden = false;
