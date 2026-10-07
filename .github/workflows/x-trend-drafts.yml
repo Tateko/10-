@@ -1,11 +1,12 @@
-# 週1回、Grok で X の話題を調べて傾聴サイトの投稿案を作り、PR にする。
-# 必要な設定は listening-site/README.md の「X の話題から投稿案を自動で作る（Grok）」を参照。
+# Grok（xAI API・有料）で X の話題を調べて傾聴サイトの投稿案を作り、PR にする。
+# 必要な設定は listening-site/README.md の「X の話題から投稿案を作る（Grok）」を参照。
+# 費用がかかるので今は手動実行のみ。週1回自動にするときは on: に下の schedule を戻す。
+#   schedule:
+#     - cron: "0 11 * * 1" # 毎週月曜 20:00（日本時間）
 name: X話題チェック→投稿案
 
 on:
-  schedule:
-    - cron: "0 11 * * 1" # 毎週月曜 20:00（日本時間）
-  workflow_dispatch: # Actions タブから手動でも実行できる
+  workflow_dispatch: # Actions タブから手動で実行する
 
 permissions:
   contents: write

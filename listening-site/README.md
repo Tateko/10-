@@ -64,20 +64,26 @@ const PAYMENT_LINKS = [
 ネットで有料サービスを売るには、特定商取引法に基づく表記が必要です（Squareの審査でも確認されます）。
 `tokushoho.html` の黄色い部分（氏名・連絡先・キャンセル規定）を記入してください。フッターからリンクしています。
 
-## X の話題から投稿案を自動で作る（Grok）
+## X の話題から投稿案を作る（Grok）
 
-毎週月曜 20:00（日本時間）に、Grok が X で今話題の悩み・言葉を調べ、`posts.md` の口調とルールに合わせた投稿案（X 10本・Threads 3本）を `sns/trends/日付.md` に書き出して PR を作ります。
-**自動では投稿しません。** PR の投稿案を読んで、使うものだけ X / Threads に投稿してください（命に関わる話題・他人の不幸に便乗する話題は使わないよう Grok に指示してあります）。
+### 無料：X アプリの Grok に依頼文を貼る（今はこちら）
 
-1. [xAI のコンソール](https://console.x.ai) でアカウントを作り、クレジットを購入して API キーを発行する（有料・従量課金。週1回なら少額）
+`sns/trends/grok-prompt.md` の依頼文を、X アプリの Grok に週1回コピーして貼るだけです。
+Grok が X で今話題の悩み・言葉を調べ、`posts.md` の口調に合わせた投稿案（X 10本・Threads 3本）を返してくれます。費用はかかりません（無料プランは回数に上限あり）。
+
+### 有料：GitHub Actions で自動化（収益化してから）
+
+xAI の API（従量課金）を使い、Grok の調査と投稿案づくりを自動で行って `sns/trends/日付.md` に書き出し、PR にします。**自動では投稿しません。**
+費用がかかるので今は手動実行のみにしてあります。
+
+1. [xAI のコンソール](https://console.x.ai) でアカウントを作り、クレジットを購入して API キーを発行する（無料枠なし）
 2. GitHub のこのリポジトリで `Settings` → `Secrets and variables` → `Actions` → `New repository secret`
    - Name: `XAI_API_KEY` ／ Secret: 発行したキー
 3. `Settings` → `Actions` → `General` → 一番下の「Allow GitHub Actions to create and approve pull requests」にチェック
-4. `Actions` タブ → 「X話題チェック→投稿案」→ `Run workflow` で一度手動実行して、PR ができるか確認する
+4. `Actions` タブ → 「X話題チェック→投稿案」→ `Run workflow` で実行する
 
+- 毎週自動で動かすときは `.github/workflows/x-trend-drafts.yml` 冒頭のコメントにある `schedule` を `on:` に戻す
 - 使うモデルを変えたいときは、`Secrets and variables` → `Actions` → `Variables` に `XAI_MODEL`（例：`grok-4`）を登録する
-- 毎週の自動実行は、このワークフローがデフォルトブランチに入っているときだけ動きます
-- 曜日・時刻は `.github/workflows/x-trend-drafts.yml` の `cron` で変えられます（UTC 表記。日本時間 −9 時間）
 
 ## PR動画（`promo/`）
 
