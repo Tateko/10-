@@ -612,7 +612,7 @@
           <a href="#contact" class="btn ghost" data-plan="60分プラン">このプランで予約</a>
         </div>
       </div>
-      <p class="pricing-note reveal" id="pricing-note">お支払い方法：銀行振込・各種キャッシュレス決済（予約確定後にご案内します）</p>
+      <p class="pricing-note reveal" id="pricing-note">お支払い方法：クレジットカード（決済サービス Square）／予約確定のご連絡の際に、お支払いページのリンクをお送りします</p>
     </div>
   </section>
 
@@ -1032,7 +1032,7 @@
   // ===== オンライン決済（Square 決済リンク） =====
   // Square の管理画面で作った「決済リンク」（例: https://square.link/u/xxxxxx）をプランごとに入れると、
   // 予約欄の下にお支払いボタンが表示されます。空欄のプランは表示されません。
-  const PAYMENT_SERVICE = "クレジットカード・電子マネー等／Square";   // 料金表の「お支払い方法」に表示
+  const PAYMENT_SERVICE = "クレジットカード／Square";   // 料金表の「お支払い方法」に表示
   const PAYMENT_LINKS = [
     { plan: "初回お試し30分", price: "¥1,000", url: "" },
     { plan: "30分プラン",     price: "¥2,000", url: "" },
@@ -1055,7 +1055,7 @@
     document.getElementById("pay-box").hidden = false;
     document.querySelectorAll("[data-pay-only]").forEach((el) => (el.hidden = false));
     document.getElementById("pricing-note").textContent =
-      "お支払い方法：銀行振込・オンライン決済" + (PAYMENT_SERVICE ? "（" + PAYMENT_SERVICE + "）" : "") + "／ご予約後、相談日の前日までにお支払いください";
+      "お支払い方法：オンライン決済" + (PAYMENT_SERVICE ? "（" + PAYMENT_SERVICE + "）" : "") + "／ご予約後、相談日の前日までにお支払いください";
   }
 
   // 料金カードのボタンからプランを引き継ぐ
