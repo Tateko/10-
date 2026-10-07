@@ -6,9 +6,18 @@
 // title の *〜* はマーカー強調、\n は改行。illus は moon / cups / bench / bubbles / sprout / sunrise。
 // night: true で夜の色（紺）になる。夜の投稿や moon のイラストと合わせる。
 
-import { chromium } from 'playwright';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { execSync } from 'node:child_process';
+
+// このフォルダに playwright が無ければ、グローバルに入っているものを使う
+let chromium;
+try {
+  ({ chromium } = await import('playwright'));
+} catch {
+  const root = execSync('npm root -g').toString().trim();
+  ({ chromium } = await import(path.join(root, 'playwright', 'index.mjs')));
+}
 
 const [out, json] = process.argv.slice(2);
 if (!out || !json) {
