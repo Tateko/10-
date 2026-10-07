@@ -693,7 +693,7 @@
           </div>
           <p class="gcal-note">
             お名前はニックネームで大丈夫です。予約が確定すると、確認メールとカレンダーの招待が届きます。<br>
-            日時の変更・キャンセルは、確認メール内のリンクからいつでもできます。
+            日時の変更・キャンセルは、確認メール内のリンクからできます（当日・無断のキャンセルは返金できません。詳しくは<a href="tokushoho.html">特定商取引法に基づく表記</a>をご確認ください）。
           </p>
           <p class="field-label pay-step" data-pay-only hidden>3. 下の「お支払い」から料金をお支払いください</p>
         </div>
@@ -752,7 +752,7 @@
           </div>
           <div class="form-foot">
             <button type="submit" class="btn">この内容で予約を申し込む</button>
-            <small>送信後、24時間以内にヒロから日時確定のご連絡をお送りします（それまでは仮予約です）。<br>送信内容は予約のご連絡のみに使用し、第三者に提供することはありません。</small>
+            <small>送信後、24時間以内にヒロから日時確定のご連絡をお送りします（それまでは仮予約です）。<br>送信内容は予約のご連絡のみに使用し、第三者に提供することはありません。<br>料金は相談日の前日までのお支払いです。前日までのキャンセルは全額返金、当日・無断のキャンセルは返金できません（<a href="tokushoho.html">特定商取引法に基づく表記</a>）。</small>
           </div>
           <p class="submit-error" id="submit-error" role="alert" hidden>
             送信できませんでした。通信状況を確かめて、もう一度お試しください。<br>
@@ -1055,7 +1055,7 @@
     document.getElementById("pay-box").hidden = false;
     document.querySelectorAll("[data-pay-only]").forEach((el) => (el.hidden = false));
     document.getElementById("pricing-note").textContent =
-      "お支払い方法：オンライン決済" + (PAYMENT_SERVICE ? "（" + PAYMENT_SERVICE + "）" : "") + "／ご予約後、相談日の前日までにお支払いください";
+      "お支払い方法：銀行振込・オンライン決済" + (PAYMENT_SERVICE ? "（" + PAYMENT_SERVICE + "）" : "") + "／ご予約後、相談日の前日までにお支払いください";
   }
 
   // 料金カードのボタンからプランを引き継ぐ
