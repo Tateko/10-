@@ -172,6 +172,18 @@
   .voice .who { font-size: .85rem; color: var(--ink-soft); }
   .sample-tag { display: inline-block; font-size: .72rem; background: #eee6da; color: #857a6f; padding: 1px 10px; border-radius: 999px; margin-left: 6px; }
 
+  /* monitor */
+  .monitor-flag { display: inline-flex; align-items: center; gap: 10px; margin-bottom: 18px; padding: 8px 18px; border-radius: 999px;
+    background: #fff; border: 2px solid var(--accent); color: var(--accent-deep); font-weight: 700; font-size: .9rem; text-decoration: none; }
+  .monitor-flag b { background: var(--accent); color: #fff; border-radius: 999px; padding: 1px 10px; font-size: .78rem; }
+  .monitor { background: var(--surface); border: 2px dashed var(--accent); border-radius: 24px; padding: 32px 36px; margin-bottom: 40px;
+    display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: center; scroll-margin-top: 80px; }
+  .monitor h3 { margin: 0 0 8px; font-size: 1.3rem; }
+  .monitor h3 span { color: var(--accent-deep); }
+  .monitor ul { margin: 10px 0 0; padding-left: 1.2em; color: var(--ink-soft); font-size: .92rem; }
+  .monitor .left { font-size: .9rem; font-weight: 700; color: var(--leaf); }
+  @media (max-width: 700px) { .monitor { grid-template-columns: 1fr; padding: 26px 22px; } .monitor .btn { width: 100%; } }
+
   /* pricing */
   .plans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; align-items: stretch; }
   .plan { background: var(--surface); border-radius: 24px; padding: 36px 28px; box-shadow: var(--shadow); display: flex; flex-direction: column; border: 2px solid transparent; position: relative; }
@@ -381,6 +393,7 @@
           アドバイスも、お説教もしません。<br>
           あなたが話したいことを、話したいペースで。
         </p>
+        <a href="#monitor" class="monitor-flag" data-monitor><b>モニター募集</b>先着3名・初回30分が無料</a>
         <div class="cta-row">
           <a href="#contact" class="btn">初回30分 お試し相談を予約する</a>
           <a href="#about" class="btn ghost">傾聴について知る</a>
@@ -576,6 +589,19 @@
         <h2 class="serif">料金プラン</h2>
         <p>まずは気軽にお試しから。無理な継続のおすすめは一切しません。</p>
       </div>
+      <div class="monitor reveal" id="monitor" data-monitor>
+        <div>
+          <span class="left" id="monitor-left">モニター募集中（先着3名）</span>
+          <h3>初回30分を<span>無料</span>でお試しいただけます</h3>
+          <p>サービスを始めたばかりなので、実際に話してみた感想を聞かせてくださる方を募集しています。</p>
+          <ul>
+            <li>相談のあと、簡単な感想をお聞かせください（良かった点も、気になった点も正直に）</li>
+            <li>感想は「20代・会社員」など年代と立場だけでサイトに載せます。お名前や相談内容は載せません</li>
+            <li>掲載する文章は、事前に確認していただけます。掲載を断っていただいても大丈夫です</li>
+          </ul>
+        </div>
+        <a href="#contact" class="btn" data-plan="モニター（初回30分・無料）">モニターに申し込む</a>
+      </div>
       <div class="plans">
         <div class="plan reveal">
           <h3>ちょっと聴いて</h3>
@@ -711,6 +737,7 @@
             <div>
               <label for="f-plan">ご希望のプラン</label>
               <select id="f-plan" name="plan">
+                <option data-monitor>モニター（初回30分・無料）</option>
                 <option>初回お試し30分</option>
                 <option>30分プラン</option>
                 <option>60分プラン</option>
@@ -825,6 +852,11 @@
 <script>
   // 予約の受付先（公開前に差し替えてください）
   const CONTACT_EMAIL = "hidamariqingtingshihiro@gmail.com";
+
+  // モニター募集の残り人数。埋まったら 0 にすると、募集の表示とプランの選択肢が消えます
+  const MONITOR_LEFT = 3;
+  if (MONITOR_LEFT > 0) document.getElementById("monitor-left").textContent = "モニター募集中（残り" + MONITOR_LEFT + "名）";
+  else document.querySelectorAll("[data-monitor]").forEach((el) => el.remove());
   const LINE_URL = ""; // 例: "https://lin.ee/xxxxxxx"
 
   // LINE公式アカウントが未設定のあいだは、LINEボタンと区切り線を出さない
