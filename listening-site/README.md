@@ -64,6 +64,21 @@ const PAYMENT_LINKS = [
 ネットで有料サービスを売るには、特定商取引法に基づく表記が必要です（Squareの審査でも確認されます）。
 `tokushoho.html` の黄色い部分（氏名・連絡先・キャンセル規定）を記入してください。フッターからリンクしています。
 
+## X の話題から投稿案を自動で作る（Grok）
+
+毎週月曜 20:00（日本時間）に、Grok が X で今話題の悩み・言葉を調べ、`posts.md` の口調とルールに合わせた投稿案（X 10本・Threads 3本）を `sns/trends/日付.md` に書き出して PR を作ります。
+**自動では投稿しません。** PR の投稿案を読んで、使うものだけ X / Threads に投稿してください（命に関わる話題・他人の不幸に便乗する話題は使わないよう Grok に指示してあります）。
+
+1. [xAI のコンソール](https://console.x.ai) でアカウントを作り、クレジットを購入して API キーを発行する（有料・従量課金。週1回なら少額）
+2. GitHub のこのリポジトリで `Settings` → `Secrets and variables` → `Actions` → `New repository secret`
+   - Name: `XAI_API_KEY` ／ Secret: 発行したキー
+3. `Settings` → `Actions` → `General` → 一番下の「Allow GitHub Actions to create and approve pull requests」にチェック
+4. `Actions` タブ → 「X話題チェック→投稿案」→ `Run workflow` で一度手動実行して、PR ができるか確認する
+
+- 使うモデルを変えたいときは、`Secrets and variables` → `Actions` → `Variables` に `XAI_MODEL`（例：`grok-4`）を登録する
+- 毎週の自動実行は、このワークフローがデフォルトブランチに入っているときだけ動きます
+- 曜日・時刻は `.github/workflows/x-trend-drafts.yml` の `cron` で変えられます（UTC 表記。日本時間 −9 時間）
+
 ## PR動画（`promo/`）
 
 - `promo/promo.mp4`：SNS用の縦型動画（1080×1920・30fps・35秒・音なし）。Instagramリール／TikTok／YouTubeショート／Xにそのまま投稿できます

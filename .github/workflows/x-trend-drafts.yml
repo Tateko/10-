@@ -1,0 +1,47 @@
+# 週1回、Grok で X の話題を調べて傾聴サイトの投稿案を作り、PR にする。
+# 必要な設定は listening-site/README.md の「X の話題から投稿案を自動で作る（Grok）」を参照。
+name: X話題チェック→投稿案
+
+on:
+  schedule:
+    - cron: "0 11 * * 1" # 毎週月曜 20:00（日本時間）
+  workflow_dispatch: # Actions タブから手動でも実行できる
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  drafts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Grok で X を調べて投稿案を書き出す
+        env:
+          XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
+          XAI_MODEL: ${{ vars.XAI_MODEL || 'grok-4' }}
+        run: node listening-site/sns/trends/generate-drafts.mjs
+
+      - name: 投稿案を PR にする
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BASE: ${{ github.event.repository.default_branch }}
+        run: |
+          DATE=$(TZ=Asia/Tokyo date +%Y-%m-%d)
+          BRANCH="sns-drafts/$DATE"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$BRANCH"
+          git add listening-site/sns/trends/
+          git commit -m "chore: X の話題から投稿案を作成（$DATE）"
+          git push -u origin "$BRANCH" --force
+          gh pr create --base "$BASE" --head "$BRANCH" \
+            --title "SNS投稿案（$DATE）" \
+            --body "Grok が X の今週の話題を調べて作った投稿案です。\`listening-site/sns/trends/$DATE.md\` を読んで、使う案を選んでから投稿してください。自動では投稿しません。" \
+            || echo "PR は既にあります"
