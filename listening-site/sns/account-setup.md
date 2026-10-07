@@ -23,7 +23,7 @@ X・Threads（Instagram）・Formspree・Square・Googleカレンダー予約を
 | プロフィール画像 | `sns/icon.png` |
 | ヘッダー画像 | `sns/x-header.jpg` |
 | 自己紹介 | 下の「X 自己紹介」 |
-| ウェブサイト | 公開したサイトのURL（例：`https://hidamari-keicho.github.io/`） |
+| ウェブサイト | 公開したサイトのURL（例：`https://hidamariqingtingshihiro-gif.github.io/hidamari-keicho.github.io/`） |
 | 場所 | `オンライン・電話` |
 
 ### X 自己紹介（160字以内）

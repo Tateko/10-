@@ -115,7 +115,7 @@ xAI の API（従量課金）を使い、Grok の調査と投稿案づくりを�
 サイトは、このリポジトリとは別の、ひだまり専用 GitHub アカウントのリポジトリで公開します。
 
 1. サービス用の Gmail で GitHub アカウントを作る（ユーザー名の例：`hidamari-keicho`）
-2. 新しいリポジトリを **Public** で作る。名前を `ユーザー名.github.io`（例：`hidamari-keicho.github.io`）にすると、URL が `https://hidamari-keicho.github.io/` になる
+2. 新しいリポジトリを **Public** で作る。名前を `ユーザー名.github.io`（例：`hidamari-keicho.github.io`）にすると、URL が `https://hidamariqingtingshihiro-gif.github.io/hidamari-keicho.github.io/` になる
 3. 「uploading an existing file」から `index.html`・`tokushoho.html`・`images` フォルダ（`hiro.jpg`・`ogp.jpg`）をアップロードして `Commit changes`
 4. `Settings` → `Pages` で `Deploy from a branch` / `main` / `/ (root)` を選んで `Save`
 5. 1〜3分後、`https://ユーザー名.github.io/` で表示される
