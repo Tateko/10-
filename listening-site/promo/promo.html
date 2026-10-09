@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>ひだまり傾聴室 PR動画</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700&family=Shippori+Mincho:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  /* 1080×1920（縦型）。record-promo.mjs が1コマずつ時刻を進めて撮影する */
+  :root {
+    --bg: #fbf7f1; --bg-alt: #f4ede2; --ink: #3b3530; --ink-soft: #6f655c;
+    --accent: #d98a5f; --accent-deep: #b86a41; --leaf: #7f9c85; --peach: #f8d9c3;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--bg); }
+  body { font-family: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", sans-serif; color: var(--ink); }
+  .serif { font-family: "Shippori Mincho", "Yu Mincho", serif; }
+
+  .stage { position: relative; width: 1080px; height: 1920px; overflow: hidden;
+    background: radial-gradient(900px 900px at 85% 8%, #f6d3b8 0%, transparent 60%),
+                radial-gradient(800px 800px at 5% 95%, #d8e4d6 0%, transparent 60%), var(--bg); }
+
+  .scene { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center;
+    text-align: center; padding: 260px 90px 380px; gap: 40px; opacity: 0;
+    animation: scene var(--dur) linear var(--start) both; }
+  .scene.last { animation-name: sceneLast; }
+  @keyframes scene { 0% { opacity: 0; } 8% { opacity: 1; } 92% { opacity: 1; } 100% { opacity: 0; } }
+  @keyframes sceneLast { 0% { opacity: 0; } 8% { opacity: 1; } 100% { opacity: 1; } }
+
+  .in { opacity: 0; animation: rise 1s cubic-bezier(.2,.7,.2,1) calc(var(--start) + var(--d, 0s)) both; }
+  @keyframes rise { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: none; } }
+
+  /* 1. つかみ */
+  .big { font-size: 118px; line-height: 1.45; font-weight: 700; letter-spacing: .06em; }
+  .big em { font-style: normal; background: linear-gradient(transparent 64%, var(--peach) 64%); }
+
+  /* 2. 悩み */
+  .worry { font-size: 76px; font-weight: 700; background: #fff; border-radius: 999px; padding: 26px 64px;
+    box-shadow: 0 16px 40px rgba(120, 90, 60, .12); }
+  .worry b { color: var(--accent-deep); }
+  .note { font-size: 58px; line-height: 1.7; color: var(--ink-soft); margin-top: 30px; }
+
+  /* 3. 傾聴 */
+  .mid { font-size: 66px; line-height: 1.8; color: var(--ink-soft); }
+  .strong { font-size: 104px; line-height: 1.5; font-weight: 700; color: var(--ink); }
+  .strong span { color: var(--accent-deep); }
+
+  /* 4. プロフィール写真 */
+  .photo { position: absolute; inset: 0; opacity: 0; animation: scene var(--dur) linear var(--start) both; }
+  .photo img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 55%;
+    animation: zoom var(--dur) linear var(--start) both; }
+  @keyframes zoom { from { transform: scale(1.02); } to { transform: scale(1.14); } }
+  .photo::after { content: ""; position: absolute; inset: 0;
+    background: linear-gradient(to bottom, rgba(40, 32, 26, 0) 35%, rgba(40, 32, 26, .78) 78%); }
+  .photo-text { position: absolute; left: 90px; right: 90px; bottom: 400px; z-index: 1; color: #fff; text-align: left;
+    display: flex; flex-direction: column; gap: 26px; }
+  .photo-text .role { font-size: 44px; letter-spacing: .12em; color: #fbe3d1; }
+  .photo-text .name { font-size: 150px; line-height: 1; }
+  .photo-text .career { font-size: 62px; line-height: 1.6; }
+  .photo-text .career b { font-size: 84px; color: #ffd7bc; }
+
+  /* 5. 約束 */
+  .kicker { font-size: 48px; letter-spacing: .3em; color: var(--accent); font-weight: 700; }
+  .promise { width: 100%; display: flex; align-items: center; gap: 44px; background: #fff; border-radius: 40px;
+    padding: 44px 56px; text-align: left; box-shadow: 0 16px 40px rgba(120, 90, 60, .12); }
+  .promise .num { font-size: 96px; color: var(--accent); line-height: 1; }
+  .promise .t { font-size: 72px; font-weight: 700; }
+  .promise .s { font-size: 40px; color: var(--ink-soft); margin-top: 6px; }
+
+  /* 6. 料金 */
+  .tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 22px; }
+  .tag { font-size: 48px; font-weight: 700; background: #eef3ec; color: #5f7c66; border-radius: 999px; padding: 16px 40px; }
+  .price-label { font-size: 64px; font-weight: 700; }
+  .price { font-size: 220px; line-height: 1; color: var(--accent-deep); }
+  .price small { font-size: 60px; color: var(--ink-soft); font-family: "Zen Maru Gothic", sans-serif; }
+
+  /* 7. 締め */
+  .mark { width: 220px; height: 220px; }
+  .brand { font-size: 112px; letter-spacing: .04em; white-space: nowrap; }
+  .tagline { font-size: 54px; line-height: 1.7; color: var(--ink-soft); }
+  .cta { font-size: 50px; font-weight: 700; color: #fff; background: var(--accent); border-radius: 999px; padding: 32px 60px; white-space: nowrap;
+    box-shadow: 0 18px 40px rgba(217, 138, 95, .4); }
+</style>
+</head>
+<body>
+<div class="stage">
+
+  <section class="scene" style="--start: 0s; --dur: 4.6s">
+    <p class="big serif">
+      <span class="in" style="--d: .2s; display: block">誰にも</span>
+      <span class="in" style="--d: .9s; display: block"><em>言えない話</em>、</span>
+      <span class="in" style="--d: 1.6s; display: block">ありませんか。</span>
+    </p>
+  </section>
+
+  <section class="scene" style="--start: 4.4s; --dur: 6.2s">
+    <p class="worry in" style="--d: .3s"><b>仕事</b>のこと。</p>
+    <p class="worry in" style="--d: 1.1s"><b>恋愛</b>のこと。</p>
+    <p class="worry in" style="--d: 1.9s"><b>お金・借金</b>のこと。</p>
+    <p class="note in" style="--d: 3.1s">身近な人だからこそ、<br>言えない。</p>
+  </section>
+
+  <section class="scene" style="--start: 10.4s; --dur: 4.8s">
+    <p class="mid in" style="--d: .2s">アドバイスも、<br>お説教も、しません。</p>
+    <p class="strong serif in" style="--d: 1.5s"><span>否定せずに</span>、<br>ただ聴きます。</p>
+  </section>
+
+  <div class="photo" style="--start: 15s; --dur: 6.4s">
+    <img src="../images/hiro.jpg" alt="">
+  </div>
+  <section class="scene" style="--start: 15s; --dur: 6.4s; padding: 0">
+    <div class="photo-text">
+      <p class="role in" style="--d: .8s">聴き手</p>
+      <p class="name serif in" style="--d: 1.2s">ヒロ</p>
+      <p class="career in" style="--d: 2.2s"><b>50人以上</b>の<br>打ち明け話を聴いてきました。</p>
+    </div>
+  </section>
+
+  <section class="scene" style="--start: 21.2s; --dur: 5.4s; gap: 32px">
+    <p class="kicker in" style="--d: .1s">3つのお約束</p>
+    <div class="promise in" style="--d: .5s"><span class="num serif">01</span><div><p class="t">否定しない</p><p class="s">責めない・比べない・説教しない</p></div></div>
+    <div class="promise in" style="--d: 1.2s"><span class="num serif">02</span><div><p class="t">秘密を守る</p><p class="s">ニックネームOK・録音なし</p></div></div>
+    <div class="promise in" style="--d: 1.9s"><span class="num serif">03</span><div><p class="t">急かさない</p><p class="s">沈黙も、涙も、大丈夫</p></div></div>
+  </section>
+
+  <section class="scene" style="--start: 26.4s; --dur: 4.4s">
+    <div class="tags in" style="--d: .2s">
+      <span class="tag">匿名OK</span><span class="tag">電話・オンライン</span><span class="tag">夜24時まで</span>
+    </div>
+    <p class="price-label in" style="--d: .8s">初回お試し 30分</p>
+    <p class="price serif in" style="--d: 1.2s">¥1,000<small>（税込）</small></p>
+  </section>
+
+  <section class="scene last" style="--start: 30.6s; --dur: 4.4s">
+    <svg class="mark in" style="--d: .2s" viewBox="0 0 32 32" aria-hidden="true">
+      <circle cx="16" cy="16" r="15" fill="#fdebdf"/>
+      <circle cx="16" cy="13" r="6" fill="#d98a5f"/>
+      <path d="M6 24c3-3 6.5-4.5 10-4.5S23 21 26 24" stroke="#7f9c85" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+    </svg>
+    <p class="brand serif in" style="--d: .5s">ひだまり傾聴室</p>
+    <p class="tagline in" style="--d: 1s">誰にも言えない話を、<br>否定せずに聴きます。</p>
+    <p class="cta in" style="--d: 1.7s">プロフィールのリンクから予約</p>
+  </section>
+
+</div>
+</body>
+</html>
