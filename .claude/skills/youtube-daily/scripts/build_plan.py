@@ -6,7 +6,7 @@
 # {
 #   "title": "動画のタイトル",
 #   "sources": {"M10": "本人のブログ（2026/4/2）"},          # 出典の帯の略号（任意）
-#   "chapters": ["", "01 章の名前", "02 章の名前", ...],      # 0番は冒頭（章なし）
+#   "chapters": ["", "01 初めての給料", "02 4人で売上ゼロ", ...],  # 0番は冒頭（章なし）。読点は入れない
 #   "scenes": [[行数, 章番号, "layout", {visual}, "日付" または null, "略号か出典の文字" または null], ...]
 # }
 # 行数の合計が台本の N の行数と合わないと止まる。動くクリップは layout "video"（visual に file・fit・audio・start）。
@@ -79,6 +79,9 @@ for i in range(len(L) - 2):
 for i in range(len(L) - 1):
     if L[i] == L[i + 1] == "punch":
         warn.append(f"{scenes[i]['id']}：punch が2つ続く")
+for c in chapters:
+    if "、" in c:
+        warn.append(f"章の名前に読点：{c}（「初めての給料」のように読点なしにする）")
 for t in lines:
     if len(re.sub(r"\{(.+?)\|.+?\}", r"\1", t)) > 40:
         warn.append(f"40字をこえる文：{t}")

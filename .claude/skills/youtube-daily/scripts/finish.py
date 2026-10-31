@@ -8,7 +8,8 @@
 # description.json の形：
 # {"intro": ["1行目", "2行目"], "question": "あなたなら…？コメントで教えてください。", "opening_chapter": "年収を捨てた、6か月後",
 #  "notes": ["数字の多くは本人の発信です", ...], "sources": [["本人のブログ", "https://..."], ...], "checked": "2026/10/30",
-#  "hashtags": "#AI #副業 #海外事例"}
+#  "hashtags": "#AI #副業 #海外事例", "title": "88人が使って0ドル→毎月2万ドル（約300万円）｜…"}
+#   title があれば、一覧で見える最初の20字に「単位つきの数字」があるかを確かめる
 import json
 import re
 import subprocess
@@ -67,6 +68,11 @@ text = "\n".join(lines) + "\n"
 (out / "youtube_説明欄.txt").write_text(text, encoding="utf-8")
 fw = sum(2 if ord(c) > 255 else 1 for c in text)
 print(f"✔ 説明欄：{len(text)}字（全角を2字と数えて {fw}）→ out/youtube_説明欄.txt" + ("" if fw < 4500 else "　⚠ 長い。出典を減らす"))
+
+if d.get("title"):
+    head = d["title"][:20]
+    ok = re.search(r"[\d,.]+(?:万|千|億)?(?:ドル|円|ユーロ|豪ドル|ルピー|人|回|%|か月|年|日)", head)
+    print(f"✔ タイトルの最初の20字：「{head}」" + ("" if ok else "　⚠ 単位つきの数字がない。強い数字と結末を前に出す"))
 
 # 3. 確かめ用のコマ
 def grab(times, path, cols=4):

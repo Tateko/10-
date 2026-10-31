@@ -1,7 +1,12 @@
-# サムネ（1280×720）を thumbnail.json の指示から作る。「どん底 → 結果」か「出来事のハンコ ＋ 結果」の2つの型。
+# サムネ（1280×720）を thumbnail.json の指示から作る。ふだんは hero 型（文字2行・大きい数字1つ・感情の伝わる人の影絵・回ごとの色）。
 #
 #   python make_thumbnail.py <動画のフォルダ>        → out/thumbnail.png と、スマホ大の見本 out/thumbnail_small.png
 #
+# 型 hero（標準）：{"type":"hero","color":"orange","line":"7年かけて、初めての売上","big":"190","unit":"ドル",
+#                    "yen":"約2.9万円","big_color":"accent","pose":"down","label":"イメージ"}
+#   文字は line（1行）と big＋unit（1行）の2行だけ。yen は数字の横に小さく（1ドル＝150円などの換算。円にしない回は省く）。
+#   color：green・orange・blue・red・purple・teal（前の回と変える）。big_color：accent・red・white。
+#   pose：down（頭をかかえる）・up（両手を上げる）・think（あごに手）・walk（去っていく）・stand。
 # 型 drop_to_result：{"type":"drop_to_result","stamp":"年収を捨てた会社員","low_label":"6か月目「怖かった」","low":"5,989",
 #                     "high_label":"10か月目","high":"40,451","note":"月の売上・本人の記録","bars":[67715,...],"red":[5]}
 # 型 event_result  ：{"type":"event_result","stamp":"貯金を使い切って、会社に出戻り","line":"2年後、1か月の売上",
@@ -19,7 +24,41 @@ proj = Path(sys.argv[1])
 t = json.load(open(proj / "thumbnail.json", encoding="utf-8"))
 css = base_css(1280, 720, 32)
 
-if t["type"] == "drop_to_result":
+from palette import PAL
+
+# 顔のない影絵（線で描く）。600×700 の枠の中。（頭の位置, 胴, 手足）
+POSE = {
+    "stand": ((300, 175), "M300 240 L300 420", "M300 260 L250 330 L240 420 M300 260 L350 330 L360 420 M300 420 L265 610 M300 420 L335 610"),
+    "down":  ((330, 300), "M300 345 Q270 420 290 500", "M300 360 L400 420 M290 500 L410 410 L430 540 M290 500 L380 450 L370 545"),
+    "up":    ((300, 185), "M300 250 L300 430", "M300 265 L215 160 L200 70 M300 265 L385 160 L400 70 M300 430 L250 615 M300 430 L350 615"),
+    "think": ((300, 175), "M300 240 L300 420", "M300 260 L380 330 L340 225 M300 260 L245 345 L320 360 M300 420 L265 610 M300 420 L335 610"),
+    "walk":  ((318, 190), "M305 255 L295 430", "M305 270 L250 350 L235 410 M305 270 L360 345 L380 400 M295 430 L225 600 M295 430 L360 520 L345 610"),
+}
+
+if t["type"] == "hero":
+    bg, ac = PAL.get(t.get("color", "green"), PAL["green"])
+    bc = {"accent": ac, "red": R, "white": "#fff"}[t.get("big_color", "accent")]
+    pose = t.get("pose", "stand")
+    (hx, hy), torso, limbs = POSE[pose]
+    ground = "<rect x='120' y='540' width='380' height='14' rx='7' fill='#0a0a0a' opacity='.5'/>" if pose == "down" else ""
+    figure = (f"<svg class='a' style='left:740px;top:40px' width='600' height='700' viewBox='0 0 600 700'>"
+              f"<circle cx='300' cy='340' r='290' fill='{ac}' opacity='.92'/>{ground}"
+              f"<circle cx='{hx}' cy='{hy}' r='52' fill='#0a0a0a'/>"
+              f"<path d='{torso}' stroke='#0a0a0a' stroke-width='92' stroke-linecap='round' fill='none'/>"
+              f"<path d='{limbs}' stroke='#0a0a0a' stroke-width='44' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>"
+              f"<div class='a' style='left:1100px;top:24px;font-size:22px;font-weight:700;color:#e6e6e6;background:rgba(0,0,0,.6);"
+              f"padding:2px 12px 4px;border-radius:6px'>{t.get('label', 'イメージ')}</div>")
+    # 数字は左の約800pxに収まる大きさにする
+    bl = len(t["big"]) + len(t.get("unit", "")) * 0.62
+    bs = max(150, min(340, int(780 / max(1, bl) * 1.6)))
+    ls = max(60, min(96, int(800 / max(1, len(t["line"])))))
+    yen = (f"<div style='font-size:52px;letter-spacing:0;margin-top:8px;color:#fff'>{t['yen']}</div>" if t.get("yen") else "")
+    body = (f"<style>body{{background-color:{bg};background-image:radial-gradient(ellipse at 80% 50%, {ac}33, rgba(0,0,0,0) 55%)}}</style>"
+            f"{figure}"
+            f"<div class='a stk' style='left:56px;top:110px;font-size:{ls}px;width:820px'>{t['line']}</div>"
+            f"<div class='a stk' style='left:44px;top:{120 + ls + 30}px;font-size:{bs}px;color:{bc}'>{t['big']}"
+            f"<span style='font-size:{int(bs * .45)}px;margin-left:10px'>{t.get('unit', '')}</span>{yen}</div>")
+elif t["type"] == "drop_to_result":
     vals = t.get("bars", [])
     mx = max(vals) if vals else 1
     bars = ''.join(f"<div class='a' style='left:{850+i*(380//max(1,len(vals)))}px;bottom:110px;width:{int(380//max(1,len(vals))*.75)}px;height:{max(8,int(330*v/mx))}px;"

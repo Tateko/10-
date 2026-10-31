@@ -21,7 +21,7 @@ put("事実メモ.md", """# 事実メモ：（人の名前）
 - 人：
 - 主な発信の場所：
 - 第三者の記事：
-- 円の換算：（1ドル＝150円／通貨が分からなければ「しない」）
+- 通貨：（P3 で確かめた通貨）／円の目安：（1ドル＝150円などで「約◯万円」）
 - 確認した日：
 
 # 時系列
@@ -53,7 +53,7 @@ put("台本.md", """# タイトル案
 # 基本
 主人公：
 挑戦：
-換算の基準：
+通貨と円の目安：
 言いたいこと：
 
 # 台本
@@ -70,7 +70,7 @@ source：
 | N | （見どころの予告3） | |
 | N | 最後に、（見る理由の約束）。 | |
 
-## 01 （章の名前を読点で区切る）
+## 01 （章の名前。読点は入れない：「初めての給料」）
 
 | 種類 | 内容 | 型 |
 |---|---|---|
@@ -87,8 +87,9 @@ source：
 """)
 for name, obj in (("scenes.json", {"title": "", "sources": {}, "chapters": [""], "scenes": []}),
                   ("visuals.json", {"items": []}),
-                  ("thumbnail.json", {"type": "drop_to_result"}),
-                  ("description.json", {"intro": [], "question": "", "opening_chapter": "", "notes": [], "sources": [], "checked": "", "hashtags": ""})):
+                  ("thumbnail.json", {"type": "hero", "color": "", "line": "", "big": "", "unit": "", "yen": "", "pose": "down"}),
+                  ("short.json", {"from": "", "to": "", "top": ["", ""], "bottom": "続きは本編で", "color": ""}),
+                  ("description.json", {"intro": [], "question": "", "opening_chapter": "", "notes": [], "sources": [], "checked": "", "hashtags": "", "title": ""})):
     if not (d / name).exists():
         (d / name).write_text(json.dumps(obj, ensure_ascii=False, indent=1), encoding="utf-8")
 print(f"✔ {d}")
