@@ -24,12 +24,15 @@ if t["type"] == "drop_to_result":
     mx = max(vals) if vals else 1
     bars = ''.join(f"<div class='a' style='left:{850+i*(380//max(1,len(vals)))}px;bottom:110px;width:{int(380//max(1,len(vals))*.75)}px;height:{max(8,int(330*v/mx))}px;"
                    f"border-radius:5px;background:{R if i in t.get('red', []) else G};opacity:{1 if i in t.get('red', []) or i == len(vals)-1 else .45}'></div>" for i, v in enumerate(vals))
+    # 結果の数字は、ラベルのすぐ右から画面の右端までに収まる大きさにする
+    hl = 60 + len(t["high_label"]) * 68 + 30
+    hs = max(110, min(200, int((1240 - hl) / max(1, len(t["high"])) * 1.05)))
     body = (f"<div class='a stamp' style='left:46px;top:40px;font-size:52px;padding:4px 26px 12px;transform:rotate(-4deg)'>{t['stamp']}</div>"
             f"<div class='a stk' style='left:60px;top:170px;font-size:70px;color:#cfd3cf'>{t['low_label']}</div>"
             f"<div class='a stk' style='left:56px;top:250px;font-size:170px;color:{R}'>{t['low']}"
             f"<span style='font-size:120px;color:{G};margin-left:40px;vertical-align:20px'>→</span></div>{bars}"
             f"<div class='a stk' style='left:60px;top:440px;font-size:70px'>{t['high_label']}</div>"
-            f"<div class='a stk' style='left:360px;top:420px;font-size:200px;color:{G}'>{t['high']}</div>"
+            f"<div class='a stk' style='left:{hl}px;top:{430 + (200 - hs) // 2}px;font-size:{hs}px;color:{G}'>{t['high']}</div>"
             f"<div class='a' style='left:60px;top:650px;font-size:30px;font-weight:800;background:#000;padding:4px 16px 8px;border-radius:8px'>{t['note']}</div>")
 else:
     body = (f"<svg class='a' style='left:0;top:0' width='1280' height='720'><polyline points='40,660 420,650 560,640 700,560 860,420 1000,260 1240,60' fill='none' "
