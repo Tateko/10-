@@ -21,7 +21,7 @@ lines = []
 for l in open(f"{proj}/台本.md", encoding="utf-8"):
     m = re.match(r"\| N \| (.*?) \|", l)
     if m:
-        lines.append(re.sub(r"\[\d+\]", "", m.group(1)).strip())
+        lines.append(re.sub(r"\[[A-Za-z0-9]+\]", "", m.group(1)).strip())
 
 EM = re.compile(r"[約]?[\d,.]+(?:万|千)?[\d,]*(?:千)?(?:K|ドル|円|回|人|位|%|か月|週|年|日)?")
 
