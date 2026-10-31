@@ -26,8 +26,8 @@ if t["type"] == "drop_to_result":
                    f"border-radius:5px;background:{R if i in t.get('red', []) else G};opacity:{1 if i in t.get('red', []) or i == len(vals)-1 else .45}'></div>" for i, v in enumerate(vals))
     body = (f"<div class='a stamp' style='left:46px;top:40px;font-size:52px;padding:4px 26px 12px;transform:rotate(-4deg)'>{t['stamp']}</div>"
             f"<div class='a stk' style='left:60px;top:170px;font-size:70px;color:#cfd3cf'>{t['low_label']}</div>"
-            f"<div class='a stk' style='left:56px;top:250px;font-size:170px;color:{R}'>{t['low']}</div>"
-            f"<div class='a stk' style='left:500px;top:300px;font-size:120px;color:{G}'>→</div>{bars}"
+            f"<div class='a stk' style='left:56px;top:250px;font-size:170px;color:{R}'>{t['low']}"
+            f"<span style='font-size:120px;color:{G};margin-left:40px;vertical-align:20px'>→</span></div>{bars}"
             f"<div class='a stk' style='left:60px;top:440px;font-size:70px'>{t['high_label']}</div>"
             f"<div class='a stk' style='left:360px;top:420px;font-size:200px;color:{G}'>{t['high']}</div>"
             f"<div class='a' style='left:60px;top:650px;font-size:30px;font-weight:800;background:#000;padding:4px 16px 8px;border-radius:8px'>{t['note']}</div>")
