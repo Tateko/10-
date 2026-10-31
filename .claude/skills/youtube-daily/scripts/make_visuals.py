@@ -48,8 +48,10 @@ def st_split(it):
 
 
 def st_stamp(it):
-    return page(f"<div style='border:9px solid {R};color:{R};font-weight:900;font-size:150px;padding:10px 70px 24px;border-radius:16px;transform:rotate(-6deg)'>{it['text']}</div>"
-                f"<div class='sub' style='font-size:38px'>{it.get('sub', '')}</div>", 1.5)
+    # 長い文字でも枠からはみ出さないよう、字数で大きさを決める（1行・幅は約1000px まで）
+    fs = min(150, int(1000 / max(1, len(it["text"]))))
+    return page(f"<div style='border:9px solid {R};color:{R};font-weight:900;font-size:{fs}px;white-space:nowrap;padding:10px 60px 24px;border-radius:16px;transform:rotate(-6deg)'>{it['text']}</div>"
+                f"<div class='sub' style='font-size:38px'>{it.get('sub', '')}</div>", 1.0)
 
 
 def st_list(it):
@@ -156,7 +158,7 @@ def an_question(it):
 
 def an_walkout(it):
     win = ''.join(f"<div class='a' style='left:{300+c*110}px;top:{200+r*95}px;width:80px;height:60px;border-radius:6px;background:{G if (r*7+c)%5==0 else '#2f3a2a'};opacity:{.9 if (r*7+c)%5==0 else .6}'></div>" for r in range(5) for c in range(7))
-    return css(".walk { animation: walk 5s linear both; } @keyframes walk { from { transform:translateX(0) } to { transform:translateX(620px) } } "
+    return css(".walk { animation: walk 8s linear both; } @keyframes walk { from { transform:translateX(0) } to { transform:translateX(620px) } } "
                ".legA { animation: sw .5s infinite alternate; transform-origin: 64px 226px; } .legB { animation: sw .5s infinite alternate-reverse; transform-origin: 98px 226px; } "
                "@keyframes sw { from { transform:rotate(-14deg) } to { transform:rotate(14deg) } }") + \
         f"<div class='a' style='left:260px;top:160px;width:820px;height:700px;background:#1f2a1c'></div>{win}" \
