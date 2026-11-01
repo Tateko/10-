@@ -49,8 +49,9 @@ if t["type"] == "hero":
               f"<div class='a' style='left:1100px;top:24px;font-size:22px;font-weight:700;color:#e6e6e6;background:rgba(0,0,0,.6);"
               f"padding:2px 12px 4px;border-radius:6px'>{t.get('label', 'イメージ')}</div>")
     # 数字は左の約800pxに収まる大きさにする
-    bl = len(t["big"]) + len(t.get("unit", "")) * 0.62
-    bs = max(150, min(340, int(780 / max(1, bl) * 1.6)))
+    # 数字（約0.6字幅）と漢字・単位（1字幅、単位は0.45倍の大きさ）から幅を見積もり、影絵に重ならない700px に収める
+    em = sum(0.6 if c in "0123456789,." else 1.0 for c in t["big"]) + len(t.get("unit", "")) * 0.45
+    bs = max(130, min(340, int(700 / max(1, em))))
     ls = max(60, min(96, int(800 / max(1, len(t["line"])))))
     yen = (f"<div style='font-size:52px;letter-spacing:0;margin-top:8px;color:#fff'>{t['yen']}</div>" if t.get("yen") else "")
     body = (f"<style>body{{background-color:{bg};background-image:radial-gradient(ellipse at 80% 50%, {ac}33, rgba(0,0,0,0) 55%)}}</style>"
