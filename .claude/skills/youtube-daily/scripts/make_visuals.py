@@ -144,7 +144,7 @@ def an_cards(it):
     return css(fly) + f"<div class='a' style='left:620px;top:820px;width:680px;height:22px;border-radius:10px;background:{MID}'></div>" \
         f"<div class='a' style='left:780px;top:560px;width:440px;height:270px;border-radius:12px;background:{INK};border:12px solid #1c2219'></div>" \
         f"<div class='a' style='left:800px;top:580px;width:400px;height:230px;background:{G};opacity:.25'></div>{cards}" \
-        f"<div class='a' style='left:0;right:0;top:880px;text-align:center;font-size:44px;font-weight:800;color:#c8ccc8;animation: fade 1s 5.5s both'>{it.get('caption', '')}</div>"
+        f"<div class='a' style='left:0;right:0;top:830px;text-align:center;font-size:44px;font-weight:800;color:#c8ccc8;animation: fade 1s 5.5s both'>{it.get('caption', '')}</div>"
 
 
 def an_question(it):
@@ -176,7 +176,7 @@ def an_consult(it):
         f"<div class='a b1' style='left:600px;top:230px;width:260px;height:120px;border-radius:30px;background:{G}'></div>" \
         f"<div class='a b2' style='left:1080px;top:200px;width:260px;height:120px;border-radius:30px;background:#c8ccc8'></div>" \
         f"<div class='a b3' style='left:640px;top:390px;width:200px;height:90px;border-radius:26px;background:{G};opacity:.8'></div>" \
-        f"<div class='a lbl' style='left:0;right:0;top:860px;text-align:center;font-size:48px;color:#c8ccc8;animation: fade 1s 3s both'>{it.get('caption', '')}</div><div class='tag'>イメージ</div>"
+        f"<div class='a lbl' style='left:0;right:0;top:770px;text-align:center;font-size:48px;color:#c8ccc8;animation: fade 1s 3s both'>{it.get('caption', '')}</div><div class='tag'>イメージ</div>"
 
 
 STILL = {"bars": st_bars, "split": st_split, "stamp": st_stamp, "list": st_list}
