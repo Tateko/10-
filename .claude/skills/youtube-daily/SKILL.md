@@ -63,3 +63,14 @@ description: 「AI動画チャンネル」（海外の1人の挑戦を、日付�
 - 「必ず」「誰でも」「稼げる」「完全自動」など言い過ぎの言葉、講座や商品の宣伝になる言い方はしない。
 - キーやパスワードをチャットで受け取らない。
 - つまずいたら `references/lessons.md`。
+
+## 絵と図解の型（4本目から・ふだんはこちら）
+再生の多い回（Codex で作った回）に合わせた見た目。絵（暖色の絵画風の1枚絵）と図解（クリーム色の平たいスライド）が必ず交互に出る。字幕は下の紺の帯（下18%）に焼き込み、動きはなく、切り替えは瞬時。1場面は2〜5文（約8〜20秒）、10分で約40場面。
+- 色：紺 #0D1C26・クリーム #F6F2EB・カード #FFFDF6・朱 #E35B36・深緑 #2C6C49・黒 #0A0C0D。
+- 絵（A）：Higgsfield の `gpt_image_2_5`（16:9・1枚0.25クレジット）。プロンプトは「Semi-realistic cinematic oil painting, thick brushstrokes, no outlines … The left 40% dark … No text, no logos」。人は後ろ姿・横顔・手元にして、本人に似せない。画面に「イメージ（AIで作成）」。**作る前に枚数とクレジットの見積もりを出して本人の OK を取る。** 一度に3枚までにする（多いと 429 で止まる）。
+- 絵の取り込み：この環境は画像の置き場（cloudfront）につながらない。Higgsfield の `sandbox_exec` で画像を取り込み、1920×1080・255KB 未満の JPEG にして、`image_paths` に2枚ずつ渡すと、こちらの tool-results に同じファイルが保存される（それを `img/<番号>.jpg` にコピー）。
+- 図解（B）の型：boxes・steps（箱3つ＋矢印）・icons（人のピクトグラム3つ）・timeline（年表）・compare（左右の比較）・table（表）・big（大きい数字）・quote（本人の言葉）・end。
+- 場面の書き方：`references/example_04_story/spec.py`（台本の文を数で割り当て、`scenes.json` を作る）。
+- 書き出し：`~/.autoedit-venv/bin/python $SK/scripts/render_story.py scenes.json img out --ffmpeg ~/.autoedit-venv/bin/ffmpeg --speed 1.12` → `out/final.mp4`・`out/chapters.txt`（約10分。バックグラウンドで実行し、`kill -0 <pid>` で終わりを待つ。`pgrep -f` は待つ側の自分にも当たるので使わない）。
+- 書き出したら、絵の場面が白くないか（絵が読めているか）と字幕の改行を、何コマか取り出して見る。
+- サムネ：`references/example_04_story/thumb.py`（絵を背景に、文字は2行＋大きい数字1つ、朱色）。ショート：`$SK/scripts/short_story.py <フォルダ> <最初の文の番号> <最後の文の番号+1>`。
