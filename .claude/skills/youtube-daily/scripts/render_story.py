@@ -19,6 +19,10 @@ ap.add_argument("--series", default="海外の挑戦を、日付と数字で")
 ap.add_argument("--speed", type=float, default=1.3)
 ap.add_argument("--ffmpeg", default="ffmpeg")
 ap.add_argument("--frames-only", action="store_true")
+ap.add_argument("--bgm", help="うしろで小さく流す音（くり返す）。効果音ラボの環境音など")
+ap.add_argument("--bgm-volume", type=float, default=0.10)
+ap.add_argument("--chapter-sfx", help="章が変わるときに1回鳴らす短い音")
+ap.add_argument("--title-sfx", help="動画の最初に1回鳴らす短い音")
 a = ap.parse_args()
 
 NAVY, CREAM, CARD, RED, GREEN, INK, GRAY = "#0D1C26", "#F6F2EB", "#FFFDF6", "#E35B36", "#2C6C49", "#0A0C0D", "#7d7a73"
@@ -173,8 +177,6 @@ for i, (f, _, t) in enumerate(jobs):
     segs.append((s, dur))
 (out / "list.txt").write_text("".join(f"file '{s.resolve()}'\n" for s, _ in segs))
 subprocess.run([a.ffmpeg, "-v", "error", "-y", "-f", "concat", "-safe", "0", "-i", str(out / "list.txt"), "-c", "copy", str(out / "_cat.mp4")], check=True)
-subprocess.run([a.ffmpeg, "-v", "error", "-y", "-i", str(out / "_cat.mp4"), "-c:v", "copy", "-af", "loudnorm=I=-14:TP=-1.5:LRA=11", "-ar", "48000", "-c:a", "aac", "-b:a", "192k",
-                str(out / "final.mp4")], check=True)
 # チャプター（章の最初の場面の時刻）
 t, chs, last = 0.0, [], None
 k = 0
@@ -183,5 +185,18 @@ for sc in scenes:
         chs.append((t, sc["chapter"])); last = sc["chapter"]
     for _ in sc["lines"]:
         t += segs[k][1]; k += 1
+# 声に、うしろの音と章の合図を重ねる
+ins, fil, mix = ["-i", str(out / "_cat.mp4")], [], ["[0:a]"]
+n = 1
+if a.bgm:
+    ins += ["-stream_loop", "-1", "-i", a.bgm]
+    fil.append(f"[{n}:a]atrim=0:{t:.2f},afade=t=in:d=2,afade=t=out:st={max(0, t - 3):.2f}:d=3,volume={a.bgm_volume}[b{n}]"); mix.append(f"[b{n}]"); n += 1
+cues = ([(0.0, a.title_sfx)] if a.title_sfx else []) + ([(s0, a.chapter_sfx) for s0, _ in chs[1:]] if a.chapter_sfx else [])
+for s0, f in cues:
+    ins += ["-i", f]
+    fil.append(f"[{n}:a]adelay={int(s0 * 1000)}|{int(s0 * 1000)},volume=0.5[c{n}]"); mix.append(f"[c{n}]"); n += 1
+fc = ";".join(fil + [f"{''.join(mix)}amix=inputs={len(mix)}:normalize=0:duration=first,loudnorm=I=-14:TP=-1.5:LRA=11[a]"])
+subprocess.run([a.ffmpeg, "-v", "error", "-y", *ins, "-filter_complex", fc, "-map", "0:v", "-map", "[a]", "-c:v", "copy", "-ar", "48000",
+                "-c:a", "aac", "-b:a", "192k", str(out / "final.mp4")], check=True)
 (out / "chapters.txt").write_text("".join(f"{int(s // 60)}:{int(s % 60):02d} {c}\n" for s, c in chs))
 print(f"✔ final.mp4 {int(t // 60)}分{int(t % 60)}秒")

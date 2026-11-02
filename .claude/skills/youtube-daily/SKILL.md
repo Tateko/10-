@@ -74,3 +74,10 @@ description: 「AI動画チャンネル」（海外の1人の挑戦を、日付�
 - 書き出し：`~/.autoedit-venv/bin/python $SK/scripts/render_story.py scenes.json img out --ffmpeg ~/.autoedit-venv/bin/ffmpeg --speed 1.12` → `out/final.mp4`・`out/chapters.txt`（約10分。バックグラウンドで実行し、`kill -0 <pid>` で終わりを待つ。`pgrep -f` は待つ側の自分にも当たるので使わない）。
 - 書き出したら、絵の場面が白くないか（絵が読めているか）と字幕の改行を、何コマか取り出して見る。
 - サムネ：`references/example_04_story/thumb.py`（絵を背景に、文字は2行＋大きい数字1つ、朱色）。ショート：`$SK/scripts/short_story.py <フォルダ> <最初の文の番号> <最後の文の番号+1>`。
+
+## 絵のクレジットが足りないとき・BGM（6本目から）
+- Higgsfield の残高が足りないときは、お金を使わずに代える：前の回の絵から合う物を使い回す（同じ絵が続かないように）か、`make_visuals.py` の平たい図で描く。残高は `balance` で先に確かめる。
+- BGM・効果音は **効果音ラボ**（https://soundeffect-lab.info/）。商用・収益化した YouTube で使ってよく、クレジットは要らない。**再配布は禁止**なので、ファイルをリポジトリに入れない（使うたびにダウンロードする）。
+  - 曲（音楽）は置いていない。うしろの音には環境音（閑静な住宅街・雨など）を小さく流す。章の変わり目に「シーン切り替え」、最初に「プレゼンタイトル表示」。
+  - この環境からはつながらないので、Higgsfield の `sandbox_exec` でダウンロード → mp3 を1本のグレースケール PNG に詰めて `image_paths` で受け取り、こちらで取り出す（PNG は1枚 500KB まで。環境音はモノラル 48kbps にして小さくする）。
+  - 書き出し：`render_story.py … --bgm 環境音.mp3 --bgm-volume 0.12 --chapter-sfx シーン切り替え.mp3 --title-sfx タイトル.mp3`。説明欄の「数字について」に「効果音・環境音：効果音ラボ」と書く（任意だが書いておく）。
