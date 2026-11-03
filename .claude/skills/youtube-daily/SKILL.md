@@ -81,3 +81,5 @@ description: 「AI動画チャンネル」（海外の1人の挑戦を、日付�
   - 曲（音楽）は置いていない。うしろの音には環境音（閑静な住宅街・雨など）を小さく流す。章の変わり目に「シーン切り替え」、最初に「プレゼンタイトル表示」。
   - この環境からはつながらないので、Higgsfield の `sandbox_exec` でダウンロード → mp3 を1本のグレースケール PNG に詰めて `image_paths` で受け取り、こちらで取り出す（PNG は1枚 500KB まで。環境音はモノラル 48kbps にして小さくする）。
   - 書き出し：`render_story.py … --bgm 環境音.mp3 --bgm-volume 0.12 --chapter-sfx シーン切り替え.mp3 --title-sfx タイトル.mp3`。説明欄の「数字について」に「効果音・環境音：効果音ラボ」と書く（任意だが書いておく）。
+- 無料の絵の代わり（7本目から）：Pollinations（https://image.pollinations.ai/prompt/…）を Higgsfield の `sandbox_exec` から呼ぶ。無料は **45秒に1枚**（間に `sleep 47`）、1024×576 で右下にロゴが入る（消さない。登録すると無しにできる）。質は Higgsfield より落ちるので、こちらで 1920×1080 に広げて暖色に整える。説明欄に「絵はAIで作ったイメージ（Pollinations）」と書く。
+- サムネは `scripts/thumb_story.py <絵> <出力> --tag … --line … --big … --unit … --sub …`（`--vertical` でショート用の縦）。
