@@ -22,6 +22,7 @@ ap.add_argument("--frames-only", action="store_true")
 ap.add_argument("--bgm", help="うしろで小さく流す音（くり返す）。効果音ラボの環境音など")
 ap.add_argument("--bgm-volume", type=float, default=0.10)
 ap.add_argument("--chapter-sfx", help="章が変わるときに1回鳴らす短い音")
+ap.add_argument("--yomi", help="読み方を直す表（JSON：{\"Wii U\": \"ウィーユー\"}）。字幕はそのまま、声だけ置きかえる")
 ap.add_argument("--title-sfx", help="動画の最初に1回鳴らす短い音")
 a = ap.parse_args()
 
@@ -164,9 +165,11 @@ if a.frames_only:
 # 2. 声（OpenJTalk）と、1文ずつの動画
 import numpy as np
 import pyopenjtalk
+YOMI = json.load(open(a.yomi)) if a.yomi else {}
 segs = []
 for i, (f, _, t) in enumerate(jobs):
     w = out / "wav" / f"{i:03d}.wav"
+    for k, v in YOMI.items(): t = t.replace(k, v)
     x, sr = pyopenjtalk.tts(t, speed=a.speed)
     pcm = np.clip(x, -32768, 32767).astype(np.int16)
     pad = np.zeros(int(sr * 0.28), dtype=np.int16)

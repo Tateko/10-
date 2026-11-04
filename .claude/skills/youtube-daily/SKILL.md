@@ -74,6 +74,7 @@ description: 「AI動画チャンネル」（海外の1人の挑戦を、日付�
 - 書き出し：`~/.autoedit-venv/bin/python $SK/scripts/render_story.py scenes.json img out --ffmpeg ~/.autoedit-venv/bin/ffmpeg --speed 1.12` → `out/final.mp4`・`out/chapters.txt`（約10分。バックグラウンドで実行し、`kill -0 <pid>` で終わりを待つ。`pgrep -f` は待つ側の自分にも当たるので使わない）。
 - 書き出したら、絵の場面が白くないか（絵が読めているか）と字幕の改行を、何コマか取り出して見る。
 - サムネ：`references/example_04_story/thumb.py`（絵を背景に、文字は2行＋大きい数字1つ、朱色）。ショート：`$SK/scripts/short_story.py <フォルダ> <最初の文の番号> <最後の文の番号+1> ["下の一言"]`（有名企業の回は「数字は会社の発表と報道の記録のまま」を渡す。省くと「本人が公開した記録」になる）。
+- 声の読み方がおかしい英字（Wii U・Switch 2 など）は、`yomi.json`（例：`{"Wii U": "ウィーユー"}`）を作って `render_story.py ... --yomi yomi.json` で直す。字幕はそのまま、声だけ置きかわる。
 
 ## 絵のクレジットが足りないとき・BGM（6本目から）
 - Higgsfield の残高が足りないときは、お金を使わずに代える：前の回の絵から合う物を使い回す（同じ絵が続かないように）か、`make_visuals.py` の平たい図で描く。残高は `balance` で先に確かめる。
