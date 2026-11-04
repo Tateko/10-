@@ -36,7 +36,7 @@ body {{ width:1920px; height:1080px; overflow:hidden; position:relative; font-fa
 .a {{ position:absolute; }}
 .band {{ left:0; right:0; bottom:0; height:194px; background:{NAVY}; display:flex; align-items:center; justify-content:center; padding:0 160px; }}
 .sub {{ color:#fff; font-size:54px; font-weight:800; line-height:1.35; text-align:center; text-wrap:balance; }}
-.src {{ left:28px; bottom:14px; font-size:22px; color:#9fb0bb; font-weight:600; }}
+.src {{ left:28px; bottom:204px; font-size:22px; color:#d7dde0; font-weight:600; background:rgba(13,28,38,.85); padding:3px 12px 5px; border-radius:5px; max-width:1300px; }}
 """
 
 
@@ -107,7 +107,7 @@ def scene_b(sc):
                        for i, (h, v) in enumerate(items))
         body = f"<div style='display:flex;justify-content:center;gap:60px'>{body}</div>"
     elif k == "table":
-        rows = "".join(f"<tr><td style='padding:18px 34px;font-size:36px;font-weight:700;border-top:1px solid #d6cfc2;color:#3b3f42'>{l}</td>"
+        rows = "".join(f"<tr><td style='padding:18px 34px;font-size:36px;font-weight:700;border-top:1px solid #d6cfc2;color:#3b3f42;white-space:nowrap'>{l}</td>"
                        f"<td style='padding:18px 34px;font-size:40px;font-weight:900;border-top:1px solid #d6cfc2;text-align:right'>{v}</td></tr>" for l, v in items)
         body = (f"<table style='margin:0 auto;width:1300px;border-collapse:collapse;background:{CARD};border:1px solid #d6cfc2;border-radius:14px'>"
                 f"<tr style='background:{NAVY};color:#fff'><td style='padding:14px 34px;font-size:30px;font-weight:800'>項目</td>"
@@ -136,7 +136,11 @@ def scene_b(sc):
             f"<div class='a' style='left:0;right:0;top:{330 if k != 'end' else 300}px;height:{460 if k != 'end' else 480}px;display:flex;align-items:center;justify-content:center'>{body}</div>{note}")
 
 
-# 1. 画面（1文ごと）
+# 1. 画面（1文ごと）。字幕は帯の中で2行まで（1行約28字）。出典は帯の上に出して、字幕と重ならないようにする
+for sc in scenes:
+    for t in sc["lines"]:
+        if len(t) > 56:
+            print(f"⚠ 字幕が3行になるおそれ（{len(t)}字）：{t}")
 from playwright.sync_api import sync_playwright
 jobs = []
 for si, sc in enumerate(scenes):
